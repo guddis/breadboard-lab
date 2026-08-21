@@ -1,0 +1,537 @@
+<meta charset="utf-8">
+<title>Project Template</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.tog rect{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+.tog.one rect{fill:var(--teal-soft);stroke:var(--teal)}
+.tog text{fill:var(--ink-3)}
+.tog.one text{fill:var(--teal)}
+.tog:hover rect{stroke:var(--ink-3)}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.25}}
+.ringing{animation:ring .28s infinite}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Topic &middot; Project NN</p>
+  <h1>Project<br>Title</h1>
+  <p class="lead">One or two sentences a 12-year-old would read and want to build. Say what
+  it does, not what it teaches &mdash; the teaching is the trick you pull off while they are
+  busy being interested.</p>
+  <div class="facts">
+    <span><b>Age</b> 12+, with an adult nearby for the first hour</span>
+    <span><b>Time</b> N hours, in N stages</span>
+    <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+    <span><b>Chips</b> CD4077, CD4012</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section>
+  <span class="snum">Template</span>
+  <h2>This page is the starting point, not the finished thing</h2>
+  <p class="sub">Everything below is a live demo of what you inherit. Delete it as you
+  replace it.</p>
+
+  <p>The design system and the diagram library are already running on this page. Change
+  the <code>CHIPS</code> array in the script and the pinout drawings redraw themselves.
+  Read <a href="README.md">template/README.md</a> for the checklist before you start.</p>
+
+  <div class="note"><b>A note block.</b> Use these for the idea behind a step &mdash; the
+  insight, the real-world connection, the thing worth remembering after the build.</div>
+
+  <div class="warn"><b>A warning block.</b> Use these for the ways someone can destroy a
+  chip or waste an afternoon. Reversed power, floating inputs, shorted outputs.</div>
+
+  <div class="why"><b>A why block.</b> Ends a stage by saying what the idea is actually
+  used for. This is what turns a wiring exercise into an explanation.</div>
+</section>
+
+<section>
+  <span class="snum">Library</span>
+  <h2>Gate symbols and truth tables</h2>
+  <p class="sub">Generated by <code>gateSym()</code> and <code>truthTable()</code>.</p>
+
+  <p>The truth tables are computed from the same JavaScript functions a simulator would
+  use, so the table on the page cannot disagree with the circuit you describe. Edit the
+  <code>GATES</code> array to change what appears here.</p>
+
+  <div class="gategrid" id="gategrid"></div>
+</section>
+
+<section>
+  <span class="snum">Library</span>
+  <h2>Chip pinouts</h2>
+  <p class="sub">Generated by <code>dipSVG()</code> from a pin table.</p>
+
+  <p>Every pin gets a role &mdash; <code>IN</code>, <code>OUT</code>, <code>PWR</code>,
+  <code>GND</code> or <code>NC</code> &mdash; and the drawing colours itself accordingly.
+  Outputs come out teal and bold, because wiring an output to a rail is the mistake that
+  kills chips.</p>
+
+  <figure>
+    <div id="dip-anatomy"></div>
+    <figcaption>Find the notch first, every time. Pin 1 sits to its lower left and the
+    numbers run <b>anticlockwise</b>.</figcaption>
+  </figure>
+
+  <p>Four of the CD4000 quad-gate chips share one pin layout, so <code>QUAD('CD40xx')</code>
+  builds the whole pin table for you. Chips with their own arrangement get spelled out.</p>
+  <div id="pinouts"></div>
+</section>
+
+<section>
+  <span class="snum">Library</span>
+  <h2>The breadboard diagram</h2>
+  <p class="sub">Generated by <code>bbSVG()</code>.</p>
+  <figure>
+    <div id="bb-anatomy"></div>
+    <figcaption>The hidden metal strips. Worth including in every project &mdash; it is the
+    single thing beginners most reliably get wrong.</figcaption>
+  </figure>
+</section>
+
+<section class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>What this stage achieves</span>
+    <span>~25 min</span></div>
+  <h2>An example stage</h2>
+  <p class="sub">One idea. Ends with something that visibly works.</p>
+
+  <p>Open with what they are about to do and why it matters. Then the wire list, as
+  <em>pin &rarr; pin</em> so it works wherever they physically place things.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail</td><td>Power in</td></tr>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>&minus; rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>pin 14 &rarr; pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td><td>Unused inputs</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Then what to expect when power goes on, including anything disappointing:</p>
+
+  <div class="note"><b>Say the letdown out loud.</b> If the LED will be dim because a
+  CD4000 output only pushes about 3 mA, write that here. Naming it first turns "it's
+  broken" into "ah, that's normal".</div>
+
+  <h3>A sub-heading inside a stage</h3>
+  <p>Use <code>ol.steps</code> when the order genuinely matters:</p>
+  <ol class="steps">
+    <li><b>First thing</b> With a short explanation underneath.</li>
+    <li><b>Second thing</b> Each one leaves the circuit in a working state.</li>
+    <li><b>Third thing</b> And now it does something worth showing someone.</li>
+  </ol>
+
+  <p>And <code>ul.tick</code> for things to check off:</p>
+  <ul class="tick">
+    <li>Something to verify before moving on.</li>
+    <li>Something else.</li>
+  </ul>
+
+  <div class="why"><b>What this is really for.</b> Close the stage by connecting it to
+  something real &mdash; a part of a processor, a security property, a reason engineers
+  care. This is the part people remember.</div>
+</section>
+
+<section>
+  <span class="snum">Section N</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Every project needs this table. It will get used.</p>
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing lights at all</td><td>Power isn't reaching pin 14 and pin 7.</td></tr>
+      <tr><td>A chip gets warm</td><td>Power in backwards. <b>Unplug now.</b></td></tr>
+      <tr><td>Lights flicker on their own</td><td>A floating input. Tie it to &minus;.</td></tr>
+      <tr><td>An LED never lights</td><td>Backwards. Long leg toward +.</td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away five minutes, re-read
+        one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>The one technique worth teaching.</b> Don't stare at the whole
+  board. Pick one signal and follow it. Halve the problem, then halve it again.</div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the wire list and troubleshooting,
+  <a href="worksheet.md">worksheet.md</a> for the tables to fill in.
+  Verify every pinout against the manufacturer's datasheet before you publish.</p>
+</div></footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ gate symbols ============ */
+const SHAPE = {
+  and : {d:'M0,0 H22 A17,17 0 0 1 22,34 H0 Z', out:39, lead:0},
+  or  : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:0},
+  not : {d:'M0,0 L30,17 L0,34 Z', out:30, lead:0, bub:1},
+  xor : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:-8, arc:1},
+  xnor: {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:-8, arc:1, bub:1}
+};
+function gateSym(kind, ins, w, h){
+  const s = SHAPE[kind], bx = s.out + 5, endX = s.bub ? bx + 5 : s.out;
+  let g = `<svg viewBox="-26 -8 ${104} 50" width="${w||150}" height="${h||62}"
+    role="img" aria-label="${kind} gate symbol">`;
+  const ys = ins === 1 ? [17] : [9, 25];
+  for (const y of ys)
+    g += `<line x1="-24" y1="${y}" x2="${s.lead}" y2="${y}" stroke="var(--ink-2)"
+      stroke-width="1.6" ${SH}/>`;
+  if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  g += `<path d="${s.d}" style="fill:var(--surface-2);stroke:var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  if (s.bub) g += `<circle cx="${bx}" cy="17" r="4.4" fill="var(--surface)"
+    stroke="var(--ink)" stroke-width="1.9"/>`;
+  g += `<line x1="${endX}" y1="17" x2="${endX + 24}" y2="17" stroke="var(--ink-2)"
+    stroke-width="1.6" ${SH}/>`;
+  return g + '</svg>';
+}
+
+/* ============ gate cards ============ */
+const GATES = [
+  {n:'NOT', chip:'CD4069', k:'not', ins:1, f:a=>a?0:1,
+   d:'Flips whatever it gets. The only gate here with a single input — and the one you reach for constantly.'},
+  {n:'AND', chip:'CD4081', k:'and', ins:2, f:(a,b)=>(a&&b)?1:0,
+   d:'Output is 1 only when <b>both</b> inputs are 1. Think of two switches in a row: the current needs to get past both.'},
+  {n:'OR', chip:'CD4071', k:'or', ins:2, f:(a,b)=>(a||b)?1:0,
+   d:'Output is 1 when <b>at least one</b> input is 1. Note that both being 1 still counts — this is not the "or" of everyday speech.'},
+  {n:'XOR', chip:'CD4070', k:'xor', ins:2, f:(a,b)=>(a!==b)?1:0,
+   d:'Output is 1 when the inputs are <b>different</b>. This is the everyday "or" — one or the other, but not both.'},
+  {n:'XNOR', chip:'CD4077', k:'xnor', ins:2, f:(a,b)=>(a===b)?1:0,
+   d:'Output is 1 when the inputs are <b>the same</b>. The whole vault hangs off this one.'}
+];
+function truthTable(g){
+  const rows = g.ins === 1 ? [[0],[1]] : [[0,0],[0,1],[1,0],[1,1]];
+  let h = '<table><thead><tr>';
+  h += g.ins === 1 ? '<th class="n">In</th>' : '<th class="n">A</th><th class="n">B</th>';
+  h += '<th class="n">Out</th></tr></thead><tbody>';
+  for (const r of rows){
+    const o = g.f.apply(null, r);
+    h += '<tr>' + r.map(v => `<td class="n">${v}</td>`).join('')
+       + `<td class="n ${o ? 'on' : 'off'}">${o}</td></tr>`;
+  }
+  return h + '</tbody></table>';
+}
+function drawGates(){
+  const host = $('gategrid'); if (!host) return;
+  host.innerHTML = GATES.map(g => `<div class="gate">
+      <h4>${g.n}</h4><span class="chip">${g.chip}</span>
+      ${gateSym(g.k, g.ins, 148, 60)}
+      <p>${g.d}</p>${truthTable(g)}</div>`).join('');
+}
+
+/* ============ DIP pinout ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd', NC='nc';
+const QUAD = n => ({name:n, pins:14, p:{
+  1:['in 1a',IN], 2:['in 1b',IN], 3:['OUT 1',OUT], 4:['OUT 2',OUT],
+  5:['in 2a',IN], 6:['in 2b',IN], 7:['− GND',GND], 8:['in 3a',IN],
+  9:['in 3b',IN], 10:['OUT 3',OUT], 11:['OUT 4',OUT], 12:['in 4a',IN],
+  13:['in 4b',IN], 14:['+ 5 V',PWR]}});
+const CHIPS = [
+  Object.assign(QUAD('CD4077'), {sub:'Quad 2-input XNOR — the comparators'}),
+  {name:'CD4012', sub:'Dual 4-input NAND — the judge', pins:14, p:{
+    1:['OUT 1',OUT], 2:['in 1a',IN], 3:['in 1b',IN], 4:['in 1c',IN],
+    5:['in 1d',IN], 6:['no connect',NC], 7:['− GND',GND], 8:['no connect',NC],
+    9:['in 2a',IN], 10:['in 2b',IN], 11:['in 2c',IN], 12:['in 2d',IN],
+    13:['OUT 2',OUT], 14:['+ 5 V',PWR]}},
+  Object.assign(QUAD('CD4081'), {sub:'Quad 2-input AND — arms the alarm'}),
+  Object.assign(QUAD('CD4071'), {sub:'Quad 2-input OR — Stage 2 only'}),
+  Object.assign(QUAD('CD4070'), {sub:'Quad 2-input XOR — Stage 2 only'}),
+  {name:'CD4069', sub:'Hex NOT — Stage 2 only', pins:14, p:{
+    1:['in 1',IN], 2:['OUT 1',OUT], 3:['in 2',IN], 4:['OUT 2',OUT],
+    5:['in 3',IN], 6:['OUT 3',OUT], 7:['− GND',GND], 8:['OUT 4',OUT],
+    9:['in 4',IN], 10:['OUT 5',OUT], 11:['in 5',IN], 12:['OUT 6',OUT],
+    13:['in 6',IN], 14:['+ 5 V',PWR]}}
+];
+const ROLECOL = {in:'var(--ink-2)', out:'var(--teal)', pwr:'var(--w-red)',
+  gnd:'var(--w-blue)', nc:'var(--ink-3)'};
+function dipSVG(c, scale){
+  const half = c.pins/2, pitch = 30, bw = 74, top = 22;
+  const bh = half*pitch, W = 380, H = bh + top + 26, bx = (W-bw)/2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W*(scale||1)}"
+    role="img" aria-label="${c.name} pinout"><rect x="${bx}" y="${top}"
+    width="${bw}" height="${bh}" rx="5" fill="var(--surface-2)"
+    stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${W/2-9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)"
+    stroke="var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= c.pins; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : c.pins - i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = c.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx + bw, x2 = left ? bx - 20 : bx + bw + 20;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+7 : bx+bw-7}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-5 : x2+5}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role===OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${W/2}" y="${H-6}" text-anchor="middle">${c.name}</text>`;
+  return s + '</svg>';
+}
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>';
+  const an = $('dip-anatomy');
+  if (an) an.innerHTML = `<div class="card" style="display:flex;gap:1.4rem;
+    flex-wrap:wrap;align-items:center;justify-content:center">
+    <div class="scroller">${dipSVG(CHIPS[0], 0.92)}</div>
+    <dl class="kv" style="max-width:17rem">
+      <dt>Notch</dt><dd>The dent at the top. Your only orientation clue.</dd>
+      <dt>Pin 1</dt><dd>Immediately left of the notch, then count down.</dd>
+      <dt>Pin 7</dt><dd>Bottom left. Always − on these six chips.</dd>
+      <dt>Pin 14</dt><dd>Top right. Always +.</dd>
+      <dt class="on">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+    </dl></div>`;
+}
+
+/* ============ breadboard anatomy ============ */
+function bbSVG(){
+  const P = 19, C = 14, LM = 44, TM = 14;
+  const ROWS = {'+':0.5,'−':1.5,A:3.1,B:4.1,C:5.1,D:6.1,E:7.1,
+                F:8.8,G:9.8,H:10.8,I:11.8,J:12.8,'−2':14.4,'+2':15.4};
+  const hx = c => LM + (c-1)*P + P/2, hy = r => TM + ROWS[r]*P + P/2;
+  const W = LM + C*P + 128, H = hy('+2') + 26;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="How breadboard holes are connected">
+    <rect x="${LM-13}" y="${TM}" width="${C*P+22}" height="${hy('+2')+11-TM}"
+      rx="6" style="fill:var(--surface);stroke:var(--line-2)" stroke-width="1.3"/>
+    <rect x="${LM-13}" y="${hy('E')+10}" width="${C*P+22}" height="${hy('F')-hy('E')-20}"
+      fill="var(--sunk)"/>`;
+  /* highlight groups */
+  const band = (c, r1, r2, col) => `<rect x="${hx(c)-8.5}" y="${hy(r1)-8.5}"
+    width="17" height="${hy(r2)-hy(r1)+17}" rx="4" fill="${col}" opacity=".5"/>`;
+  s += band(4,'A','E','var(--teal-soft)') + band(4,'F','J','var(--copper-soft)');
+  s += `<rect x="${LM-9}" y="${hy('+')-8.5}" width="${C*P+14}" height="17" rx="4"
+    fill="var(--w-red)" opacity=".16"/>`;
+  /* rail stripes */
+  for (const [r,col,dy] of [['+','var(--w-red)',-11],['−','var(--w-blue)',11],
+                            ['−2','var(--w-blue)',-11],['+2','var(--w-red)',11]])
+    s += `<line x1="${LM-7}" y1="${hy(r)+dy}" x2="${LM+C*P-5}" y2="${hy(r)+dy}"
+      stroke="${col}" stroke-width="1.5" opacity=".8"/>`;
+  /* holes + labels */
+  for (const r of Object.keys(ROWS)){
+    for (let c = 1; c <= C; c++)
+      s += `<rect x="${hx(c)-3.6}" y="${hy(r)-3.6}" width="7.2" height="7.2" rx="1.6"
+        style="fill:var(--sunk);stroke:var(--line)" stroke-width=".8"/>`;
+    s += `<text class="sv-num" x="${LM-19}" y="${hy(r)+3.3}" text-anchor="middle"
+      >${r.replace('2','')}</text>`;
+  }
+  /* callouts */
+  const call = (x, y, t, anchor) => `<text class="sv-lbl" x="${x}" y="${y}"
+    text-anchor="${anchor||'start'}">${t}</text>`;
+  const RX = LM + C*P + 12;
+  s += `<line x1="${hx(4)+10}" y1="${hy('C')}" x2="${RX-6}" y2="${hy('B')}"
+    stroke="var(--teal)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('B')-4, 'these five holes')
+    + call(RX, hy('B')+9, 'are one wire');
+  s += `<line x1="${hx(4)+10}" y1="${hy('H')}" x2="${RX-6}" y2="${hy('I')}"
+    stroke="var(--copper)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('I')-4, 'so are these —')
+    + call(RX, hy('I')+9, 'but NOT joined')
+    + call(RX, hy('I')+22, 'to the five above');
+  s += call(RX, hy('+')+3, '+ rail, full length')
+    + call(RX, hy('−')+3, '− rail, full length')
+    + call(hx(1)-4, hy('E')+ (hy('F')-hy('E'))/2 + 3.5,
+        'the channel — chips straddle this', 'start');
+  return s + '</svg>';
+}
+function drawBB(){
+  const h = $('bb-anatomy');
+  if (h) h.innerHTML = '<div class="scroller">' + bbSVG() + '</div>';
+}
+drawGates(); drawPinouts(); drawBB();
+</script>

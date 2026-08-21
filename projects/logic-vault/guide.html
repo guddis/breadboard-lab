@@ -1,0 +1,1246 @@
+<meta charset="utf-8">
+<title>The Logic Vault</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Logic gates · Project 01</p>
+  <h1>The Logic<br>Vault</h1>
+  <p class="lead">A combination safe with no computer inside it. You hide a secret
+  code in four wires; someone else has to find it. Everything that decides
+  <em>right</em> or <em>wrong</em> is done by three chips that only know how to
+  compare, and one that knows how to say no.</p>
+  <div class="facts">
+    <span><b>Age</b> 12+, with an adult nearby for the first hour</span>
+    <span><b>Time</b> 2–3 hours, in 7 stages</span>
+    <span><b>Voltage</b> 5 V — nothing dangerous</span>
+    <span><b>Chips</b> CD4077, CD4012, CD4081</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Play with the finished thing before you build any of it.</p>
+
+  <p>Four <b>dials</b> on the front. Four <b>secret</b> wires hidden round the back.
+  The vault compares them, one pair at a time. If all four pairs agree, the green
+  light comes on and the vault lights up. Press <b>OPEN</b> with even one dial wrong
+  and a buzzer goes off.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="btn-open" class="prim">Hold to OPEN</button>
+      <button id="btn-scramble">New secret code</button>
+      <button id="btn-peek">Show the secret</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">Click any dial to flip it between 1 and 0.
+  This is a simulation of the exact circuit you're about to wire — same chips, same
+  pins, same behaviour.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A gate called XNOR answers the
+  question <em>"are these two wires the same?"</em> Use four of them, then ask
+  <em>"did all four say yes?"</em> That's a combination lock.</div>
+</section>
+
+<section id="bits">
+  <span class="snum">Section 2</span>
+  <h2>One wire, two words</h2>
+  <p class="sub">Everything below rests on this, so it's worth thirty seconds.</p>
+
+  <p>A wire in this project is only ever doing one of two things. It's either
+  connected to the <b>+ rail</b>, or connected to the <b>− rail</b>. That's it.
+  There's no in-between, no "a bit on".</p>
+
+  <div class="two">
+    <div class="card">
+      <h4 style="margin-top:0">Connected to +</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">About 5 volts.
+      Engineers write this as <b>1</b> and say "high". You'll also hear
+      <em>true</em>, or <em>set</em>.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Connected to −</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">Zero volts. Written
+      <b>0</b>, said "low". Also <em>false</em>, or <em>clear</em>. Note this is
+      <em>not</em> the same as unplugged.</p>
+    </div>
+  </div>
+
+  <div class="warn"><b>Unplugged is a third thing, and it's trouble.</b> A chip input
+  with nothing on it doesn't read 0 — it drifts, picks up radio and mains hum from
+  the room, and flickers. These CMOS chips are especially twitchy about it. Every
+  input in this project goes to + or to − or to another chip's output. Never nowhere.</div>
+
+  <p>A <b>logic gate</b> is a lump of circuitry with one or two input wires and one
+  output wire. It looks at its inputs, applies one fixed rule, and drives its output
+  to 1 or 0. It does this constantly, with no clock and no program — change an input
+  and the output follows within a few billionths of a second.</p>
+
+  <p>The rule is written as a <b>truth table</b>: every possible combination of
+  inputs, and what the output does for each. Two inputs means four rows. That's the
+  entire specification of a gate — learn the table and you know the part.</p>
+</section>
+
+<section id="gates">
+  <span class="snum">Section 3</span>
+  <h2>The five gates you need</h2>
+  <p class="sub">One chip each. You'll test all five by hand in Stages 1–3.</p>
+
+  <p>Each chip below holds several copies of the same gate. A CD4081 is four separate
+  AND gates sharing one lump of plastic — they don't interact, you just get four for
+  the price of one.</p>
+
+  <div class="gategrid" id="gategrid"></div>
+
+  <div class="why"><b>Why these five?</b> AND, OR and NOT are the classic three —
+  every digital circuit ever built can be made from them alone. XOR and XNOR are
+  shortcuts for a job that comes up constantly: comparing. You could build XNOR out
+  of the other three, and in <a href="worksheet.md">Challenge C</a> you will. But
+  there's a chip for it, so we use the chip.</div>
+</section>
+
+<section id="xnor">
+  <span class="snum">Section 4</span>
+  <h2>The trick: a gate that asks a question</h2>
+  <p class="sub">This is the idea the whole vault is built on.</p>
+
+  <p>Look hard at the XNOR table. Ignore the name for a moment and just read the
+  pattern:</p>
+
+  <div class="scroller"><table class="tt">
+    <thead><tr><th class="n">A</th><th class="n">B</th><th class="n">Out</th>
+      <th>In words</th></tr></thead>
+    <tbody>
+      <tr><td class="n">0</td><td class="n">0</td><td class="n on">1</td>
+        <td>same → yes</td></tr>
+      <tr><td class="n">0</td><td class="n">1</td><td class="n off">0</td>
+        <td>different → no</td></tr>
+      <tr><td class="n">1</td><td class="n">0</td><td class="n off">0</td>
+        <td>different → no</td></tr>
+      <tr><td class="n">1</td><td class="n">1</td><td class="n on">1</td>
+        <td>same → yes</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>An XNOR gate outputs 1 when its two inputs <b>match</b>, whatever they happen to
+  be. It doesn't care <em>what</em> the values are, only whether they <em>agree</em>.
+  It's a machine that answers one question: <em>are these two the same?</em></p>
+
+  <p>So: put a dial on one input and a hidden secret wire on the other. The output is
+  now a light that means <b>"this dial is correct"</b>. Do that four times and you have
+  four correctness lights. Then all you need is a gate that asks <em>"are all four of
+  those lights on?"</em>, and you have a combination lock.</p>
+
+  <div class="note"><b>This is a real part.</b> Engineers call it a
+  <em>comparator</em>, and the datasheet for the CD4077 lists "logical comparators"
+  as its first application. Every time a computer checks a password, compares two
+  numbers, or spots a corrupted file, something shaped like this is doing the work —
+  just with 64 of them side by side instead of 4.</div>
+</section>
+
+<section id="design">
+  <span class="snum">Section 5</span>
+  <h2>How the vault thinks</h2>
+  <p class="sub">Four signals in, two decisions out, three chips in between.</p>
+
+  <p>Scroll back to the simulator and watch the wires light up as you flip dials.
+  Here's the same journey in words:</p>
+
+  <ol class="steps">
+    <li><b>Compare, four times over</b>
+      Each dial meets its secret wire at an XNOR gate inside the <b>CD4077</b>.
+      Four gates, four answers. Each output is 1 for "this one's right".</li>
+    <li><b>Judge</b>
+      Those four answers go into one 4-input NAND gate inside the <b>CD4012</b>.
+      A NAND outputs 0 only when <em>every</em> input is 1 — so its output is
+      0 when the code is fully correct, and 1 the moment anything is wrong.
+      That signal is <b>LOCKED</b>.</li>
+    <li><b>Flip it</b>
+      LOCKED is backwards for driving a green light, so we invert it. The CD4012
+      has a second 4-input NAND doing nothing, so we use that — see below.
+      Its output is <b>UNLOCKED</b>.</li>
+    <li><b>Act</b>
+      LOCKED lights the red LED. UNLOCKED lights the green LED and the vault lights.
+      And the <b>CD4081</b> combines LOCKED with the OPEN button to fire the buzzer:
+      alarm only when you <em>try</em> the door <em>and</em> the code is wrong.</li>
+  </ol>
+
+  <h3>The free inverter</h3>
+  <p>We need a NOT gate for exactly one signal, and putting a whole sixth chip on the
+  board for one gate would be silly. There's a trick instead.</p>
+
+  <p>A NAND gate outputs 0 only when all its inputs are 1. So tie <em>all four</em>
+  inputs of the spare gate to the same wire. Now there are only two cases: all four
+  are 0, or all four are 1 — and the gate outputs 1, then 0. That is precisely a NOT
+  gate. A NAND with its inputs tied together <b>becomes</b> an inverter.</p>
+
+  <div class="why"><b>Why this matters more than it looks.</b> NAND can imitate every
+  other gate — NOT, AND, OR, all of them. It's <em>functionally complete</em>, and
+  chip factories exploit this: it's often cheaper to build a whole processor from one
+  repeated NAND cell than to make five different kinds of gate. You just used the
+  same trick a chip designer would.</div>
+
+  <h3>Why the buzzer needs a transistor</h3>
+  <p>These chips are from 1968 and they are <em>polite</em>. A CD4000 output at 5 V
+  can push about 3 milliamps before its voltage starts sagging. An LED will glow from
+  that — dimly. A buzzer wants ten times more and simply won't sound.</p>
+
+  <p>So each output that has real work to do gets a <b>PN2222 transistor</b>: the chip
+  pushes a tiny current into the transistor's base, and the transistor lets a much
+  bigger current through from the + rail. A small signal controlling a large one —
+  that's an amplifier, and it's the single most useful thing a transistor does.</p>
+
+  <div class="note"><b>Chips think, transistors shove.</b> Keep the two jobs separate
+  in your head and a lot of electronics stops being confusing. If something needs to
+  be bright, loud, or move, a logic chip won't do it alone.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 6</span>
+  <h2>What you need</h2>
+  <p class="sub">All of it is in the kit. Full wire list lives in
+  <a href="README.md">README.md</a>.</p>
+
+  <h3>The three chips that stay in</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>What it holds</th><th>Job</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD4077</code></td><td>Four 2-input XNOR gates</td>
+        <td>The four "does this dial match?" comparators</td></tr>
+      <tr><td><code>CD4012</code></td><td>Two 4-input NAND gates</td>
+        <td>The judge, plus the free inverter</td></tr>
+      <tr><td><code>CD4081</code></td><td>Four 2-input AND gates</td>
+        <td>Arms the alarm</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:.93rem;color:var(--ink-2)">Stages 1–3 also borrow
+  <code>CD4069</code> (NOT), <code>CD4071</code> (OR) and <code>CD4070</code> (XOR)
+  for the experiments. Those come back out before Stage 5.</p>
+
+  <h3>Everything else</h3>
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="n">3</td><td>PN2222 transistor</td>
+        <td>Flat side toward you, legs down: <b>E – B – C</b></td></tr>
+      <tr><td class="n">1</td><td>Active buzzer</td><td>The kind that beeps on plain DC</td></tr>
+      <tr><td class="n">1</td><td>Red LED</td><td>LOCKED</td></tr>
+      <tr><td class="n">1</td><td>Green LED</td><td>UNLOCKED</td></tr>
+      <tr><td class="n">2</td><td>White LED</td><td>The vault lights</td></tr>
+      <tr><td class="n">4</td><td>Yellow LED</td><td>Stage 4 only, then removed</td></tr>
+      <tr><td class="n">1</td><td>Push button</td><td>OPEN</td></tr>
+      <tr><td class="n">8</td><td>220 Ω resistor</td><td>LED current limiting</td></tr>
+      <tr><td class="n">2</td><td>10 kΩ resistor</td><td>Q1 base, button pull-down</td></tr>
+      <tr><td class="n">2</td><td>5.1 kΩ resistor</td><td>Q2 and Q3 bases</td></tr>
+      <tr><td class="n">3</td><td>0.1 µF ceramic ("104")</td><td>One per chip, across its power pins</td></tr>
+      <tr><td class="n">1</td><td>100 µF electrolytic</td><td>Across the rails — <b>stripe to −</b></td></tr>
+      <tr><td class="n">1</td><td>Breadboard</td><td>Full-size is comfier than half</td></tr>
+      <tr><td class="n">~35</td><td>Jumper wires</td><td>Red for +, black for −, colours for signals</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Power</h3>
+  <p><b>4.5 V to 5 V.</b> Three AA cells in a holder, or the MB102 breadboard module
+  set to 5 V. These chips run happily anywhere from 3 V to 18 V, so nothing here is
+  fussy. Nothing in this project goes anywhere near mains electricity.</p>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 7</span>
+  <h2>Seven rules for not breaking things</h2>
+  <p class="sub">Read once now. Re-read rule 2 every time you place a chip.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you rewire</b>
+      Every single time. Rewiring a live board is how chips die and how you lose an
+      afternoon to a fault you created yourself.</li>
+    <li><b>The notch tells you which way round the chip goes</b>
+      Every chip has a notch or dot at one end. Notch to the <em>left</em>, and pin 1
+      is the bottom-left. Backwards means pin 14 gets ground and pin 7 gets +5 V —
+      the chip heats up and dies in seconds.</li>
+    <li><b>Never leave an input dangling</b>
+      Including inputs on gates you aren't using. Tie every unused input to −.</li>
+    <li><b>Never wire an output straight to + or −</b>
+      That's a short circuit through the chip's own transistors.</li>
+    <li><b>The electrolytic capacitor has a right way round</b>
+      The stripe marks the negative leg. Backwards, it can pop.</li>
+    <li><b>Touch something metal before handling chips</b>
+      Static from a carpet is thousands of volts. CMOS hates it.</li>
+    <li><b>Warm chip means stop</b>
+      Pull the power immediately and check rule 2, then rule 4.</li>
+  </ol>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 8</span>
+  <h2>Reading a chip, and reading a breadboard</h2>
+  <p class="sub">Two skills. Ten minutes. Then the wiring is just following a list.</p>
+
+  <h3>Pin numbering</h3>
+  <figure>
+    <div id="dip-anatomy"></div>
+    <figcaption>Find the notch first, every time. Pin 1 sits to its lower left, and
+    the numbers run <b>anticlockwise</b> — down the left side, across the bottom, up
+    the right. On all six chips here, pin 14 is + and pin 7 is −.</figcaption>
+  </figure>
+
+  <h3>How a breadboard is joined up</h3>
+  <figure>
+    <div id="bb-anatomy"></div>
+    <figcaption>The hidden metal strips. Each column of five holes is one connection;
+    the two halves are separate, which is why chips straddle the channel — each pin
+    lands in its own private column. The long rails carry power the whole way.</figcaption>
+  </figure>
+
+  <div class="warn"><b>Some cheap boards split the rails in the middle.</b> If the
+  left half of your board works and the right half is dead, that's why. Bridge the
+  two halves with a jumper and carry on.</div>
+
+  <h3>The pinouts you'll be using</h3>
+  <p>Four of these six chips share an identical pin layout — inputs on 1&nbsp;+&nbsp;2,
+  5&nbsp;+&nbsp;6, 8&nbsp;+&nbsp;9, 12&nbsp;+&nbsp;13, with outputs on 3, 4, 10 and 11.
+  Learn it once and you've learned four chips.</p>
+  <div id="pinouts"></div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>Your first gate</span>
+    <span>~25 min</span></div>
+  <h2>Build a test bench</h2>
+  <p class="sub">One chip, two dials, one light. Everything later is this, repeated.</p>
+
+  <p>Put the <b>CD4081</b> across the channel with its notch to the left. Pin 1 is
+  bottom-left. Then wire it up:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail</td><td>Power in</td></tr>
+      <tr><td>Supply −</td><td>Top blue rail</td><td>Ground in</td></tr>
+      <tr><td>Top red rail</td><td>Bottom red rail</td><td>Power to both sides</td></tr>
+      <tr><td>Top blue rail</td><td>Bottom blue rail</td><td>Ground to both sides</td></tr>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td><b>pin 1</b></td><td>loose jumper — <b>DIAL A</b></td><td>Input A</td></tr>
+      <tr><td><b>pin 2</b></td><td>loose jumper — <b>DIAL B</b></td><td>Input B</td></tr>
+      <tr><td><b>pin 3</b></td><td>220 Ω → LED long leg</td><td>Output, via the light</td></tr>
+      <tr><td>LED short leg</td><td>− rail</td><td>Completes the circuit</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>− rail</td><td>Unused inputs — rule 3</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now power up. Take the two loose ends of DIAL A and DIAL B and plug each into
+  either the + rail or the − rail. Four combinations. Try all four, and write the
+  result in <a href="worksheet.md">worksheet</a> table 2 as you go.</p>
+
+  <div class="note"><b>The light will be dim, and that's correct.</b> Remember the
+  3 milliamp limit — the chip is doing its best. Stage 5 adds transistors and you'll
+  get proper brightness then. If it's completely dark, the LED is in backwards: long
+  leg toward +.</div>
+
+  <div class="why"><b>Why the little capacitor?</b> When a gate switches, it gulps
+  current for a few billionths of a second. That gulp makes the supply voltage dip,
+  and the dip can make <em>other</em> gates twitch. The 0.1 µF sits right next to the
+  chip as a tiny local reservoir. Real circuit boards have one per chip, always.
+  It's the most-skipped and most-worth-it component in electronics.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>Meet the family</span>
+    <span>~30 min</span></div>
+  <h2>Swap the chip, keep the bench</h2>
+  <p class="sub">Three more gates, no rewiring. This is the payoff for four chips
+  sharing a pinout.</p>
+
+  <p>Power down. Lift the CD4081 out and drop in a <b>CD4071</b>. Every wire stays
+  exactly where it is — same power pins, same inputs on 1 and 2, same output on 3.
+  Power up and run the four combinations again.</p>
+
+  <p>Then do it again with the <b>CD4070</b>. Fill in worksheet tables 3 and 4.</p>
+
+  <h3>Then the odd one out</h3>
+  <p>The <b>CD4069</b> is six NOT gates, and NOT has only one input, so it needs a
+  different layout: input on pin 1, output on pin 2. Move your output wire from pin 3
+  to <b>pin 2</b>, pull the DIAL B jumper out entirely, and leave DIAL A on pin 1.
+  Two combinations only.</p>
+
+  <div class="warn"><b>Power down before every chip swap.</b> Pulling a live chip is
+  the fastest way to kill one. Get in the habit now, while nothing you've built
+  matters much.</div>
+
+  <p>By the end of this stage you've personally verified four of the five gates by
+  hand. Compare your XOR table with the others — it's the first one that isn't
+  obvious, and it's the one that leads somewhere.</p>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>The comparator</span>
+    <span>~15 min</span></div>
+  <h2>Find the gate that answers questions</h2>
+  <p class="sub">One more swap, and the vault becomes obvious.</p>
+
+  <p>Same bench. Drop in the <b>CD4077</b> — inputs 1 and 2, output 3, exactly as
+  before. Run all four combinations and fill in worksheet table 5.</p>
+
+  <p>Now stop and compare it against your XOR table from Stage 2. Every single row is
+  flipped. XOR says "these are different"; XNOR says "these are the same". They're the
+  same gate with an inverter bolted on the end, which is exactly what the N in the
+  name means.</p>
+
+  <p>Then try this. Leave <b>DIAL B in the + rail and don't touch it again.</b> It's
+  now a fixed secret: a 1. Flip only DIAL A.</p>
+
+  <div class="scroller"><table class="tt">
+    <thead><tr><th class="n">Secret</th><th class="n">Your dial</th>
+      <th class="n">Light</th><th>Means</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td class="n">0</td><td class="n off">off</td>
+        <td>wrong</td></tr>
+      <tr><td class="n">1</td><td class="n">1</td><td class="n on">on</td>
+        <td>right</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>That is a working one-digit combination lock. Move DIAL B to − and the secret
+  becomes 0 — the lock still works, it just wants the opposite answer. <b>The secret
+  is the wire.</b> Nothing was programmed; you changed the machine.</p>
+
+  <div class="note"><b>You're now four repetitions away from the finished vault.</b>
+  Everything after this is scale and plumbing.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>Four at once</span>
+    <span>~30 min</span></div>
+  <h2>All four comparators</h2>
+  <p class="sub">Use the whole CD4077. Four dials, four secrets, four lights.</p>
+
+  <p>Keep the CD4077 in place. It has four independent XNOR gates and you've been using
+  one. Wire up the other three the same way, plus a yellow LED on each output:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Comparator</th><th>Dial → pin</th><th>Secret → pin</th>
+      <th>Output pin</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="n">1</td><td class="n">2</td><td class="n">3</td></tr>
+      <tr><td>2</td><td class="n">5</td><td class="n">6</td><td class="n">4</td></tr>
+      <tr><td>3</td><td class="n">8</td><td class="n">9</td><td class="n">10</td></tr>
+      <tr><td>4</td><td class="n">12</td><td class="n">13</td><td class="n">11</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Each of the four outputs gets its own <b>220 Ω resistor into a yellow LED</b>,
+  short leg to the − rail. Four lights, one per digit.</p>
+
+  <ul class="tick">
+    <li>Set the four secret jumpers to a code — say <b>1 0 1 1</b> — and leave them.</li>
+    <li>Set all four dials to 0. One light should be on: digit 2, the one whose
+      secret is also 0.</li>
+    <li>Work along the dials until all four lights are on. You've cracked it.</li>
+  </ul>
+
+  <div class="note"><b>Notice how easy that was.</b> Each light told you about exactly
+  one dial, so you never had to guess a whole code — four flips and you're in. Hold
+  onto that thought; it comes back in Stage 7 and it turns out to be a real security
+  problem with a real name.</div>
+
+  <div class="why"><b>What you've built has a name.</b> This is a <em>4-bit
+  comparator</em>. Widen it to 64 bits and give it a subtraction unit and you've got
+  the part of a processor that decides whether one number equals another — the thing
+  behind every <code>if</code> statement in every program ever written.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>The judge</span>
+    <span>~40 min</span></div>
+  <h2>One verdict instead of four</h2>
+  <p class="sub">Add the CD4012 and the two status lights. This is the big stage.</p>
+
+  <p>Pull the four yellow LEDs and their resistors out — they've done their teaching.
+  Place the <b>CD4012</b> on the board, notch left, a few columns to the right of the
+  CD4077. Power it: pin 14 to +, pin 7 to −, and a 0.1 µF across those two pins.</p>
+
+  <h3>Wire the four answers into the judge</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From CD4077</th><th>To CD4012</th><th>Signal</th></tr></thead>
+    <tbody>
+      <tr><td>pin 3</td><td>pin 2</td><td>MATCH 1</td></tr>
+      <tr><td>pin 4</td><td>pin 3</td><td>MATCH 2</td></tr>
+      <tr><td>pin 10</td><td>pin 4</td><td>MATCH 3</td></tr>
+      <tr><td>pin 11</td><td>pin 5</td><td>MATCH 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn"><b>The inputs are pins 2, 3, 4, 5 — not 1.</b> Pin 1 is the
+  <em>output</em> of that gate. Getting this one wrong is the single most common way
+  this stage fails. Also: pins 6 and 8 are "no connection" — leave them empty.</div>
+
+  <p><b>CD4012 pin 1 is now LOCKED.</b> It goes high the instant any dial disagrees
+  with its secret, and low only when all four agree.</p>
+
+  <h3>Make the free inverter</h3>
+  <p>Four short jumpers, all starting at <b>pin 1</b>:</p>
+  <div class="scroller"><table class="tt">
+    <thead><tr><th>From</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>pin 1</td><td>pin 9</td></tr>
+      <tr><td>pin 1</td><td>pin 10</td></tr>
+      <tr><td>pin 1</td><td>pin 11</td></tr>
+      <tr><td>pin 1</td><td>pin 12</td></tr>
+    </tbody>
+  </table></div>
+  <p>All four inputs of the second gate now carry the same signal, so it acts as a NOT
+  gate. <b>Pin 13 is UNLOCKED</b> — the exact opposite of pin 1.</p>
+
+  <h3>The output block</h3>
+  <p>Two transistors, wired the same way. On each PN2222, flat side toward you and legs
+  down: <b>left = emitter, middle = base, right = collector</b>.</p>
+
+  <div class="two">
+    <div class="card">
+      <h4 style="margin-top:0">Q1 — the red LOCKED light</h4>
+      <ul class="tick" style="margin:.5rem 0 0">
+        <li>CD4012 <b>pin 1</b> → 10 kΩ → Q1 base</li>
+        <li>Q1 emitter → − rail</li>
+        <li>+ rail → 220 Ω → red LED long leg</li>
+        <li>Red LED short leg → Q1 collector</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Q2 — green, plus the vault lights</h4>
+      <ul class="tick" style="margin:.5rem 0 0">
+        <li>CD4012 <b>pin 13</b> → 5.1 kΩ → Q2 base</li>
+        <li>Q2 emitter → − rail</li>
+        <li>+ rail → 220 Ω → green LED long leg</li>
+        <li>+ rail → 220 Ω → white LED long leg (×2)</li>
+        <li>All three short legs → Q2 collector</li>
+      </ul>
+    </div>
+  </div>
+
+  <p>Power up. Red should be lit. Set the dials to the secret code and red goes out as
+  green and both whites come on — <em>brightly</em> this time.</p>
+
+  <div class="why"><b>Why 10 kΩ on Q1 but 5.1 kΩ on Q2?</b> The LOCKED wire is busy —
+  besides Q1 it also feeds five chip inputs. A smaller resistor would draw more current
+  out of that pin and drag its voltage down until the chips stopped reading it as a
+  clean 1. Pin 13 drives nothing but Q2, so it can afford to be generous. Sharing one
+  output between several jobs is called <em>fan-out</em>, and every real design has a
+  budget for it.</div>
+</section>
+
+<section id="s6" class="stage">
+  <div class="tag"><span class="no">Stage 6</span><span>The alarm</span>
+    <span>~25 min</span></div>
+  <h2>Make it shout</h2>
+  <p class="sub">The button, the third transistor, and the buzzer.</p>
+
+  <p>A buzzer that screams whenever the code is wrong would scream almost constantly.
+  So the alarm needs two conditions at once: the code is wrong <b>AND</b> someone is
+  trying the door. That's a job for an AND gate.</p>
+
+  <h3>The OPEN button</h3>
+  <p>Place the button so it straddles the channel. A 4-legged tactile button has its
+  legs joined in pairs, and <b>using two diagonally opposite legs</b> is the choice
+  that's always right.</p>
+  <div class="scroller"><table class="tt">
+    <thead><tr><th>From</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>One button leg</td><td>+ rail</td></tr>
+      <tr><td>Diagonally opposite leg</td><td>the OPEN node</td></tr>
+      <tr><td>OPEN node</td><td>10 kΩ → − rail</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>That 10 kΩ is a pull-down, and it's rule 3 in action.</b> With
+  the button un-pressed, its leg is connected to nothing — a floating input. The
+  resistor gently holds the node at 0 until the button slams it up to +. Leave it out
+  and your alarm will fire at random. It's in the troubleshooting table for a reason.</div>
+
+  <h3>The AND gate and Q3</h3>
+  <p>Place the <b>CD4081</b>, notch left. Power pins 14 and 7 as usual, plus its
+  0.1 µF.</p>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td>CD4012 pin 1</td><td>CD4081 pin 1</td><td>LOCKED</td></tr>
+      <tr><td>OPEN node</td><td>CD4081 pin 2</td><td>Button</td></tr>
+      <tr><td>CD4081 pins 5, 6, 8, 9, 12, 13</td><td>− rail</td><td>Unused inputs</td></tr>
+      <tr><td>CD4081 pin 3</td><td>5.1 kΩ → Q3 base</td><td>ALARM</td></tr>
+      <tr><td>Q3 emitter</td><td>− rail</td><td></td></tr>
+      <tr><td>Buzzer + (long leg)</td><td>+ rail</td><td></td></tr>
+      <tr><td>Buzzer −</td><td>Q3 collector</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up and test both cases. Wrong code plus OPEN held down: the buzzer sounds.
+  Right code plus OPEN: silence, green light, vault lit. <b>The vault is finished.</b></p>
+</section>
+
+<section id="s7" class="stage">
+  <div class="tag"><span class="no">Stage 7</span><span>Play</span>
+    <span>as long as you like</span></div>
+  <h2>Now break it</h2>
+  <p class="sub">Set a code, hand it to someone, and think about what you've made.</p>
+
+  <ol class="steps">
+    <li><b>Hide the secret</b>
+      Set the four secret jumpers without anyone watching, then tape a folded card
+      over that end of the board. Real safes have a back panel for the same reason.</li>
+    <li><b>Hand it over</b>
+      All they get is four dials and the OPEN button. Time them.</li>
+    <li><b>Do the counting</b>
+      Four dials, two positions each: 2 × 2 × 2 × 2 = <b>16</b> possible codes. Worst
+      case is 16 tries, average about 8. Work through
+      <a href="worksheet.md">worksheet section 8</a>.</li>
+    <li><b>Now put the yellow lights back</b>
+      Wire the four match LEDs onto the CD4077 outputs again and hand it over a second
+      time. Watch how fast it falls: four flips, no guessing.</li>
+  </ol>
+
+  <div class="note"><b>You've just discovered a side channel.</b> The lock was never
+  broken — 16 codes is still 16 codes. But the machine <em>leaked</em>, telling the
+  attacker about each digit separately, and that turned one hard problem into four
+  trivial ones. Engineers call anything a machine gives away without meaning to a
+  <b>side channel</b>: a light, a sound, how long something takes, how warm it gets,
+  how much power it draws. Real bank cards have been broken exactly this way — not by
+  beating the maths, but by watching the power supply flicker while the card thought.
+  It's also why a good login screen says "wrong username or password" and never which
+  one was wrong.</div>
+
+  <h3>Make it harder</h3>
+  <ul class="tick">
+    <li>Add dials 5 and 6 using a second CD4077 — 64 codes.</li>
+    <li>Feed the spare CD4081 gates so the alarm latches on and needs a reset.</li>
+    <li>Put the green LED on a switch you can hide, so cracking it is silent.</li>
+  </ul>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>If you want more</span></div>
+  <h2>Two upgrades</h2>
+
+  <h3>Make it remember — CD4013</h3>
+  <p>Right now the green light goes out the moment a dial moves. A real safe stays open
+  until you close it. That needs <em>memory</em>, and the <b>CD4013</b> is two flip-flops
+  — the smallest memory there is, one bit each.</p>
+  <p>Feed UNLOCKED into the <b>SET</b> pin (pin 6) and a push button into <b>RESET</b>
+  (pin 4), then take your green light from <b>Q</b> (pin 1) instead of the CD4012.
+  Now the vault latches open when the code is first correct and stays open until you
+  press reset. Pin 14 is +, pin 7 is −, as always; tie DATA (pin 5) and CLOCK (pin 3)
+  to −, since set and reset work on their own.</p>
+  <div class="why"><b>This is the line between two kinds of circuit.</b> Everything
+  before this was <em>combinational</em> — outputs depend only on inputs right now.
+  A flip-flop makes it <em>sequential</em>: the output depends on what happened
+  earlier. That single step is the difference between a calculator and a computer.</div>
+
+  <h3>Count the failed attempts — CD4026</h3>
+  <p>The <b>CD4026</b> is a counter that drives a 7-segment display directly. Feed the
+  ALARM signal from CD4081 pin 3 into its CLOCK (pin 1) and wire its seven outputs
+  through 220 Ω resistors to a display's segments. Every failed attempt ticks the
+  number up. Three strikes and you're caught.</p>
+  <p style="font-size:.93rem;color:var(--ink-2)">Your displays are
+  <b>common anode</b>, so the common pin goes to + and the CD4026 is designed for
+  common cathode — you'll need to invert the segment drives with a CD4069, or use
+  the display upside-down in your head. This one is a genuine puzzle; that's the point.</p>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 9</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">It will happen. Every one of these has a boring cause.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing lights at all</td><td>Power isn't reaching pin 14 and pin 7.
+        Check both, on every chip.</td></tr>
+      <tr><td>A chip gets warm</td><td>Power in backwards. <b>Unplug now.</b>
+        Notch left, pin 14 top-left.</td></tr>
+      <tr><td>Lights flicker or change on their own</td><td>A floating input. Find the
+        input with nothing on it and tie it to −.</td></tr>
+      <tr><td>Green never comes on</td><td>A MATCH wire is on the wrong CD4012 pin.
+        The inputs are 2, 3, 4, 5 — never 1.</td></tr>
+      <tr><td>Green is always on</td><td>The four jumpers from pin 1 to pins 9–12 are
+        missing or misplaced.</td></tr>
+      <tr><td>Both red and green on together</td><td>One of those four jumpers is on
+        pin 8 — that's a no-connect pin.</td></tr>
+      <tr><td>LEDs very dim in stages 1–4</td><td>Normal. 3 mA is all the chip has.
+        Stage 5 fixes it.</td></tr>
+      <tr><td>An LED never lights</td><td>Backwards. Long leg toward +.</td></tr>
+      <tr><td>Buzzer silent but the logic is right</td><td>Buzzer polarity, or it's the
+        passive buzzer rather than the active one.</td></tr>
+      <tr><td>Buzzer sounds at random</td><td>The button's 10 kΩ pull-down is missing.</td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away for five minutes,
+        come back and re-read one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>The one technique worth learning.</b> Don't stare at the whole
+  board. Pick one signal and follow it: is MATCH 1 doing the right thing? Put an LED
+  on it and check. Then MATCH 2. Halve the problem, then halve it again. Four checks
+  find a fault anywhere in sixteen wires.</div>
+</section>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ gate symbols ============ */
+const SHAPE = {
+  and : {d:'M0,0 H22 A17,17 0 0 1 22,34 H0 Z', out:39, lead:0},
+  or  : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:0},
+  not : {d:'M0,0 L30,17 L0,34 Z', out:30, lead:0, bub:1},
+  xor : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:-8, arc:1},
+  xnor: {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:-8, arc:1, bub:1}
+};
+function gateSym(kind, ins, w, h){
+  const s = SHAPE[kind], bx = s.out + 5, endX = s.bub ? bx + 5 : s.out;
+  let g = `<svg viewBox="-26 -8 ${104} 50" width="${w||150}" height="${h||62}"
+    role="img" aria-label="${kind} gate symbol">`;
+  const ys = ins === 1 ? [17] : [9, 25];
+  for (const y of ys)
+    g += `<line x1="-24" y1="${y}" x2="${s.lead}" y2="${y}" stroke="var(--ink-2)"
+      stroke-width="1.6" ${SH}/>`;
+  if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  g += `<path d="${s.d}" style="fill:var(--surface-2);stroke:var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  if (s.bub) g += `<circle cx="${bx}" cy="17" r="4.4" fill="var(--surface)"
+    stroke="var(--ink)" stroke-width="1.9"/>`;
+  g += `<line x1="${endX}" y1="17" x2="${endX + 24}" y2="17" stroke="var(--ink-2)"
+    stroke-width="1.6" ${SH}/>`;
+  return g + '</svg>';
+}
+
+/* ============ gate cards ============ */
+const GATES = [
+  {n:'NOT', chip:'CD4069', k:'not', ins:1, f:a=>a?0:1,
+   d:'Flips whatever it gets. The only gate here with a single input — and the one you reach for constantly.'},
+  {n:'AND', chip:'CD4081', k:'and', ins:2, f:(a,b)=>(a&&b)?1:0,
+   d:'Output is 1 only when <b>both</b> inputs are 1. Think of two switches in a row: the current needs to get past both.'},
+  {n:'OR', chip:'CD4071', k:'or', ins:2, f:(a,b)=>(a||b)?1:0,
+   d:'Output is 1 when <b>at least one</b> input is 1. Note that both being 1 still counts — this is not the "or" of everyday speech.'},
+  {n:'XOR', chip:'CD4070', k:'xor', ins:2, f:(a,b)=>(a!==b)?1:0,
+   d:'Output is 1 when the inputs are <b>different</b>. This is the everyday "or" — one or the other, but not both.'},
+  {n:'XNOR', chip:'CD4077', k:'xnor', ins:2, f:(a,b)=>(a===b)?1:0,
+   d:'Output is 1 when the inputs are <b>the same</b>. The whole vault hangs off this one.'}
+];
+function truthTable(g){
+  const rows = g.ins === 1 ? [[0],[1]] : [[0,0],[0,1],[1,0],[1,1]];
+  let h = '<table><thead><tr>';
+  h += g.ins === 1 ? '<th class="n">In</th>' : '<th class="n">A</th><th class="n">B</th>';
+  h += '<th class="n">Out</th></tr></thead><tbody>';
+  for (const r of rows){
+    const o = g.f.apply(null, r);
+    h += '<tr>' + r.map(v => `<td class="n">${v}</td>`).join('')
+       + `<td class="n ${o ? 'on' : 'off'}">${o}</td></tr>`;
+  }
+  return h + '</tbody></table>';
+}
+function drawGates(){
+  const host = $('gategrid'); if (!host) return;
+  host.innerHTML = GATES.map(g => `<div class="gate">
+      <h4>${g.n}</h4><span class="chip">${g.chip}</span>
+      ${gateSym(g.k, g.ins, 148, 60)}
+      <p>${g.d}</p>${truthTable(g)}</div>`).join('');
+}
+
+/* ============ DIP pinout ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd', NC='nc';
+const QUAD = n => ({name:n, pins:14, p:{
+  1:['in 1a',IN], 2:['in 1b',IN], 3:['OUT 1',OUT], 4:['OUT 2',OUT],
+  5:['in 2a',IN], 6:['in 2b',IN], 7:['− GND',GND], 8:['in 3a',IN],
+  9:['in 3b',IN], 10:['OUT 3',OUT], 11:['OUT 4',OUT], 12:['in 4a',IN],
+  13:['in 4b',IN], 14:['+ 5 V',PWR]}});
+const CHIPS = [
+  Object.assign(QUAD('CD4077'), {sub:'Quad 2-input XNOR — the comparators'}),
+  {name:'CD4012', sub:'Dual 4-input NAND — the judge', pins:14, p:{
+    1:['OUT 1',OUT], 2:['in 1a',IN], 3:['in 1b',IN], 4:['in 1c',IN],
+    5:['in 1d',IN], 6:['no connect',NC], 7:['− GND',GND], 8:['no connect',NC],
+    9:['in 2a',IN], 10:['in 2b',IN], 11:['in 2c',IN], 12:['in 2d',IN],
+    13:['OUT 2',OUT], 14:['+ 5 V',PWR]}},
+  Object.assign(QUAD('CD4081'), {sub:'Quad 2-input AND — arms the alarm'}),
+  Object.assign(QUAD('CD4071'), {sub:'Quad 2-input OR — Stage 2 only'}),
+  Object.assign(QUAD('CD4070'), {sub:'Quad 2-input XOR — Stage 2 only'}),
+  {name:'CD4069', sub:'Hex NOT — Stage 2 only', pins:14, p:{
+    1:['in 1',IN], 2:['OUT 1',OUT], 3:['in 2',IN], 4:['OUT 2',OUT],
+    5:['in 3',IN], 6:['OUT 3',OUT], 7:['− GND',GND], 8:['OUT 4',OUT],
+    9:['in 4',IN], 10:['OUT 5',OUT], 11:['in 5',IN], 12:['OUT 6',OUT],
+    13:['in 6',IN], 14:['+ 5 V',PWR]}}
+];
+const ROLECOL = {in:'var(--ink-2)', out:'var(--teal)', pwr:'var(--w-red)',
+  gnd:'var(--w-blue)', nc:'var(--ink-3)'};
+function dipSVG(c, scale){
+  const half = c.pins/2, pitch = 30, bw = 74, top = 22;
+  const bh = half*pitch, W = 380, H = bh + top + 26, bx = (W-bw)/2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W*(scale||1)}"
+    role="img" aria-label="${c.name} pinout"><rect x="${bx}" y="${top}"
+    width="${bw}" height="${bh}" rx="5" fill="var(--surface-2)"
+    stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${W/2-9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)"
+    stroke="var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= c.pins; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : c.pins - i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = c.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx + bw, x2 = left ? bx - 20 : bx + bw + 20;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+7 : bx+bw-7}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-5 : x2+5}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role===OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${W/2}" y="${H-6}" text-anchor="middle">${c.name}</text>`;
+  return s + '</svg>';
+}
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>';
+  const an = $('dip-anatomy');
+  if (an) an.innerHTML = `<div class="card" style="display:flex;gap:1.4rem;
+    flex-wrap:wrap;align-items:center;justify-content:center">
+    <div class="scroller">${dipSVG(CHIPS[0], 0.92)}</div>
+    <dl class="kv" style="max-width:17rem">
+      <dt>Notch</dt><dd>The dent at the top. Your only orientation clue.</dd>
+      <dt>Pin 1</dt><dd>Immediately left of the notch, then count down.</dd>
+      <dt>Pin 7</dt><dd>Bottom left. Always − on these six chips.</dd>
+      <dt>Pin 14</dt><dd>Top right. Always +.</dd>
+      <dt class="on">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+    </dl></div>`;
+}
+
+/* ============ breadboard anatomy ============ */
+function bbSVG(){
+  const P = 19, C = 14, LM = 44, TM = 14;
+  const ROWS = {'+':0.5,'−':1.5,A:3.1,B:4.1,C:5.1,D:6.1,E:7.1,
+                F:8.8,G:9.8,H:10.8,I:11.8,J:12.8,'−2':14.4,'+2':15.4};
+  const hx = c => LM + (c-1)*P + P/2, hy = r => TM + ROWS[r]*P + P/2;
+  const W = LM + C*P + 128, H = hy('+2') + 26;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="How breadboard holes are connected">
+    <rect x="${LM-13}" y="${TM}" width="${C*P+22}" height="${hy('+2')+11-TM}"
+      rx="6" style="fill:var(--surface);stroke:var(--line-2)" stroke-width="1.3"/>
+    <rect x="${LM-13}" y="${hy('E')+10}" width="${C*P+22}" height="${hy('F')-hy('E')-20}"
+      fill="var(--sunk)"/>`;
+  /* highlight groups */
+  const band = (c, r1, r2, col) => `<rect x="${hx(c)-8.5}" y="${hy(r1)-8.5}"
+    width="17" height="${hy(r2)-hy(r1)+17}" rx="4" fill="${col}" opacity=".5"/>`;
+  s += band(4,'A','E','var(--teal-soft)') + band(4,'F','J','var(--copper-soft)');
+  s += `<rect x="${LM-9}" y="${hy('+')-8.5}" width="${C*P+14}" height="17" rx="4"
+    fill="var(--w-red)" opacity=".16"/>`;
+  /* rail stripes */
+  for (const [r,col,dy] of [['+','var(--w-red)',-11],['−','var(--w-blue)',11],
+                            ['−2','var(--w-blue)',-11],['+2','var(--w-red)',11]])
+    s += `<line x1="${LM-7}" y1="${hy(r)+dy}" x2="${LM+C*P-5}" y2="${hy(r)+dy}"
+      stroke="${col}" stroke-width="1.5" opacity=".8"/>`;
+  /* holes + labels */
+  for (const r of Object.keys(ROWS)){
+    for (let c = 1; c <= C; c++)
+      s += `<rect x="${hx(c)-3.6}" y="${hy(r)-3.6}" width="7.2" height="7.2" rx="1.6"
+        style="fill:var(--sunk);stroke:var(--line)" stroke-width=".8"/>`;
+    s += `<text class="sv-num" x="${LM-19}" y="${hy(r)+3.3}" text-anchor="middle"
+      >${r.replace('2','')}</text>`;
+  }
+  /* callouts */
+  const call = (x, y, t, anchor) => `<text class="sv-lbl" x="${x}" y="${y}"
+    text-anchor="${anchor||'start'}">${t}</text>`;
+  const RX = LM + C*P + 12;
+  s += `<line x1="${hx(4)+10}" y1="${hy('C')}" x2="${RX-6}" y2="${hy('B')}"
+    stroke="var(--teal)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('B')-4, 'these five holes')
+    + call(RX, hy('B')+9, 'are one wire');
+  s += `<line x1="${hx(4)+10}" y1="${hy('H')}" x2="${RX-6}" y2="${hy('I')}"
+    stroke="var(--copper)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('I')-4, 'so are these —')
+    + call(RX, hy('I')+9, 'but NOT joined')
+    + call(RX, hy('I')+22, 'to the five above');
+  s += call(RX, hy('+')+3, '+ rail, full length')
+    + call(RX, hy('−')+3, '− rail, full length')
+    + call(hx(1)-4, hy('E')+ (hy('F')-hy('E'))/2 + 3.5,
+        'the channel — chips straddle this', 'start');
+  return s + '</svg>';
+}
+function drawBB(){
+  const h = $('bb-anatomy');
+  if (h) h.innerHTML = '<div class="scroller">' + bbSVG() + '</div>';
+}
+drawGates(); drawPinouts(); drawBB();
+</script>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.tog rect{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+.tog.one rect{fill:var(--teal-soft);stroke:var(--teal)}
+.tog text{fill:var(--ink-3)}
+.tog.one text{fill:var(--teal)}
+.tog:hover rect{stroke:var(--ink-3)}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.25}}
+.ringing{animation:ring .28s infinite}
+</style>
+<script>
+"use strict";
+/* ============ the vault simulator ============ */
+const SIM = {dial:[1,0,0,1], secret:[1,0,1,1], open:false, peek:false};
+const RY = [66,118,170,222];
+
+function togg(x, y, v, id, kind, label){
+  return `<g class="tog ${v ? 'one' : ''}" id="${id}" role="button" tabindex="0"
+    aria-label="${label}, currently ${v}" data-kind="${kind}">
+    <rect x="${x}" y="${y-14}" width="46" height="28" rx="6"/>
+    <text class="sv-bit" x="${x+23}" y="${y+5}" text-anchor="middle">${v}</text></g>`;
+}
+function symAt(x, y, kind, sc){
+  const s = SHAPE[kind]; sc = sc || 1;
+  let g = `<g transform="translate(${x},${y}) scale(${sc})">`;
+  if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" stroke-linecap="round"/>`;
+  g += `<path class="gsym" d="${s.d}"/>`;
+  if (s.bub) g += `<circle class="bub" cx="${s.out+5}" cy="17" r="4.4"/>`;
+  return g + '</g>';
+}
+function simSVG(){
+  const m = SIM.dial.map((d,i) => d === SIM.secret[i] ? 1 : 0);
+  const locked   = m.every(v => v === 1) ? 0 : 1;
+  const unlocked = locked ? 0 : 1;
+  const alarm    = (locked && SIM.open) ? 1 : 0;
+  const vault    = unlocked;
+  const hi = c => c ? ' hi' : '';
+  const NX = 400, NW = 56, NTOP = 40, NH = 210, NMID = NTOP + NH/2;
+  let s = `<svg viewBox="0 0 840 344" role="img"
+    aria-label="Interactive diagram of the Logic Vault circuit">`;
+
+  /* column captions */
+  s += `<text class="sv-lbl" x="37" y="30" text-anchor="middle">DIALS</text>
+        <text class="sv-lbl" x="101" y="30" text-anchor="middle">SECRET</text>
+        <text class="sv-lbl" x="222" y="30" text-anchor="middle">CD4077</text>
+        <text class="sv-lbl" x="${NX+28}" y="30" text-anchor="middle">CD4012</text>
+        <text class="sv-lbl" x="700" y="30" text-anchor="middle">OUTPUT</text>`;
+
+  /* four comparator rows */
+  for (let i = 0; i < 4; i++){
+    const y = RY[i], d = SIM.dial[i], k = SIM.secret[i];
+    s += togg(14, y, d, 'd'+i, 'dial', 'Dial ' + (i+1));
+    s += SIM.peek
+      ? togg(78, y, k, 's'+i, 'secret', 'Secret ' + (i+1))
+      : `<g class="tog" id="s${i}" role="button" tabindex="0" data-kind="secret"
+          aria-label="Secret ${i+1}, hidden">
+          <rect x="78" y="${y-14}" width="46" height="28" rx="6"/>
+          <text class="sv-bit" x="101" y="${y+5}" text-anchor="middle">?</text></g>`;
+    s += `<path class="w${hi(d)}" d="M60,${y} H140 V${y-8} H172"/>`;
+    s += `<path class="w${hi(k)}" d="M124,${y} H150 V${y+8} H172"/>`;
+    s += symAt(180, y-17, 'xnor');
+    s += `<path class="w${hi(m[i])}" d="M231,${y} H247"/>`;
+    s += `<circle class="lamp" cx="258" cy="${y}" r="8"
+      ${m[i] ? 'style="fill:var(--amber);stroke:var(--amber)"' : ''}/>`;
+    s += `<text class="sv-lbl" x="272" y="${y+3.6}">match ${i+1}</text>`;
+    s += `<path class="w${hi(m[i])}" d="M330,${y} H${NX}"/>`;
+  }
+
+  /* the 4-input NAND */
+  s += `<path class="gsym" d="M${NX},${NTOP} H${NX+22}
+    C${NX+50},${NTOP} ${NX+NW},${NTOP+40} ${NX+NW},${NMID}
+    C${NX+NW},${NTOP+170} ${NX+50},${NTOP+NH} ${NX+22},${NTOP+NH}
+    H${NX} Z"/>`;
+  s += `<circle class="bub" cx="${NX+NW+5}" cy="${NMID}" r="5"/>`;
+  s += `<text class="sv-lbl" x="${NX+26}" y="${NMID+4}"
+    text-anchor="middle">NAND</text>`;
+
+  /* LOCKED bus */
+  s += `<path class="w${hi(locked)}" d="M${NX+NW+10},${NMID} H505"/>`;
+  s += `<circle cx="505" cy="${NMID}" r="3.2"
+    fill="${locked ? 'var(--teal)' : 'var(--line-2)'}"/>`;
+  s += `<text class="sv-lbl" x="468" y="${NMID-14}">LOCKED</text>`;
+
+  /* red branch */
+  s += `<path class="w${hi(locked)}" d="M505,${NMID} V72 H640"/>`;
+  s += `<circle class="lamp" cx="660" cy="72" r="11"
+    ${locked ? 'style="fill:var(--red);stroke:var(--red)"' : ''}/>`;
+  s += `<text class="sv-cap" x="678" y="69">LOCKED</text>`;
+  s += `<text class="sv-lbl" x="678" y="83">red light</text>`;
+
+  /* free inverter -> green */
+  s += `<path class="w${hi(locked)}" d="M505,${NMID} H548"/>`;
+  s += symAt(548, NMID-17, 'and');
+  s += `<circle class="bub" cx="592" cy="${NMID}" r="4.4"/>`;
+  s += `<text class="sv-lbl" x="524" y="${NMID+22}">tied</text>`;
+  s += `<path class="w${hi(unlocked)}" d="M597,${NMID} H640"/>`;
+  s += `<circle class="lamp" cx="660" cy="${NMID}" r="11"
+    ${unlocked ? 'style="fill:var(--green);stroke:var(--green)"' : ''}/>`;
+  s += `<text class="sv-cap" x="678" y="${NMID-3}">UNLOCKED</text>`;
+  s += `<text class="sv-lbl" x="678" y="${NMID+11}">green + vault lights</text>`;
+  s += `<circle class="lamp" cx="660" cy="${NMID+26}" r="6"
+    ${vault ? 'style="fill:var(--w-yellow);stroke:var(--w-yellow)"' : ''}/>`;
+  s += `<circle class="lamp" cx="678" cy="${NMID+26}" r="6"
+    ${vault ? 'style="fill:var(--w-yellow);stroke:var(--w-yellow)"' : ''}/>`;
+
+  /* alarm AND */
+  s += `<path class="w${hi(locked)}" d="M512,${NMID} V237 H548"/>`;
+  s += `<text class="sv-lbl" x="548" y="220">CD4081</text>`;
+  s += symAt(548, 228, 'and');
+  s += `<path class="w${hi(alarm)}" d="M587,245 H640"/>`;
+  s += `<circle class="lamp${alarm ? ' ringing' : ''}" cx="660" cy="245" r="11"
+    ${alarm ? 'style="fill:var(--copper);stroke:var(--copper)"' : ''}/>`;
+  s += `<text class="sv-cap" x="678" y="242">ALARM</text>`;
+  s += `<text class="sv-lbl" x="678" y="256">buzzer</text>`;
+
+  /* OPEN button */
+  s += `<rect x="300" y="282" width="96" height="30" rx="8"
+    fill="${SIM.open ? 'var(--teal-soft)' : 'var(--surface-2)'}"
+    stroke="${SIM.open ? 'var(--teal)' : 'var(--line-2)'}" stroke-width="1.4"/>`;
+  s += `<text class="sv-lbl" x="348" y="301" text-anchor="middle"
+    fill="${SIM.open ? 'var(--teal)' : 'var(--ink-3)'}">OPEN</text>`;
+  s += `<path class="w${hi(SIM.open?1:0)}" d="M396,297 H530 V253 H548"/>`;
+  return s + '</svg>';
+}
+function simMsg(){
+  const m = SIM.dial.map((d,i) => d === SIM.secret[i] ? 1 : 0);
+  const ok = m.every(v => v === 1), n = m.filter(v => v).length;
+  if (ok && SIM.open)  return 'Open. The vault is lit.';
+  if (ok)              return 'Code correct — press OPEN.';
+  if (SIM.open)        return 'ALARM! ' + n + ' of 4 correct.';
+  return n + ' of 4 dials correct.';
+}
+function simRender(){
+  const host = $('sim-svg'); if (!host) return;
+  host.innerHTML = simSVG();
+  const msg = $('sim-msg'); if (msg) msg.textContent = simMsg();
+  host.querySelectorAll('.tog').forEach(g => {
+    const i = +g.id.slice(1), kind = g.dataset.kind;
+    const flip = e => {
+      e.preventDefault();
+      if (kind === 'dial') SIM.dial[i] ^= 1;
+      else if (SIM.peek)   SIM.secret[i] ^= 1;
+      else { SIM.peek = true; const b = $('btn-peek'); if (b) b.textContent = 'Hide the secret'; }
+      simRender();
+    };
+    g.addEventListener('click', flip);
+    g.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') flip(e);
+    });
+  });
+}
+function initSim(){
+  if (!$('sim-svg')) return;
+  const ob = $('btn-open');
+  const set = v => { SIM.open = v; simRender(); };
+  ob.addEventListener('pointerdown', e => { e.preventDefault(); set(true); });
+  ['pointerup','pointerleave','pointercancel'].forEach(ev =>
+    ob.addEventListener(ev, () => set(false)));
+  ob.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); set(true); }
+  });
+  ob.addEventListener('keyup', e => {
+    if (e.key === 'Enter' || e.key === ' ') set(false);
+  });
+  $('btn-scramble').addEventListener('click', () => {
+    SIM.secret = Array.from({length:4}, () => Math.random() < .5 ? 0 : 1);
+    SIM.peek = false;
+    $('btn-peek').textContent = 'Show the secret';
+    simRender();
+  });
+  $('btn-peek').addEventListener('click', e => {
+    SIM.peek = !SIM.peek;
+    e.currentTarget.textContent = SIM.peek ? 'Hide the secret' : 'Show the secret';
+    simRender();
+  });
+  simRender();
+}
+initSim();
+</script>
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the tables to fill in.
+  All pinouts checked against the Texas Instruments datasheets.</p>
+</div></footer>
