@@ -1,0 +1,1269 @@
+<meta charset="utf-8">
+<title>The Gate Bench</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+.unk{color:var(--line-2)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simrow{display:flex;gap:1.4rem;flex-wrap:wrap;align-items:center}
+.simrow>div:first-child{flex:1 1 22rem;min-width:16rem}
+.simrow>div:last-child{flex:0 1 11rem}
+.simrow table{margin:0}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+.simbar.tight{margin-top:.55rem;padding-top:0;border-top:none}
+.simbar[hidden]{display:none}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+button .pn{font:500 .68rem/1 var(--fm);color:var(--ink-3);margin-left:.3rem}
+button.prim .pn{color:var(--teal-soft)}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.w.dash{stroke-dasharray:4 4}
+.tog rect{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+.tog.one rect{fill:var(--teal-soft);stroke:var(--teal)}
+.tog text{fill:var(--ink-3)}
+.tog.one text{fill:var(--teal)}
+.tog:hover rect{stroke:var(--ink-3)}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+.mbox{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;stroke-dasharray:5 3}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Logic gates &middot; Project 01</p>
+  <h1>The Gate<br>Bench</h1>
+  <p class="lead">Build one small circuit — two switches and three lights — and then
+  swap six different chips through it. Each chip has a different opinion about your two
+  switches. By the end you can work out which chip somebody plugged in while your back
+  was turned, using nothing but the lights.</p>
+  <div class="facts">
+    <span><b>Age</b> 11+, with an adult nearby for the first hour</span>
+    <span><b>Time</b> 1&frac12;&ndash;2 hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+    <span><b>Chips</b> six, one at a time</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Play with it here first. The real one behaves exactly like this.</p>
+
+  <p>Two <b>jumper wires</b>, A and B. You plug each one into the + rail or the
+  &minus; rail. A yellow lamp next to each shows which you chose. In the middle sits a
+  chip, and on the right a red lamp shows what the chip made of your two choices.</p>
+
+  <p>Pick a chip below and start flipping. The table on the right fills in a row every
+  time you try a combination you haven't tried yet — four rows in total, and then you
+  know that chip completely.</p>
+
+  <div class="sim">
+    <div class="simrow">
+      <div id="sim-svg"></div>
+      <div><div id="sim-table"></div></div>
+    </div>
+    <div class="simbar" id="chip-picker"></div>
+    <div class="simbar tight">
+      <button id="btn-mystery">Mystery chip</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight" id="guess-row" hidden></div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">Click a jumper to flip it between 1 and 0.
+  <b>Mystery chip</b> hides the label and picks one at random — find out which it is by
+  testing it, then name it. That is the game you'll play for real in Stage&nbsp;5.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A logic chip is a rule about
+  wires. There are only sixteen possible rules for two inputs, your kit holds chips for six
+  of them, and four experiments pin any chip down completely.</div>
+</section>
+
+<section id="bits">
+  <span class="snum">Section 2</span>
+  <h2>One wire, two words</h2>
+  <p class="sub">Thirty seconds here saves an hour later.</p>
+
+  <p>A wire in this project is only ever doing one of two things. It is connected to
+  the <b>+ rail</b>, or connected to the <b>&minus; rail</b>. There is no in-between and
+  no "a bit on".</p>
+
+  <div class="two">
+    <div class="card">
+      <h4 style="margin-top:0">Connected to +</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">About 5 volts. Engineers
+      write this as <b>1</b> and say "high". You'll also hear <em>true</em>.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Connected to &minus;</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">Zero volts. Written
+      <b>0</b>, said "low". Also <em>false</em>. This is <em>not</em> the same as
+      unplugged.</p>
+    </div>
+  </div>
+
+  <div class="warn"><b>Unplugged is a third thing, and it causes trouble.</b> A chip
+  input with nothing on it does not read 0. It drifts, picks up mains hum and radio from
+  the room, and flickers. Every input on your bench goes to +, or to &minus;, or to
+  another chip's output. Never to nowhere.</div>
+
+  <p>A <b>logic gate</b> has one or two input wires and one output wire. It looks at its
+  inputs, applies one fixed rule, and drives its output to 1 or 0. No clock, no program,
+  no memory — change an input and the output follows within a few billionths of a
+  second.</p>
+
+  <p>The rule is written as a <b>truth table</b>: every possible combination of inputs
+  down the left, what the output does on the right. Two inputs give four combinations, so
+  four rows. That table <em>is</em> the chip. Learn the table and there is nothing else
+  to know.</p>
+</section>
+
+<section id="gates">
+  <span class="snum">Section 3</span>
+  <h2>The six gates on your bench</h2>
+  <p class="sub">One chip each. You will fill in all six tables by hand.</p>
+
+  <p>Each chip below holds several copies of the same gate. A CD4081 is four separate
+  AND gates sharing one lump of plastic — they don't interact, you get four for the price
+  of one. You'll use one of them and tie the spare inputs down.</p>
+
+  <div class="gategrid" id="gategrid"></div>
+
+  <div class="why"><b>Read the symbols, not only the names.</b> The flat-backed bullet
+  shape is AND, the curved shield is OR, the shield with an extra arc is XOR, and the
+  triangle is NOT. A small circle on the output means <em>and then flip it</em> — which
+  is the entire difference between AND and NAND, and between OR and NOR. That circle is
+  the most useful piece of notation in digital electronics.</div>
+</section>
+
+<section id="bench">
+  <span class="snum">Section 4</span>
+  <h2>Why one bench does all six</h2>
+  <p class="sub">The lazy discovery that makes this project short.</p>
+
+  <p>Five of your six chips have <b>identical pinouts</b>. Not similar — identical. The
+  inputs of the first gate are always pins 1 and 2, and its output is always pin 3. The
+  three spare gates are always on pins 5&nbsp;+&nbsp;6, 8&nbsp;+&nbsp;9 and
+  12&nbsp;+&nbsp;13, with outputs on 4, 10 and 11. Power is always pin 14, ground always
+  pin 7.</p>
+
+  <figure>
+    <div id="shared-pinout"></div>
+    <figcaption>One drawing, five chips. The CD4081, CD4071, CD4070, CD4011 and CD4001
+    are wired the same way and differ only in what they decide.</figcaption>
+  </figure>
+
+  <p>So you build the wiring once. To meet a new gate you pull the power, lift one chip
+  out, drop the next one in, and power up again. <b>You move zero wires.</b> Four of your
+  six chips arrive that way, with no rewiring at all.</p>
+
+  <div class="note"><b>This is not a coincidence.</b> It's a standard, agreed between
+  manufacturers in the 1970s so that a circuit board could take a different chip without
+  being redesigned. The same instinct is why a USB plug fits every USB socket. Standards
+  are boring right up to the moment they save you an afternoon.</div>
+
+  <p>The sixth chip, the <b>CD4069</b>, breaks the pattern — it holds six NOT gates
+  instead of four 2-input gates, so it cannot possibly use the same pins. That one costs
+  you a rewire, and Stage&nbsp;4 walks through it carefully, because three of the holes
+  you have been grounding are <em>outputs</em> on that chip.</p>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 5</span>
+  <h2>What you need</h2>
+  <p class="sub">All of it is in the kit. The full wire list is in
+  <a href="README.md">README.md</a>.</p>
+
+  <h3>The six chips</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>What it holds</th><th>Meets you in</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD4081</code></td><td>Four 2-input AND gates</td><td>Stage 1, Stage 5</td></tr>
+      <tr><td><code>CD4071</code></td><td>Four 2-input OR gates</td><td>Stage 2</td></tr>
+      <tr><td><code>CD4070</code></td><td>Four 2-input XOR gates</td><td>Stage 2, Stage 5</td></tr>
+      <tr><td><code>CD4011</code></td><td>Four 2-input NAND gates</td><td>Stage 3, bonus</td></tr>
+      <tr><td><code>CD4001</code></td><td>Four 2-input NOR gates</td><td>Stage 3</td></tr>
+      <tr><td><code>CD4069</code></td><td>Six NOT gates</td><td>Stage 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Everything else</h3>
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2</td><td>Yellow LED</td><td>The A and B lamps</td></tr>
+      <tr><td class="n">1</td><td>Red LED</td><td>The output lamp</td></tr>
+      <tr><td class="n">1</td><td>Green LED</td><td>Stage 5 — the GO light</td></tr>
+      <tr><td class="n">2</td><td>1 kΩ resistor</td><td>The two input lamps</td></tr>
+      <tr><td class="n">2</td><td>220 Ω resistor</td><td>Output lamp, and the GO light</td></tr>
+      <tr><td class="n">2</td><td>10 kΩ resistor</td><td>Stage 5 — button pull-downs</td></tr>
+      <tr><td class="n">2</td><td>Push button (small)</td><td>Stage 5 — the two hands</td></tr>
+      <tr><td class="n">1</td><td>0.1 µF ceramic ("104")</td><td>Across the chip's power pins</td></tr>
+      <tr><td class="n">1</td><td>100 µF electrolytic</td><td>Across the rails — <b>stripe to &minus;</b></td></tr>
+      <tr><td class="n">1</td><td>Breadboard</td><td>Half-size is plenty</td></tr>
+      <tr><td class="n">~20</td><td>Jumper wires</td><td>Red for +, black for &minus;, colours for signals</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:.93rem;color:var(--ink-2)">The bonus stage adds one
+  <code>PN2222</code> transistor, one white LED and one more 10 kΩ resistor if you want
+  a light that is bright rather than polite.</p>
+
+  <h3>Power</h3>
+  <p><b>4.5 V to 5 V.</b> Three AA cells in a holder, or the MB102 breadboard module set
+  to 5 V. These chips run happily anywhere from 3 V to 18 V, so nothing here is fussy
+  about voltage. Nothing in this project goes anywhere near mains electricity.</p>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 6</span>
+  <h2>Six rules for not breaking things</h2>
+  <p class="sub">Read once now. Re-read rule 2 every single time you place a chip —
+  which, in this project, is often.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you swap a chip or move a wire</b>
+      Every time. You will do this five times today, and a live swap is the one that
+      kills a chip.</li>
+    <li><b>The notch tells you which way round the chip goes</b>
+      Every chip has a notch or a dot at one end. Notch to the <em>left</em>, and pin 1
+      is the bottom-left. Backwards means pin 14 gets ground and pin 7 gets +5 V; the
+      chip heats up and dies in seconds.</li>
+    <li><b>Never leave an input dangling</b>
+      Including inputs on the three gates you aren't using. Tie every unused input to
+      &minus;.</li>
+    <li><b>Never wire an output to + or &minus;</b>
+      That's a short circuit through the chip's own transistors. It matters here more
+      than usual: the holes you ground for one chip may be outputs on the next one.</li>
+    <li><b>The electrolytic capacitor has a right way round</b>
+      The stripe marks the negative leg. Backwards, it can pop.</li>
+    <li><b>Touch something metal before you pick up a chip</b>
+      Static off a carpet is thousands of volts, and CMOS hates it. Hold chips by the
+      ends, not the legs.</li>
+  </ol>
+
+  <div class="warn"><b>Warm chip means stop.</b> Pull the power immediately, then check
+  rule 2, then rule 4. A chip that has been hot for a few seconds usually survives; one
+  that has been hot for a minute usually doesn't.</div>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 7</span>
+  <h2>Reading a chip, and reading a breadboard</h2>
+  <p class="sub">Two skills, ten minutes. After this the wiring is following a list.</p>
+
+  <h3>Pin numbering</h3>
+  <figure>
+    <div id="dip-anatomy"></div>
+    <figcaption>Find the notch first, every time. Pin 1 sits to its lower left and the
+    numbers run <b>anticlockwise</b> — down the left side, across the bottom, up the
+    right. On all six chips here, pin 14 is + and pin 7 is &minus;.</figcaption>
+  </figure>
+
+  <h3>How a breadboard is joined up</h3>
+  <figure>
+    <div id="bb-anatomy"></div>
+    <figcaption>The hidden metal strips. Each column of five holes is one connection, and
+    the two halves are separate — which is why a chip straddles the channel, so every pin
+    lands in its own private column. The long rails carry power the whole way
+    along.</figcaption>
+  </figure>
+
+  <div class="warn"><b>Some cheap boards split the rails in the middle.</b> If the left
+  half of your board works and the right half is dead, that is why. Bridge the two halves
+  with a jumper and carry on.</div>
+
+  <h3>The six pinouts</h3>
+  <p>Five identical, one different. You only have to hold one of these in your head.</p>
+  <div id="pinouts"></div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>Build the bench</span>
+    <span>~30 min</span></div>
+  <h2>Two switches and three lights</h2>
+  <p class="sub">This is the only wiring in the project. Take your time over it.</p>
+
+  <p>Put the <b>CD4081</b> across the channel with the notch pointing left, so pin 1 is
+  the bottom-left leg. Then wire it up in four blocks. Power first, always.</p>
+
+  <h3>Block 1 — power</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail</td><td>Power in</td></tr>
+      <tr><td>Supply &minus;</td><td>Top blue rail</td><td>Ground in</td></tr>
+      <tr><td>Top red rail</td><td>Bottom red rail</td><td>Power to both sides</td></tr>
+      <tr><td>Top blue rail</td><td>Bottom blue rail</td><td>Ground to both sides</td></tr>
+      <tr><td>100 µF <b>+</b> leg</td><td>Red rail (striped leg to blue rail)</td>
+        <td>Smooths the supply</td></tr>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>&minus; rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 &rarr; pin 7</td><td>Steadies the supply
+        close to the chip</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Block 2 — the two inputs</h3>
+  <p>Pick two empty columns on the board and call them the <b>A column</b> and the
+  <b>B column</b>. Everything to do with input A meets in its column.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A column</td><td><b>pin 1</b></td><td>Input A reaches the gate</td></tr>
+      <tr><td>A column</td><td>loose jumper, free end</td>
+        <td>The switch — you plug it into + or &minus;</td></tr>
+      <tr><td>B column</td><td><b>pin 2</b></td><td>Input B reaches the gate</td></tr>
+      <tr><td>B column</td><td>loose jumper, free end</td><td>The other switch</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td>
+        <td>The three spare gates' inputs — rule 3</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Block 3 — the two input lamps</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A column</td><td>1 kΩ &rarr; yellow LED long leg</td><td>The A lamp</td></tr>
+      <tr><td>Yellow LED short leg</td><td>&minus; rail</td><td>Completes it</td></tr>
+      <tr><td>B column</td><td>1 kΩ &rarr; yellow LED long leg</td><td>The B lamp</td></tr>
+      <tr><td>Yellow LED short leg</td><td>&minus; rail</td><td>Completes it</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Block 4 — the output lamp</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 3</b></td><td>220 Ω &rarr; red LED long leg</td><td>The gate's answer</td></tr>
+      <tr><td>Red LED short leg</td><td>&minus; rail</td><td>Completes it</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now power up and plug the two loose jumper ends into the rails. There are four
+  combinations: both in &minus;, one in +, the other in +, both in +. Try all four and
+  write what the red lamp does in <a href="worksheet.md">worksheet</a> table 1.</p>
+
+  <ul class="tick">
+    <li>Both yellow lamps follow their jumpers immediately.</li>
+    <li>The red lamp comes on for exactly one of the four combinations.</li>
+    <li>Nothing gets warm.</li>
+  </ul>
+
+  <div class="note"><b>All three lamps are deliberately dim, and equally dim.</b> A
+  CD4000 output behaves like a 5 V battery with about a kilohm of resistance built in, so
+  it can push roughly 3 milliamps and no more. Rather than let the two input lamps run
+  bright off the rails and make the output look broken by comparison, the 1 kΩ resistors
+  hold them back to match. Matching them is a choice, not a rule — and it makes the truth
+  table readable at a glance.</div>
+
+  <div class="why"><b>What you have actually built.</b> A test bench: a fixed setup whose
+  only job is to let you ask the same question of many different parts. Every electronics
+  lab has one, usually the oldest and ugliest thing on the shelf. Building the bench
+  before the experiment is most of what makes an experiment quick.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>Two more gates, no rewiring</span>
+    <span>~15 min</span></div>
+  <h2>Swap the chip, keep the wiring</h2>
+  <p class="sub">Two chips, two tables, and not a single wire moved.</p>
+
+  <p>Pull the power. Lift the CD4081 out — rock it gently from both ends rather than
+  levering one end, or you'll bend the legs. Drop the <b>CD4071</b> in, notch to the
+  left, same holes. Power up.</p>
+
+  <p>Test all four combinations again and fill in <a href="worksheet.md">worksheet</a>
+  table 2. Then do the same with the <b>CD4070</b> for table 3.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>Gate</th><th>What to notice</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD4071</code></td><td>OR</td>
+        <td>Three of the four rows light. The row that stays dark is the interesting
+        one.</td></tr>
+      <tr><td><code>CD4070</code></td><td>XOR</td>
+        <td>Two rows light. Compare it against OR: only the bottom row differs.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Put the two tables side by side. OR and XOR agree on three rows out of four, and
+  disagree only when <em>both</em> inputs are 1. In everyday speech "or" almost always
+  means XOR — "you can have pudding or ice cream" is not an invitation to have both. The
+  chip called OR is the one that allows both.</p>
+
+  <div class="note"><b>A gate you can hear yourself using.</b> XOR is the "different?"
+  gate: its output is 1 exactly when the two inputs disagree. That makes it a
+  one-bit comparator, and it is why you'll use it for a stair light in Stage 5.</div>
+
+  <div class="why"><b>Why swapping is the whole trick.</b> You met two new parts in
+  fifteen minutes because the interesting difference between them is not in the wiring,
+  it's in the rule. Isolating the thing that varies — and holding everything else fixed
+  — is the same move a scientist makes with a control group.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>The gates with a circle</span>
+    <span>~20 min</span></div>
+  <h2>Say no to everything</h2>
+  <p class="sub">Two more swaps, and then a gate you make rather than buy.</p>
+
+  <p>Same routine. Power off, out with the CD4070, in with the <b>CD4011</b>. Fill in
+  <a href="worksheet.md">worksheet</a> table 4. Then the <b>CD4001</b> for table 5.</p>
+
+  <p>Now put four tables next to each other: AND, NAND, OR, NOR. Every single row of
+  NAND is the opposite of AND. Every row of NOR is the opposite of OR. The little circle
+  on the symbol means precisely that and nothing more — <em>work out the answer, then
+  flip it</em>.</p>
+
+  <div class="note"><b>NOR is the "nothing is happening" gate.</b> Its output is 1 only
+  when both inputs are 0. If you want a light that comes on when <em>no</em> alarm
+  anywhere is triggered, that's a NOR — and it is why the gate exists.</div>
+
+  <h3>Make a NOT gate out of a NAND gate</h3>
+  <p>You have a NAND on the board. A NAND outputs 0 only when <em>all</em> its inputs
+  are 1. So tie both inputs to the same wire, and only two cases remain: both 0, or
+  both 1. The output is then 1, then 0. That is a NOT gate.</p>
+
+  <p>Put the CD4011 back in and add one wire:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A column</td><td><b>pin 2</b></td>
+        <td>Both inputs of gate 1 now follow A</td></tr>
+      <tr><td>B jumper</td><td>Park the free end in &minus;</td>
+        <td>Out of the way, and not dangling</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Flip A on its own. The red lamp does the opposite of the A lamp, every time. Fill
+  in <a href="worksheet.md">worksheet</a> table 6 — it has only two rows, because a gate
+  with one meaningful input only has two.</p>
+
+  <div class="why"><b>You just did what a chip factory does.</b> NAND can imitate every
+  other gate: NOT, AND, OR, all of them. It is <em>functionally complete</em>, and that
+  matters commercially — it is often cheaper to build a processor out of one repeated
+  NAND cell than to manufacture five different kinds of gate. The bonus stage builds AND
+  and OR out of NANDs so you can see it for yourself.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>The odd chip out</span>
+    <span>~15 min</span></div>
+  <h2>The chip that only says no</h2>
+  <p class="sub">The one rewire in the project. Read the warning before you touch
+  anything.</p>
+
+  <p>The <b>CD4069</b> holds six NOT gates. Six gates with one input each need twelve
+  pins, arranged input-output-input-output all the way round, so its pins mean completely
+  different things from the five chips you've used so far.</p>
+
+  <div class="warn"><b>Pull the six ground jumpers out first.</b> On the quad chips, pins
+  5, 6, 8, 9, 12 and 13 are all inputs and grounding them is correct. On the CD4069, pins
+  6, 8 and 12 are <b>outputs</b>. Leave those jumpers in, insert this chip, and you have
+  wired three outputs straight to ground — rule 4, and the chip will get hot. Take them
+  out while the power is off, then put the CD4069 in.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Remove</td><td>All six jumpers on pins 5, 6, 8, 9, 12, 13</td>
+        <td>Three of them would ground an output</td></tr>
+      <tr><td>Move the output lamp</td><td>from pin 3 to <b>pin 2</b></td>
+        <td>Gate 1's output lives on pin 2 here</td></tr>
+      <tr><td>A column</td><td><b>pin 1</b></td><td>Already there — leave it</td></tr>
+      <tr><td>pins 3, 5, 9, 11, 13</td><td>&minus; rail</td>
+        <td>The five unused <em>inputs</em> on this chip</td></tr>
+      <tr><td>B jumper</td><td>Park the free end in &minus;</td>
+        <td>This chip has nothing for B to do</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up and flip A. The red lamp is on when the A lamp is off. It is the same
+  behaviour you built out of a NAND in Stage 3, now coming from a chip that does nothing
+  else.</p>
+
+  <h3>Two NOTs in a row</h3>
+  <p>You have five spare inverters, so chain two of them: send gate 1's output into gate
+  2's input, and watch gate 2's output.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 2</b></td><td><b>pin 3</b></td><td>First NOT feeds the second</td></tr>
+      <tr><td>Move the output lamp</td><td>from pin 2 to <b>pin 4</b></td>
+        <td>Watch the second gate instead</td></tr>
+      <tr><td>Remove</td><td>the jumper grounding pin 3</td>
+        <td>Pin 3 has a real signal on it now — rule 4 again</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>The red lamp now copies the A lamp exactly. Two flips cancel out, and you have
+  built a gate that does nothing at all.</p>
+
+  <div class="why"><b>Doing nothing is a real job.</b> A pair of inverters is called a
+  <em>buffer</em>, and factories sell chips full of them. The output is a fresh, strong
+  copy of a signal that may have arrived tired — because one chip output can only feed so
+  many inputs before its voltage sags. When a signal has to travel across a large board
+  or fan out to many places, somebody puts buffers in. Not every useful circuit changes
+  its input.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>Make it do a job</span>
+    <span>~30 min</span></div>
+  <h2>Two machines and a guessing game</h2>
+  <p class="sub">Same bench. Now the gates are useful instead of interesting.</p>
+
+  <h3>Machine one: the two-hand interlock</h3>
+  <p>Dangerous machinery in factories often has two start buttons, placed far enough
+  apart that you need both hands. If both your hands are on the buttons, neither is
+  inside the machine. That is an AND gate with a safety certificate.</p>
+
+  <p>Power off. Put the <b>CD4081</b> back in, restore the six ground jumpers on pins 5,
+  6, 8, 9, 12 and 13, and put the output lamp back on <b>pin 3</b>. Then replace the two
+  loose jumpers with buttons:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Button 1, one leg</td><td>+ rail</td><td>Pressing connects A to +</td></tr>
+      <tr><td>Button 1, <b>diagonally opposite</b> leg</td><td>A column</td>
+        <td>Diagonal legs are the pair that is always right</td></tr>
+      <tr><td>A column</td><td>10 kΩ &rarr; &minus; rail</td>
+        <td>Pull-down: holds A at 0 when the button is up</td></tr>
+      <tr><td>Button 2, one leg</td><td>+ rail</td><td></td></tr>
+      <tr><td>Button 2, <b>diagonally opposite</b> leg</td><td>B column</td><td></td></tr>
+      <tr><td>B column</td><td>10 kΩ &rarr; &minus; rail</td><td>Pull-down for B</td></tr>
+      <tr><td><b>pin 3</b></td><td>220 Ω &rarr; green LED long leg</td><td>The GO light</td></tr>
+      <tr><td>Green LED short leg</td><td>&minus; rail</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Green comes on only while both buttons are held. Let either one go and it dies
+  instantly.</p>
+
+  <div class="note"><b>The pull-down resistor is the whole reason this works.</b> A
+  button that isn't pressed doesn't connect its input to 0 — it connects it to nothing,
+  and rule 3 says nothing is trouble. The 10 kΩ resistor to &minus; holds the input at 0
+  whenever the button is up, and is weak enough that pressing the button overrules it
+  easily. Almost every button on almost every circuit board has one of these.</div>
+
+  <h3>Machine two: the stair light</h3>
+  <p>A staircase has a switch at the bottom and a switch at the top, and either one
+  turns the light on or off no matter what the other one is doing. Think about what that
+  rule actually says: the light changes state whenever <em>either</em> switch changes. It
+  doesn't care about the switches' positions, only whether they agree.</p>
+
+  <p>That is XOR. Power off, swap the CD4081 for the <b>CD4070</b>, put the two loose
+  jumpers back in place of the buttons, and move the lamp back to the red LED — or leave
+  the green one in, it makes no difference to the logic.</p>
+
+  <p>Now flip either jumper between + and &minus;. The lamp changes every time, whichever
+  jumper you touch.</p>
+
+  <div class="why"><b>This is the real circuit in your house.</b> Two-way switching on a
+  staircase does exactly this, using mechanical switches and no chips — but the logic is
+  identical, and an electrician who wires it wrong gets a light that only works when the
+  upstairs switch is down. Your bench version has an advantage: you can see both inputs
+  and the answer at once.</div>
+
+  <h3>The guessing game</h3>
+  <p>Put the bench back to its Stage 1 state: two loose jumpers, red output lamp on pin
+  3, six ground jumpers in place. Now have somebody else pick one of the five quad chips
+  — CD4081, CD4071, CD4070, CD4011 or CD4001 — and plug it in while you look away.</p>
+
+  <p>Your job is to name the gate. You may test any combination you like. Count how many
+  tests you need, and write the game down in
+  <a href="worksheet.md">worksheet</a> table 7.</p>
+
+  <div class="note"><b>Three tests are always enough, and sometimes necessary.</b> Each
+  test gives you one bit of information — the lamp is on or off — so three tests can tell
+  apart at most eight possibilities. Two tests can only separate four, and you have five
+  chips. So three is both sufficient and the true minimum. Start with A=0, B=0: that one
+  test splits your five chips into the two that light and the three that don't.</div>
+
+  <div class="why"><b>This is how faults get found.</b> Nobody hands an engineer a broken
+  circuit with a label on it. You form a guess, choose the test that would rule out the
+  most possibilities, and repeat. Choosing the test that halves the field — instead of
+  the first test you happen to think of — is the difference between five minutes and an
+  afternoon.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>If you're still going</span>
+    <span>~20 min each</span></div>
+  <h2>Three things to try next</h2>
+  <p class="sub">Pick whichever one you like the sound of.</p>
+
+  <h3>1. NAND is enough for everything</h3>
+  <p>Put the <b>CD4011</b> in. You have four NAND gates and you have already turned one
+  of them into a NOT. A NAND followed by a NOT is an AND — so use two gates:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A column</td><td><b>pin 1</b></td><td>Gate 1 input</td></tr>
+      <tr><td>B column</td><td><b>pin 2</b></td><td>Gate 1 input</td></tr>
+      <tr><td><b>pin 3</b></td><td><b>pin 5</b></td><td>Gate 1's answer into gate 2</td></tr>
+      <tr><td><b>pin 3</b></td><td><b>pin 6</b></td><td>Both of gate 2's inputs tied — a NOT</td></tr>
+      <tr><td>Output lamp</td><td>on <b>pin 4</b></td><td>Gate 2's output</td></tr>
+      <tr><td>pins 8, 9, 12, 13</td><td>&minus; rail</td><td>The two spare gates</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Test it. It's an AND, built from a chip that has no AND gates in it.</p>
+
+  <p>OR is stranger. Invert both inputs first, then NAND the results:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A column</td><td><b>pins 5 and 6</b></td><td>Gate 2 becomes NOT A</td></tr>
+      <tr><td>B column</td><td><b>pins 8 and 9</b></td><td>Gate 3 becomes NOT B</td></tr>
+      <tr><td><b>pin 4</b></td><td><b>pin 1</b></td><td>NOT A into gate 1</td></tr>
+      <tr><td><b>pin 10</b></td><td><b>pin 2</b></td><td>NOT B into gate 1</td></tr>
+      <tr><td>Output lamp</td><td>on <b>pin 3</b></td><td>Gate 1's output</td></tr>
+      <tr><td>pins 12, 13</td><td>&minus; rail</td><td>The one spare gate</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Three gates, and the red lamp now behaves exactly like the CD4071 did in Stage 2.</p>
+
+  <div class="why"><b>You've just proved De Morgan's law with wire.</b> "Not A, and not
+  B" being false is the same statement as "A or B" being true. Augustus De Morgan wrote
+  that down in the 1840s, a century before anyone could build it, and now it's the rule
+  that lets a factory make a whole processor from one repeated cell.</div>
+
+  <h3>2. Make it bright</h3>
+  <p>The dim lamps are the chip's fault, not yours, and one transistor fixes it. A
+  <b>PN2222</b> with the flat side toward you and the legs down reads <b>E&nbsp;–
+  B&nbsp;– C</b>: emitter, base, collector.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Gate output pin</td><td>10 kΩ &rarr; base (middle leg)</td>
+        <td>A tiny current, all the chip can afford</td></tr>
+      <tr><td>Emitter (left leg)</td><td>&minus; rail</td><td></td></tr>
+      <tr><td>+ rail</td><td>220 Ω &rarr; white LED long leg</td>
+        <td>Current straight off the rail now</td></tr>
+      <tr><td>White LED short leg</td><td>Collector (right leg)</td>
+        <td>The transistor is the switch</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>About a third of a milliamp goes into the base and about eight milliamps flow
+  through the LED — roughly thirty times what the chip could manage on its own, and
+  bright enough to read by.</p>
+
+  <div class="note"><b>Chips think, transistors shove.</b> Keep those two jobs separate
+  in your head and a lot of electronics stops being confusing. If something has to be
+  bright, loud, or move, a logic chip will not do it alone.</div>
+
+  <h3>3. Build a gate nobody sold you</h3>
+  <p>There are sixteen possible rules for two inputs — you work out why in
+  <a href="worksheet.md">worksheet</a> question 8 — and you own chips for six of them.
+  Pick one of the other ten and build it. "Output is 1 only when A is 1 and B is 0" is a
+  good first target: it needs one NOT and one AND, and both are on your bench.</p>
+
+  <div class="why"><b>Where this goes next.</b> Every gate you met today forgets
+  everything the instant you change an input. Add a chip that <em>remembers</em> — a
+  CD4013 flip-flop — and you can build a counter, a memory, or a lock that stays locked.
+  The <a href="../logic-vault/guide.html">Logic Vault</a> is the next project along: the
+  same gates, wired into a combination safe with an alarm.</div>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 8</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">It will. This table is the fastest way out.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing lights at all, ever</td><td>Power isn't reaching pin 14 and pin 7.
+        Check both, on the chip, with the chip in.</td></tr>
+      <tr><td>A chip gets warm</td><td><b>Unplug now.</b> Either it's in backwards
+        (rule 2) or a jumper is grounding an output (rule 4 — the CD4069 trap).</td></tr>
+      <tr><td>Yellow lamps work, red never does</td><td>The output lamp is on the wrong
+        pin, or in backwards. Long leg toward the resistor and the chip.</td></tr>
+      <tr><td>Red lamp is on for all four rows</td><td>Both jumpers are landing in the
+        same column, or a jumper is in a column that isn't reaching the pin you
+        think.</td></tr>
+      <tr><td>Lamps flicker or change on their own</td><td>A floating input. Find the
+        input with nothing on it and tie it to &minus;.</td></tr>
+      <tr><td>The table you measured matches no gate</td><td>Two rows are probably
+        swapped. Redo the test, and say the jumper positions out loud as you write each
+        row.</td></tr>
+      <tr><td>It worked, then stopped after a swap</td><td>A leg is bent under the chip
+        instead of in its hole. Lift the chip and look along the row of legs at eye
+        level.</td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away for five minutes,
+        come back and re-read one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>The one technique worth learning.</b> Don't stare at the whole
+  board. Pick one signal — say A — and follow it: jumper, column, pin, lamp. Test each
+  step. Halve the problem, then halve it again. It is the same idea as the guessing game
+  in Stage 5, pointed at your own wiring.</div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the tables to fill in.
+  All six pinouts checked against the Texas Instruments datasheets.</p>
+</div></footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ gate symbols ============ */
+const SHAPE = {
+  and : {d:'M0,0 H22 A17,17 0 0 1 22,34 H0 Z', out:39, lead:0},
+  nand: {d:'M0,0 H22 A17,17 0 0 1 22,34 H0 Z', out:39, lead:0, bub:1},
+  or  : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:0},
+  nor : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:0, bub:1},
+  not : {d:'M0,0 L30,17 L0,34 Z', out:30, lead:0, bub:1},
+  xor : {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:-8, arc:1},
+  xnor: {d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, lead:-8, arc:1, bub:1}
+};
+const endOf = s => s.bub ? s.out + 10 : s.out;
+
+function gateSym(kind, ins, w, h){
+  const s = SHAPE[kind], bx = s.out + 5, endX = endOf(s);
+  let g = `<svg viewBox="-26 -8 ${104} 50" width="${w||150}" height="${h||62}"
+    role="img" aria-label="${kind} gate symbol">`;
+  const ys = ins === 1 ? [17] : [9, 25];
+  for (const y of ys)
+    g += `<line x1="-24" y1="${y}" x2="${s.lead}" y2="${y}" stroke="var(--ink-2)"
+      stroke-width="1.6" ${SH}/>`;
+  if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  g += `<path d="${s.d}" style="fill:var(--surface-2);stroke:var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  if (s.bub) g += `<circle cx="${bx}" cy="17" r="4.4" fill="var(--surface)"
+    stroke="var(--ink)" stroke-width="1.9"/>`;
+  g += `<line x1="${endX}" y1="17" x2="${endX + 20}" y2="17" stroke="var(--ink-2)"
+    stroke-width="1.6" ${SH}/>`;
+  return g + '</svg>';
+}
+function symAt(x, y, kind){
+  const s = SHAPE[kind];
+  let g = `<g transform="translate(${x},${y})">`;
+  if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" stroke-linecap="round"/>`;
+  g += `<path class="gsym" d="${s.d}"/>`;
+  if (s.bub) g += `<circle class="bub" cx="${s.out + 5}" cy="17" r="4.4"/>`;
+  return g + '</g>';
+}
+
+/* ============ the six gates ============ */
+const GATES = [
+  {n:'AND', art:'an', chip:'CD4081', k:'and', ins:2, f:(a,b)=>(a&&b)?1:0,
+   d:'Output is 1 only when <b>both</b> inputs are 1. Two switches in a row — the current has to get past both of them.'},
+  {n:'OR', art:'an', chip:'CD4071', k:'or', ins:2, f:(a,b)=>(a||b)?1:0,
+   d:'Output is 1 when <b>at least one</b> input is 1. Both being 1 still counts, which is not what "or" usually means out loud.'},
+  {n:'XOR', art:'an', chip:'CD4070', k:'xor', ins:2, f:(a,b)=>(a!==b)?1:0,
+   d:'Output is 1 when the two inputs are <b>different</b>. This one is the everyday "or" — one or the other, but not both.'},
+  {n:'NAND', art:'a', chip:'CD4011', k:'nand', ins:2, f:(a,b)=>(a&&b)?0:1,
+   d:'An AND with the answer flipped: 0 only when both inputs are 1. Tie its inputs together and it becomes a NOT.'},
+  {n:'NOR', art:'a', chip:'CD4001', k:'nor', ins:2, f:(a,b)=>(a||b)?0:1,
+   d:'An OR with the answer flipped: 1 only when <b>neither</b> input is 1. The gate that means "nothing is happening".'},
+  {n:'NOT', art:'a', chip:'CD4069', k:'not', ins:1, f:a=>a?0:1,
+   d:'One input, one output, and it flips whatever it gets. The smallest useful gate there is — this chip holds six.'}
+];
+const BG = {};
+GATES.forEach(g => BG[g.k] = g);
+
+function truthTable(g){
+  const rows = g.ins === 1 ? [[0],[1]] : [[0,0],[0,1],[1,0],[1,1]];
+  let h = '<table><thead><tr>';
+  h += g.ins === 1 ? '<th class="n">In</th>' : '<th class="n">A</th><th class="n">B</th>';
+  h += '<th class="n">Out</th></tr></thead><tbody>';
+  for (const r of rows){
+    const o = g.f.apply(null, r);
+    h += '<tr>' + r.map(v => `<td class="n">${v}</td>`).join('')
+       + `<td class="n ${o ? 'on' : 'off'}">${o}</td></tr>`;
+  }
+  return h + '</tbody></table>';
+}
+function drawGates(){
+  const host = $('gategrid'); if (!host) return;
+  host.innerHTML = GATES.map(g => `<div class="gate">
+      <h4>${g.n}</h4><span class="chip">${g.chip}</span>
+      ${gateSym(g.k, g.ins, 148, 60)}
+      <p>${g.d}</p>${truthTable(g)}</div>`).join('');
+}
+
+/* ============ DIP pinout ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd', NC='nc';
+const QUAD = n => ({name:n, pins:14, p:{
+  1:['in 1a',IN], 2:['in 1b',IN], 3:['OUT 1',OUT], 4:['OUT 2',OUT],
+  5:['in 2a',IN], 6:['in 2b',IN], 7:['− GND',GND], 8:['in 3a',IN],
+  9:['in 3b',IN], 10:['OUT 3',OUT], 11:['OUT 4',OUT], 12:['in 4a',IN],
+  13:['in 4b',IN], 14:['+ 5 V',PWR]}});
+const HEXNOT = n => ({name:n, pins:14, p:{
+  1:['in 1',IN], 2:['OUT 1',OUT], 3:['in 2',IN], 4:['OUT 2',OUT],
+  5:['in 3',IN], 6:['OUT 3',OUT], 7:['− GND',GND], 8:['OUT 4',OUT],
+  9:['in 4',IN], 10:['OUT 5',OUT], 11:['in 5',IN], 12:['OUT 6',OUT],
+  13:['in 6',IN], 14:['+ 5 V',PWR]}});
+const CHIPS = [
+  Object.assign(QUAD('CD4081'), {sub:'Quad 2-input AND'}),
+  Object.assign(QUAD('CD4071'), {sub:'Quad 2-input OR'}),
+  Object.assign(QUAD('CD4070'), {sub:'Quad 2-input XOR'}),
+  Object.assign(QUAD('CD4011'), {sub:'Quad 2-input NAND'}),
+  Object.assign(QUAD('CD4001'), {sub:'Quad 2-input NOR'}),
+  Object.assign(HEXNOT('CD4069'), {sub:'Hex NOT — the odd one out'})
+];
+const ROLECOL = {in:'var(--ink-2)', out:'var(--teal)', pwr:'var(--w-red)',
+  gnd:'var(--w-blue)', nc:'var(--ink-3)'};
+function dipSVG(c, scale){
+  const half = c.pins/2, pitch = 30, bw = 74, top = 22;
+  const bh = half*pitch, W = 380, H = bh + top + 26, bx = (W-bw)/2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W*(scale||1)}"
+    role="img" aria-label="${c.name} pinout"><rect x="${bx}" y="${top}"
+    width="${bw}" height="${bh}" rx="5" fill="var(--surface-2)"
+    stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${W/2-9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)"
+    stroke="var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= c.pins; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : c.pins - i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = c.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx + bw, x2 = left ? bx - 20 : bx + bw + 20;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+7 : bx+bw-7}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-5 : x2+5}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role===OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${W/2}" y="${H-6}" text-anchor="middle">${c.name}</text>`;
+  return s + '</svg>';
+}
+function drawPinouts(){
+  const host = $('pinouts');
+  if (host) host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>';
+
+  const sh = $('shared-pinout');
+  if (sh) sh.innerHTML = `<div class="card scroller"
+    style="display:flex;justify-content:center">
+    ${dipSVG(QUAD('4081 · 4071 · 4070 · 4011 · 4001'), 0.98)}</div>`;
+
+  const an = $('dip-anatomy');
+  if (an) an.innerHTML = `<div class="card" style="display:flex;gap:1.4rem;
+    flex-wrap:wrap;align-items:center;justify-content:center">
+    <div class="scroller">${dipSVG(CHIPS[0], 0.92)}</div>
+    <dl class="kv" style="max-width:17rem">
+      <dt>Notch</dt><dd>The dent at one end. Your only orientation clue.</dd>
+      <dt>Pin 1</dt><dd>Immediately left of the notch, then count down.</dd>
+      <dt>Pin 7</dt><dd>Bottom left. Always &minus; on all six chips.</dd>
+      <dt>Pin 14</dt><dd>Top right. Always +.</dd>
+      <dt class="on">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+    </dl></div>`;
+}
+
+/* ============ breadboard anatomy ============ */
+function bbSVG(){
+  const P = 19, C = 14, LM = 44, TM = 14;
+  const ROWS = {'+':0.5,'−':1.5,A:3.1,B:4.1,C:5.1,D:6.1,E:7.1,
+                F:8.8,G:9.8,H:10.8,I:11.8,J:12.8,'−2':14.4,'+2':15.4};
+  const hx = c => LM + (c-1)*P + P/2, hy = r => TM + ROWS[r]*P + P/2;
+  const W = LM + C*P + 128, H = hy('+2') + 26;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img"
+    aria-label="How breadboard holes are connected">
+    <rect x="${LM-13}" y="${TM}" width="${C*P+22}" height="${hy('+2')+11-TM}"
+      rx="6" style="fill:var(--surface);stroke:var(--line-2)" stroke-width="1.3"/>
+    <rect x="${LM-13}" y="${hy('E')+10}" width="${C*P+22}" height="${hy('F')-hy('E')-20}"
+      fill="var(--sunk)"/>`;
+  const band = (c, r1, r2, col) => `<rect x="${hx(c)-8.5}" y="${hy(r1)-8.5}"
+    width="17" height="${hy(r2)-hy(r1)+17}" rx="4" fill="${col}" opacity=".5"/>`;
+  s += band(4,'A','E','var(--teal-soft)') + band(4,'F','J','var(--copper-soft)');
+  s += `<rect x="${LM-9}" y="${hy('+')-8.5}" width="${C*P+14}" height="17" rx="4"
+    fill="var(--w-red)" opacity=".16"/>`;
+  for (const [r,col,dy] of [['+','var(--w-red)',-11],['−','var(--w-blue)',11],
+                            ['−2','var(--w-blue)',-11],['+2','var(--w-red)',11]])
+    s += `<line x1="${LM-7}" y1="${hy(r)+dy}" x2="${LM+C*P-5}" y2="${hy(r)+dy}"
+      stroke="${col}" stroke-width="1.5" opacity=".8"/>`;
+  for (const r of Object.keys(ROWS)){
+    for (let c = 1; c <= C; c++)
+      s += `<rect x="${hx(c)-3.6}" y="${hy(r)-3.6}" width="7.2" height="7.2" rx="1.6"
+        style="fill:var(--sunk);stroke:var(--line)" stroke-width=".8"/>`;
+    s += `<text class="sv-num" x="${LM-19}" y="${hy(r)+3.3}" text-anchor="middle"
+      >${r.replace('2','')}</text>`;
+  }
+  const call = (x, y, t, anchor) => `<text class="sv-lbl" x="${x}" y="${y}"
+    text-anchor="${anchor||'start'}">${t}</text>`;
+  const RX = LM + C*P + 12;
+  s += `<line x1="${hx(4)+10}" y1="${hy('C')}" x2="${RX-6}" y2="${hy('B')}"
+    stroke="var(--teal)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('B')-4, 'these five holes')
+    + call(RX, hy('B')+9, 'are one wire');
+  s += `<line x1="${hx(4)+10}" y1="${hy('H')}" x2="${RX-6}" y2="${hy('I')}"
+    stroke="var(--copper)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('I')-4, 'so are these —')
+    + call(RX, hy('I')+9, 'but NOT joined')
+    + call(RX, hy('I')+22, 'to the five above');
+  s += call(RX, hy('+')+3, '+ rail, full length')
+    + call(RX, hy('−')+3, '− rail, full length')
+    + call(hx(1)-4, hy('E')+ (hy('F')-hy('E'))/2 + 3.5,
+        'the channel — chips straddle this', 'start');
+  return s + '</svg>';
+}
+function drawBB(){
+  const h = $('bb-anatomy');
+  if (h) h.innerHTML = '<div class="scroller">' + bbSVG() + '</div>';
+}
+drawGates(); drawPinouts(); drawBB();
+
+/* ============ the bench simulator ============ */
+const SIM = {chip:'and', a:0, b:0, mystery:false, seen:{}, msg:''};
+const ROWS4 = [[0,0],[0,1],[1,0],[1,1]];
+const key = (a, b) => '' + a + b;
+const gate = () => BG[SIM.chip];
+const outBit = () => gate().f(SIM.a, SIM.b);
+
+function togg(x, y, v, id, label){
+  return `<g class="tog ${v ? 'one' : ''}" id="${id}" role="button" tabindex="0"
+    aria-label="${label} jumper, currently ${v}">
+    <rect x="${x}" y="${y-14}" width="46" height="28" rx="6"/>
+    <text class="sv-bit" x="${x+23}" y="${y+5}" text-anchor="middle">${v}</text></g>`;
+}
+function benchSVG(){
+  const g = gate(), o = outBit(), hi = v => v ? ' hi' : '';
+  const oneIn = g.ins === 1 && !SIM.mystery;
+  const GX = 226, GY = 89, CY = 106;
+  const outX = SIM.mystery ? 280 : GX + endOf(SHAPE[g.k]);
+  let s = `<svg viewBox="0 0 452 186" role="img"
+    aria-label="Interactive diagram of the gate bench">`;
+
+  s += `<text class="sv-lbl" x="39" y="26" text-anchor="middle">JUMPER</text>
+        <text class="sv-lbl" x="100" y="26" text-anchor="middle">LAMP</text>
+        <text class="sv-lbl" x="252" y="26" text-anchor="middle">THE CHIP</text>
+        <text class="sv-lbl" x="372" y="26" text-anchor="middle">OUT</text>`;
+
+  /* the two inputs */
+  const rows = [[SIM.a, 64, 'a', 'A', 98, 164, 1], [SIM.b, 148, 'b', 'B', 114, 184, 2]];
+  for (const [v, y, id, lbl, gy, vx, pin] of rows){
+    s += togg(16, y, v, 'tog-' + id, lbl);
+    s += `<path class="w${hi(v)}" d="M62,${y} H${92}"/>`;
+    s += `<circle class="lamp" cx="100" cy="${y}" r="8"
+      ${v ? 'style="fill:var(--w-yellow);stroke:var(--w-yellow)"' : ''}/>`;
+    s += `<text class="sv-cap" x="${16}" y="${y - 20}">${lbl}</text>`;
+    if (oneIn && id === 'b'){
+      s += `<path class="w dash" d="M108,${y} H158"/>`;
+      s += `<text class="sv-lbl" x="108" y="174">a NOT gate has nothing for B to do</text>`;
+    } else {
+      const ty = oneIn ? CY : gy;
+      s += `<path class="w${hi(v)}" d="M108,${y} H${vx} V${ty} H${GX}"/>`;
+      /* label the long clear run before the wire drops toward the gate — the two
+         gate inputs are only 16 units apart, which is no room for text */
+      s += `<text class="sv-num" x="${(108 + vx)/2}" y="${y - 7}"
+        text-anchor="middle">pin ${oneIn ? 1 : pin}</text>`;
+    }
+  }
+
+  /* the chip */
+  if (SIM.mystery){
+    s += `<rect class="mbox" x="${GX}" y="${GY - 3}" width="54" height="40" rx="6"/>`;
+    s += `<text class="sv-bit" x="${GX + 27}" y="${CY + 6}" text-anchor="middle"
+      style="font-size:19px;fill:var(--ink)">?</text>`;
+    s += `<text class="sv-cap" x="252" y="74" text-anchor="middle">? ? ?</text>`;
+    s += `<text class="sv-lbl" x="252" y="146" text-anchor="middle">mystery gate</text>`;
+  } else {
+    s += symAt(GX, GY, g.k);
+    s += `<text class="sv-cap" x="252" y="74" text-anchor="middle">${g.chip}</text>`;
+    s += `<text class="sv-lbl" x="252" y="146" text-anchor="middle">${g.n}</text>`;
+  }
+
+  /* the output */
+  s += `<path class="w${hi(o)}" d="M${outX},${CY} H356"/>`;
+  s += `<text class="sv-num" x="${(outX + 356)/2}" y="${CY - 6}"
+    text-anchor="middle">pin ${oneIn ? 2 : 3}</text>`;
+  s += `<circle class="lamp" cx="372" cy="${CY}" r="11"
+    ${o ? 'style="fill:var(--red);stroke:var(--red)"' : ''}/>`;
+  s += `<text class="sv-bit" x="392" y="${CY + 5}"
+    style="fill:${o ? 'var(--red)' : 'var(--ink-3)'}">${o}</text>`;
+  s += `<text class="sv-lbl" x="392" y="${CY + 20}">red lamp</text>`;
+  return s + '</svg>';
+}
+function benchTable(){
+  const g = gate();
+  let h = `<table class="tt"><thead><tr><th class="n">A</th><th class="n">B</th>
+    <th class="n">Out</th><th></th></tr></thead><tbody>`;
+  for (const [a, b] of ROWS4){
+    const here  = a === SIM.a && b === SIM.b;
+    const known = SIM.seen[key(a, b)];
+    const v = g.f(a, b);
+    h += `<tr${here ? ' style="background:var(--surface-2)"' : ''}>
+      <td class="n">${a}</td><td class="n">${b}</td>
+      <td class="n ${known ? (v ? 'on' : 'off') : 'unk'}">${known ? v : '?'}</td>
+      <td class="n" style="color:var(--teal)">${here ? '◀' : ''}</td></tr>`;
+  }
+  return h + '</tbody></table>';
+}
+function benchMsg(){
+  if (SIM.msg) return SIM.msg;
+  const n = Object.keys(SIM.seen).length, g = gate();
+  if (SIM.mystery)
+    return n < 4 ? n + ' of 4 rows tested. Which gate is it?'
+                 : 'All four rows tested. Now name it.';
+  if (n < 4) return n + ' of 4 combinations tried.';
+  return `Table complete — that is ${g.art} ${g.n}.`;
+}
+function mark(){ SIM.seen[key(SIM.a, SIM.b)] = 1 }
+
+function benchRender(){
+  const host = $('sim-svg'); if (!host) return;
+  host.innerHTML = benchSVG();
+  $('sim-table').innerHTML = benchTable();
+  $('sim-msg').textContent = benchMsg();
+
+  $('chip-picker').querySelectorAll('button').forEach(b =>
+    b.className = (!SIM.mystery && b.dataset.k === SIM.chip) ? 'prim' : '');
+  $('guess-row').hidden = !SIM.mystery;
+
+  host.querySelectorAll('.tog').forEach(el => {
+    const which = el.id.slice(4);
+    const flip = e => {
+      e.preventDefault();
+      SIM[which] ^= 1;
+      SIM.msg = '';
+      mark();
+      benchRender();
+    };
+    el.addEventListener('click', flip);
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') flip(e);
+    });
+  });
+}
+function pickChip(k, mystery){
+  SIM.chip = k;
+  SIM.mystery = !!mystery;
+  SIM.seen = {};
+  SIM.msg = '';
+  mark();
+  benchRender();
+}
+function judgeGuess(k){
+  const act = gate(), gu = BG[k];
+  if (k === SIM.chip){
+    SIM.mystery = false;
+    return `Correct — it is ${act.art} ${act.n}, the ${act.chip}.`;
+  }
+  for (const [a, b] of ROWS4)
+    if (SIM.seen[key(a, b)] && act.f(a, b) !== gu.f(a, b))
+      return `Not ${gu.n}: with A=${a} and B=${b} this chip gave `
+           + `${act.f(a, b)}, and ${gu.art} ${gu.n} would give ${gu.f(a, b)}.`;
+  return `Not ${gu.n} — but nothing you have tested rules it out yet. Try another row.`;
+}
+function initSim(){
+  if (!$('sim-svg')) return;
+  $('chip-picker').innerHTML = GATES.map(g =>
+    `<button data-k="${g.k}">${g.n}<span class="pn">${g.chip}</span></button>`).join('');
+  $('chip-picker').addEventListener('click', e => {
+    const b = e.target.closest('button[data-k]');
+    if (b) pickChip(b.dataset.k, false);
+  });
+  $('guess-row').innerHTML = '<span class="sv-lbl" style="font:600 .74rem/1 var(--fd);'
+    + 'letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)">It is a</span>'
+    + GATES.map(g => `<button data-g="${g.k}">${g.n}</button>`).join('');
+  $('guess-row').addEventListener('click', e => {
+    const b = e.target.closest('button[data-g]');
+    if (!b) return;
+    SIM.msg = judgeGuess(b.dataset.g);
+    benchRender();
+  });
+  $('btn-mystery').addEventListener('click', () => {
+    const pick = GATES[Math.floor(Math.random() * GATES.length)];
+    SIM.a = 0; SIM.b = 0;
+    pickChip(pick.k, true);
+  });
+  pickChip('and', false);
+}
+initSim();
+</script>

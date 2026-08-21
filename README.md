@@ -11,7 +11,11 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 
 | Project | Topic | Age | Time | Chips |
 |---|---|---|---|---|
+| [Gate Bench](projects/gate-bench/) | The six logic gates, one at a time | 11+ | 1½–2 h | CD4081, CD4071, CD4070, CD4011, CD4001, CD4069 |
 | [Logic Vault](projects/logic-vault/) | Logic gates, comparators, side channels | 12+ | 2–3 h | CD4077, CD4012, CD4081 |
+
+The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
+time, and the **Logic Vault** puts them to work.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is
