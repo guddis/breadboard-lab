@@ -13,9 +13,12 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 |---|---|---|---|---|
 | [Gate Bench](projects/gate-bench/) | The six logic gates, one at a time | 11+ | 1½–2 h | CD4081, CD4071, CD4070, CD4011, CD4001, CD4069 |
 | [Logic Vault](projects/logic-vault/) | Logic gates, comparators, side channels | 12+ | 2–3 h | CD4077, CD4012, CD4081 |
+| [Reaction Machine](projects/reaction-machine/) | Clocks, counting, one bit of memory | 10–12 | 2–2½ h | CD40106, CD4017, CD4013, CD4081 |
 
 The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
-time, and the **Logic Vault** puts them to work.
+time, and the **Logic Vault** puts them to work. Both are combinational — they answer
+instantly and forget instantly. The **Reaction Machine** breaks out of that: it makes its
+own beat, counts, and remembers.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is

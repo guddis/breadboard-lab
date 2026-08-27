@@ -1,0 +1,1244 @@
+<meta charset="utf-8">
+<title>The Reaction Machine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+tr.gold td{background:var(--copper-soft)}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+.unk{color:var(--line-2)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+.simbar.tight{margin-top:.55rem;padding-top:0;border-top:none}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+button.sel{border-color:var(--copper);color:var(--copper)}
+button .pn{font:500 .68rem/1 var(--fm);color:var(--ink-3);margin-left:.3rem}
+button.prim .pn{color:var(--teal-soft)}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.w.dash{stroke-dasharray:4 4}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.mbox.live{stroke:var(--teal);stroke-width:2.2}
+.spoke{stroke:var(--line);stroke-width:1.2}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.3}}
+.ringing{animation:ring .28s infinite}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Clocks &amp; counting &middot; Project 03</p>
+  <h1>The Reaction<br>Machine</h1>
+  <p class="lead">Ten lights chase each other round a circle, fast. One of them is gold.
+  Hit the STOP button at exactly the right moment and the machine says you won —
+  out loud. Miss, and it says that too. Nothing in it is programmed; a resistor and a
+  capacitor decide how fast time runs.</p>
+  <div class="facts">
+    <span><b>Age</b> 10–12, with an adult nearby for the first hour</span>
+    <span><b>Time</b> 2–2½ hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V — nothing dangerous</span>
+    <span><b>Chips</b> CD40106, CD4017, CD4013, CD4081</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Play it here first. It's the same circuit, same chips, same speeds.</p>
+
+  <p>A ring of ten lights. A dot runs round it, about twelve steps a second on the easy
+  setting. You get one press of <b>STOP</b>. If the dot is sitting on the gold light when
+  you press, the green lamp comes on and the buzzer goes off. If it isn't, the red lamp
+  tells you so, and you press <b>RESET</b> to go again.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="btn-stop" class="prim">STOP</button>
+      <button id="btn-reset">RESET</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <button id="sp-easy" class="sel">Easy <span class="pn">12 Hz · 1 MΩ</span></button>
+      <button id="sp-hard">Hard <span class="pn">25 Hz · 2 × 1 MΩ</span></button>
+      <button id="sp-brutal">Brutal <span class="pn">49 Hz · 4 × 1 MΩ</span></button>
+      <button id="btn-pause">Pause</button>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">The three speeds are the three real resistor
+  choices from Stage 5 — the numbers on the buttons are what you will actually plug in.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A capacitor filling and emptying
+  through a resistor makes a steady beat. A counter turns each beat into "light the next
+  one". A flip-flop remembers that you pressed the button. An AND gate checks whether
+  those two facts — <em>stopped</em> and <em>on the gold one</em> — are true at the same
+  moment.</div>
+</section>
+
+<section id="new">
+  <span class="snum">Section 2</span>
+  <h2>Three things you haven't built yet</h2>
+  <p class="sub">The Gate Bench and the Logic Vault were made only of gates. This one
+  isn't.</p>
+
+  <p>In the first two projects, every circuit answered instantly and forgot instantly.
+  Change an input, the output changes; let go, and it's as if nothing happened. Those are
+  called <b>combinational</b> circuits, and they can't count, can't wait, and can't
+  remember. This machine needs all three.</p>
+
+  <div class="two">
+    <div class="card">
+      <h4 style="margin-top:0">A clock</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">Something that goes
+      1&nbsp;0&nbsp;1&nbsp;0 on its own, forever, with nothing telling it to. One
+      inverter, one resistor, one capacitor. This is where <em>time</em> comes from.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">A counter</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">Something that keeps track
+      of how many beats have gone by, and lights the matching lamp. One chip, ten
+      outputs, and it does the whole job.</p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">A memory</h4>
+      <p style="margin:0;font-size:.94rem;color:var(--ink-2)">Something that stays
+      changed after you let go of the button. One flip-flop — and it is genuinely the
+      same thing your computer's memory is made of, just one bit of it.</p>
+    </div>
+  </div>
+
+  <div class="why"><b>Why this order.</b> Clock, counter, memory: that's the shape of every
+  computer ever built. A processor is a clock driving a counter that keeps track of which
+  instruction it's on, plus a great deal of memory. You are about to build the skeleton of
+  one and then play a game on it.</div>
+</section>
+
+<section id="clock">
+  <span class="snum">Section 3</span>
+  <h2>How to make a beat out of nothing</h2>
+  <p class="sub">The one idea in this project that needs a proper explanation.</p>
+
+  <p>Start with an ordinary <b>inverter</b> — you met six of them in the Gate Bench.
+  Now do something that sounds silly: connect its output back to its own input, through a
+  resistor. And hang a capacitor from that input to the − rail.</p>
+
+  <figure>
+    <div id="osc-svg"></div>
+    <figcaption>The whole clock. One sixth of a CD40106, one resistor, one capacitor.</figcaption>
+  </figure>
+
+  <p>A <b>capacitor</b> is a tiny rechargeable bucket for electricity. Current flowing in
+  fills it and its voltage rises; current flowing out empties it and its voltage falls.
+  The resistor controls how fast — a big resistor is a narrow pipe, so filling takes
+  longer.</p>
+
+  <p>Now follow it round. Say the capacitor is empty, so the input is at 0. An inverter
+  flips that, so the output is high, and current trickles back through the resistor and
+  starts filling the capacitor. The input voltage climbs. At some point it gets high
+  enough to count as a 1 — and the inverter flips. The output goes low, and now current
+  drains <em>out</em> of the capacitor through the same resistor. The input falls until
+  it's low enough to count as a 0, the inverter flips again, and we're back where we
+  started. It never settles. It can't.</p>
+
+  <div class="note"><b>Why the CD40106 and not the CD4069.</b> An ordinary inverter is
+  vague about where 0 stops and 1 starts, and near that boundary it can dither. The
+  CD40106 is a <b>Schmitt trigger</b>: it flips up at 2.9 V and back down at 1.9 V, and
+  those two different thresholds are exactly what makes the swing wide, clean and
+  countable. Both numbers are from the datasheet, at 5 V.</div>
+
+  <p>Because those thresholds are known, the beat is predictable. Multiply the resistor by
+  the capacitor and the frequency falls out:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Resistor</th><th>Capacitor</th><th class="n">R × C</th>
+      <th class="n">Beats per second</th><th>Feels like</th></tr></thead>
+    <tbody>
+      <tr><td>100 kΩ</td><td>10 µF</td><td class="n">1 s</td><td class="n">≈ 1.2</td>
+        <td>A slow, countable tick — Stage 1 and all debugging</td></tr>
+      <tr><td>1 MΩ</td><td>0.1 µF ("104")</td><td class="n">0.1 s</td><td class="n">≈ 12</td>
+        <td>Game speed, easy setting</td></tr>
+      <tr><td>2 × 1 MΩ side by side</td><td>0.1 µF</td><td class="n">0.05 s</td>
+        <td class="n">≈ 25</td><td>Hard</td></tr>
+      <tr><td>4 × 1 MΩ side by side</td><td>0.1 µF</td><td class="n">0.025 s</td>
+        <td class="n">≈ 49</td><td>Nearly a blur</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>The formula, if you want it, is <b>f ≈ 1.23 ÷ (R × C)</b>. The 1.23 comes from those
+  two thresholds; you can derive it once you've met logarithms.</p>
+
+  <div class="warn"><b>Yours will not be exactly 12 Hz, and that is fine.</b> A "104"
+  capacitor is allowed to be 20% off, and the trigger thresholds vary from chip to chip.
+  Anything between 8 and 16 is normal. Nothing in this machine cares about the exact
+  number — you're building a game, not a watch.</div>
+
+  <div class="why"><b>Two resistors side by side make a smaller resistor.</b> That surprises
+  everybody. Two pipes side by side carry more water than one, so the current has an easier
+  time, so the resistance is <em>lower</em> — two 1 MΩ in parallel behave like 500 kΩ, and
+  four behave like 250 kΩ. That's why adding resistors speeds the game up.</div>
+</section>
+
+<section id="design">
+  <span class="snum">Section 4</span>
+  <h2>How the machine thinks</h2>
+  <p class="sub">Four chips, each with exactly one job.</p>
+
+  <ol class="steps">
+    <li><b>Keep time — CD40106</b>
+      One inverter with its resistor and capacitor, ticking away. Its output is the
+      <b>clock</b>: high, low, high, low, about twelve times a second.</li>
+    <li><b>Count the ticks — CD4017</b>
+      This chip has ten outputs and it makes exactly one of them high at a time,
+      stepping to the next one on every rising edge of the clock. Ten LEDs, one per
+      output, and the dot walks round the ring by itself.</li>
+    <li><b>Remember the button — CD4013</b>
+      Pressing STOP sets a flip-flop, and it stays set after you let go. That signal is
+      called <b>FROZEN</b>, and it goes to the CD4017's <em>clock inhibit</em> pin — a pin
+      whose entire purpose is "stop counting". The dot stops dead.</li>
+    <li><b>Judge it — CD4081</b>
+      One AND gate asks <em>is it FROZEN <b>and</b> sitting on the gold light?</em> —
+      that's <b>WIN</b>. A second AND gate asks <em>is it FROZEN <b>and not</b> on the
+      gold light?</em> — that's <b>MISS</b>. The "not" comes from a spare inverter on the
+      CD40106 you already have.</li>
+  </ol>
+
+  <div class="note"><b>The AND gate is what makes it a game.</b> While the dot is
+  spinning, FROZEN is 0, so both verdict gates output 0 no matter where the dot is — the
+  green lamp cannot flicker as the gold light rushes past. The verdict only exists once
+  you have committed. An AND gate used this way is a <em>valve</em>: one input is the
+  signal, the other is permission.</div>
+
+  <h3>The reason one light gets a transistor and nine don't</h3>
+
+  <p>A CD4000 output at 5 V can push about 2½ milliamps into an LED before its own voltage
+  starts sagging — down to about 2.5 V. For nine of the ten lights that's fine: their only
+  job is to glow, and a sagging 2.5 V still glows.</p>
+
+  <p>But the gold light's output has a second job. Two chips have to <em>read</em> it and
+  believe it. And the datasheet says an input only counts as a guaranteed 1 above
+  <b>3.5 V</b>. A wire sitting at 2.5 V is in the no-man's-land between 0 and 1, where a
+  chip is allowed to believe whatever it likes.</p>
+
+  <p>So the gold light gets a <b>PN2222 transistor</b> and a 10 kΩ resistor. The chip now
+  pushes only 0.4 mA — barely a load, so its output stays up near 4.6 V and reads as a
+  clean 1 — and the transistor does the shoving instead. As a bonus the gold light ends up
+  the brightest lamp in the ring, which is exactly what you want from a target.</p>
+
+  <div class="why"><b>This is the most useful thing in this guide.</b> "It worked until I
+  connected something else to it" is one of the most common faults in real electronics,
+  and this is why: every wire has a strength as well as a value. Chips think, transistors
+  shove — and if a signal has to be both bright <em>and</em> believed, it needs help.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 5</span>
+  <h2>What you need</h2>
+  <p class="sub">All from the kit. The full wire list is in
+  <a href="README.md">README.md</a>.</p>
+
+  <h3>Chips</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>What it holds</th><th>Job here</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD40106</code></td><td>Six Schmitt-trigger inverters</td>
+        <td>The clock, plus one spare inverter for the MISS gate</td></tr>
+      <tr><td><code>CD4017</code></td><td>Decade counter, 10 decoded outputs</td>
+        <td>Walks the dot round the ring. <b>16 pins</b> — the odd one out</td></tr>
+      <tr><td><code>CD4013</code></td><td>Two D-type flip-flops</td>
+        <td>Remembers that you pressed STOP</td></tr>
+      <tr><td><code>CD4081</code></td><td>Four 2-input AND gates</td>
+        <td>The WIN and MISS verdicts</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Everything else</h3>
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="n">9</td><td>Red LED</td><td>The ring</td></tr>
+      <tr><td class="n">1</td><td>Yellow LED</td><td>The gold target</td></tr>
+      <tr><td class="n">1</td><td>Green LED</td><td>WIN</td></tr>
+      <tr><td class="n">1</td><td>Red LED</td><td>MISS — the tenth red one</td></tr>
+      <tr><td class="n">3</td><td>PN2222 transistor</td>
+        <td>Flat side toward you, legs down: <b>E – B – C</b></td></tr>
+      <tr><td class="n">1</td><td>Active buzzer</td><td>The kind that beeps on plain DC</td></tr>
+      <tr><td class="n">2</td><td>Push button</td><td>STOP and RESET</td></tr>
+      <tr><td class="n">9</td><td>220 Ω resistor</td><td>The nine plain ring LEDs</td></tr>
+      <tr><td class="n">3</td><td>330 Ω resistor</td><td>Gold, WIN and MISS LEDs</td></tr>
+      <tr><td class="n">1–4</td><td>1 MΩ resistor</td><td>Clock speed — more means faster</td></tr>
+      <tr><td class="n">1</td><td>100 kΩ resistor</td><td>Slow mode, for building and debugging</td></tr>
+      <tr><td class="n">3</td><td>10 kΩ resistor</td><td>Gold transistor base, two button pull-downs</td></tr>
+      <tr><td class="n">2</td><td>5.1 kΩ resistor</td><td>WIN and MISS transistor bases</td></tr>
+      <tr><td class="n">1</td><td>0.1 µF ceramic ("104")</td><td>The clock capacitor</td></tr>
+      <tr><td class="n">4</td><td>0.1 µF ceramic ("104")</td><td>One across each chip's power pins</td></tr>
+      <tr><td class="n">1</td><td>10 µF electrolytic</td><td>Slow mode — <b>stripe to −</b></td></tr>
+      <tr><td class="n">1</td><td>100 µF electrolytic</td><td>Across the rails — <b>stripe to −</b></td></tr>
+      <tr><td class="n">1</td><td>Breadboard</td><td>Full-size. Four chips and 12 LEDs need the room</td></tr>
+      <tr><td class="n">~45</td><td>Jumper wires</td><td>Red for +, black for −, colours for signals</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Power</h3>
+  <p><b>4.5 V to 5 V.</b> Three AA cells, or the MB102 breadboard module set to 5 V. All
+  four chips are happy from 3 V to 18 V. Nothing here goes near mains electricity.</p>
+
+  <div class="note"><b>About the ring's brightness.</b> Nine of the lamps run at about
+  2½ mA, and each is only lit a tenth of the time. In a bright room the ring looks faint.
+  Turn the lights down and it looks like an arcade machine — which, conveniently, is when
+  you want to play it anyway.</div>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 6</span>
+  <h2>Six rules for not breaking things</h2>
+  <p class="sub">Rule 2 has a new trap in it this time. Read it twice.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you rewire</b>
+      Every single time.</li>
+    <li><b>Count the pins before you trust them</b>
+      Three chips here are 14-pin, with + on 14 and − on 7. The CD4017 is
+      <b>16-pin</b>, with + on <b>16</b> and − on <b>8</b>. Wire it like a 14-pin chip and
+      you put 5 V into an output. Notch to the left, pin 1 bottom-left, numbers run
+      anticlockwise.</li>
+    <li><b>Never leave an input dangling</b>
+      Including the ones on halves of chips you aren't using. Every unused input goes
+      to −. A floating CMOS input picks up radio noise and flickers.</li>
+    <li><b>Never wire an output straight to + or −</b>
+      That's a short circuit through the chip. The CD4017 has ten outputs in a row and
+      it is easy to ground one by accident while grounding its neighbours' inputs.</li>
+    <li><b>Electrolytic capacitors have a right way round</b>
+      The stripe marks the negative leg. Backwards, they can pop. Both the 100 µF and
+      the 10 µF have stripes; the little "104" ceramics don't care.</li>
+    <li><b>Warm chip means stop</b>
+      Pull the power immediately, then re-check rules 2 and 4.</li>
+  </ol>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 7</span>
+  <h2>The four pinouts</h2>
+  <p class="sub">Two of these you've seen. Two are new, and one of them is a different
+  shape.</p>
+
+  <p>If you need reminding how pin numbering and breadboard rows work, that's covered in
+  detail in <a href="../gate-bench/guide.html">Project 01</a> — this guide assumes you've
+  placed a chip before.</p>
+
+  <div id="pinouts"></div>
+
+  <div class="warn"><b>The CD4017's outputs are not in counting order.</b> Count 0 comes
+  out of pin 3, count 1 out of pin 2, count 2 out of pin 4. If you wire the LEDs in pin
+  order the dot will hop around the ring in a jumble instead of walking. Stage 2 has the
+  translation table; use it and don't improvise.</div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>The heartbeat</span>
+    <span>~25 min</span></div>
+  <h2>Make time out of a resistor</h2>
+  <p class="sub">One chip, two components, one blinking light. Nothing else works until
+  this does.</p>
+
+  <p>Power the rails first: supply + to the top red rail, supply − to the top blue rail,
+  then jumper top red to bottom red and top blue to bottom blue. Put the 100 µF capacitor
+  across the rails with its <b>stripe to −</b>.</p>
+
+  <p>Now place the <b>CD40106</b> across the channel, notch to the left, and wire it:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td>100 kΩ</td><td>pin 2 → pin 1</td><td>The timing resistor — output back to input</td></tr>
+      <tr><td>10 µF <b>+ leg</b></td><td>pin 1</td><td>The timing capacitor</td></tr>
+      <tr><td>10 µF <b>stripe leg</b></td><td>− rail</td><td>Polarity matters here</td></tr>
+      <tr><td><b>pin 2</b></td><td>1 kΩ → LED long leg</td><td>So you can see the beat</td></tr>
+      <tr><td>LED short leg</td><td>− rail</td><td>Completes the circuit</td></tr>
+      <tr><td>pins 5, 9, 11, 13</td><td>− rail</td><td>Unused inputs — rule 3</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Leave pins 3, 4, 6, 8, 10 and 12 empty for now. Pin 3 gets used in Stage 4, and the
+  rest are outputs you'll never need — <em>don't</em> ground them.</p>
+
+  <p>Power up. The LED should blink about once a second, steadily, forever.</p>
+
+  <ul class="tick">
+    <li>Count the blinks in 20 seconds and write it in the
+      <a href="worksheet.md">worksheet</a>. You should get somewhere near 25.</li>
+    <li>Pull the 100 kΩ out and put a <b>1 MΩ</b> in its place. Ten times the resistance,
+      so a tenth of the speed — one blink every eight seconds. Painfully slow. Put the
+      100 kΩ back.</li>
+    <li>Now swap the 10 µF capacitor for the little <b>0.1 µF "104"</b> — a hundred times
+      smaller. The LED stops looking like a blink and starts looking like a dim, steady
+      glow, because it is now flickering about 120 times a second, far too fast for your
+      eye.</li>
+  </ul>
+
+  <div class="note"><b>That last one is worth sitting with.</b> Nothing changed except how
+  big the bucket is. Blinking, flickering and "sounds like a note" are the same circuit at
+  different speeds — and that's the whole of Project 05, when we get to it.</div>
+
+  <p>Finish the stage with the <b>game clock</b> in place: <b>1 MΩ</b> and the
+  <b>0.1 µF "104"</b>. About 12 beats a second. The LED will look like a steady dim glow —
+  that's correct, and the ring will show you it's really ticking.</p>
+
+  <div class="why"><b>What you just built has a name.</b> A <em>relaxation oscillator</em>.
+  Before quartz crystals were cheap this is how clocks, blinkers, metronomes and organ
+  keyboards were made, and it's still how most blinking indicator lights work. It has no
+  program, no crystal and no instructions — just a bucket, a pipe, and something that
+  changes its mind at two different voltages.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>The ring</span>
+    <span>~40 min</span></div>
+  <h2>Ten lights, one at a time</h2>
+  <p class="sub">The longest stage, and the one that looks like something.</p>
+
+  <p>Before you wire ten LEDs, <b>put the clock back into slow mode</b> — 100 kΩ and the
+  10 µF. At one step per second you can watch the dot arrive at each lamp and check your
+  work as you go. At game speed you'd never see which one was wrong.</p>
+
+  <div class="warn"><b>The CD4017 is a 16-pin chip.</b> + goes to <b>pin 16</b> and − to
+  <b>pin 8</b>. Not 14 and 7. Check it twice before you switch on.</div>
+
+  <p>Place the CD4017, notch to the left, and wire the control pins:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 16</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 8</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 16 → pin 8</td><td>Steadies the supply</td></tr>
+      <tr><td>CD40106 <b>pin 2</b></td><td>CD4017 <b>pin 14</b></td><td>The clock arrives</td></tr>
+      <tr><td>CD4017 <b>pin 15</b></td><td>− rail</td><td>Reset off — we never want to zero it</td></tr>
+      <tr><td>CD4017 <b>pin 13</b></td><td>− rail</td><td><b>Temporary.</b> Inhibit off, so it counts</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Pin 12 is the carry output — leave it empty (there's a use for it in the bonus).</p>
+
+  <h3>The ten lamps</h3>
+
+  <p>Each lamp is the same three things: <b>output pin → resistor → LED long leg</b>, and
+  <b>LED short leg → − rail</b>. The only thing that changes is which pin. Work down this
+  table in order and your ring will walk properly:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Ring position</th><th class="n">Count</th>
+      <th class="n">CD4017 pin</th><th>LED</th><th>Resistor</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td class="n">0</td><td class="n">3</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">2</td><td class="n">1</td><td class="n">2</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">3</td><td class="n">2</td><td class="n">4</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">4</td><td class="n">3</td><td class="n">7</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">5</td><td class="n">4</td><td class="n">10</td><td>Red</td><td>220 Ω</td></tr>
+      <tr class="gold"><td class="n">6</td><td class="n">5</td><td class="n">1</td>
+        <td><b>Yellow — the gold one</b></td><td>220 Ω for now</td></tr>
+      <tr><td class="n">7</td><td class="n">6</td><td class="n">5</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">8</td><td class="n">7</td><td class="n">6</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">9</td><td class="n">8</td><td class="n">9</td><td>Red</td><td>220 Ω</td></tr>
+      <tr><td class="n">10</td><td class="n">9</td><td class="n">11</td><td>Red</td><td>220 Ω</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Arrange them in a circle if your jumper wires will reach, or a straight row if they
+  won't — the circuit doesn't care, and a row is easier to build. Put the yellow one at
+  position 6 either way, so it's in the middle of a row and not at an end where it would
+  be easier to hit.</p>
+
+  <p>Power up. One lamp at a time should light, walking from position 1 to position 10 and
+  back to 1, about one step per second.</p>
+
+  <ul class="tick">
+    <li>Watch it go round twice and check the dot never jumps or skips.</li>
+    <li>If it hops around in a jumble, you wired the LEDs in pin order instead of using
+      the table.</li>
+    <li>If one lamp stays dark, it's backwards — long leg toward the chip.</li>
+    <li>Now switch to game speed: 1 MΩ and the 0.1 µF. The dot becomes a spinning
+      blur.</li>
+  </ul>
+
+  <div class="why"><b>Why the pins are in that strange order.</b> Inside, the CD4017 isn't
+  ten separate things — it's five flip-flops in a loop, and the chip designers laid the
+  pins out to keep the internal wiring short and cheap, not to be convenient for you.
+  Datasheets are full of decisions like this. It's a good early lesson that the outside of
+  a part is shaped by its insides, and that reading the drawing beats guessing.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>The freeze</span>
+    <span>~25 min</span></div>
+  <h2>A circuit that remembers</h2>
+  <p class="sub">After this stage it's already playable — just without a referee.</p>
+
+  <p>A push button is only pressed for a tenth of a second, and the dot is moving. We need
+  the machine to hold on to the fact that you pressed. That's what a <b>flip-flop</b> is
+  for: two inputs called SET and RESET, and one output that stays wherever it was last
+  put.</p>
+
+  <p>Place the <b>CD4013</b> — back to 14 pins, + on 14 and − on 7.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td><b>pin 5</b> (D1)</td><td>− rail</td><td>Not using the clocked way in</td></tr>
+      <tr><td><b>pin 3</b> (CLOCK1)</td><td>− rail</td><td>Same — held quiet</td></tr>
+      <tr><td>pins 8, 9, 10, 11</td><td>− rail</td><td>The whole second flip-flop, unused</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Leave pins 2, 12 and 13 empty — they're outputs.</p>
+
+  <h3>The two buttons</h3>
+
+  <p>Each button is wired the same way. Use <b>diagonally opposite legs</b>: a 4-leg
+  tactile button has its legs joined in hidden pairs, and diagonal is the one choice that
+  is always right.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>STOP button leg</td><td>+ rail</td><td>Pressing means 1</td></tr>
+      <tr><td>STOP diagonal leg</td><td>STOP node</td><td></td></tr>
+      <tr><td>STOP node</td><td>10 kΩ → − rail</td><td>Holds it at 0 when not pressed</td></tr>
+      <tr><td>STOP node</td><td>CD4013 <b>pin 6</b> (SET1)</td><td>Press = remember</td></tr>
+      <tr><td>RESET button leg</td><td>+ rail</td><td></td></tr>
+      <tr><td>RESET diagonal leg</td><td>RESET node</td><td></td></tr>
+      <tr><td>RESET node</td><td>10 kΩ → − rail</td><td></td></tr>
+      <tr><td>RESET node</td><td>CD4013 <b>pin 4</b> (RESET1)</td><td>Press = forget</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn"><b>Those 10 kΩ resistors are not optional.</b> Without them, the button
+  node is connected to nothing at all when the button is up — rule 3 — and the flip-flop
+  will set and reset itself at random as you walk past the board.</div>
+
+  <h3>Hand the freeze to the counter</h3>
+
+  <p>Now remove the temporary wire from CD4017 pin 13 to −, and put this in its place:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4013 <b>pin 1</b> (Q1)</td><td>CD4017 <b>pin 13</b></td>
+        <td><b>FROZEN</b> → clock inhibit</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up and press RESET first. The dot should spin. Press STOP and it should stop
+  dead, and stay stopped however long you wait. Press RESET and it carries on from where
+  it stopped.</p>
+
+  <div class="note"><b>Press RESET after every power-up.</b> A flip-flop wakes up in
+  whichever state it feels like — that's what makes it memory, and nobody told it what to
+  remember before it was switched on. If the ring is frozen the moment you power up,
+  it isn't broken; it just woke up remembering a press that never happened.</div>
+
+  <div class="why"><b>You have built one bit of RAM.</b> A gigabyte of memory is this
+  circuit about eight billion times over, shrunk. The clock-inhibit pin is worth noticing
+  too: the chip designers knew people would want to stop a counter without losing its
+  count, so they gave it a pin for exactly that. Real parts are full of thoughtfulness like
+  this, and it's all in the datasheet.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>The verdict</span>
+    <span>~35 min</span></div>
+  <h2>Teach it to judge you</h2>
+  <p class="sub">Two AND gates, one spare inverter, three transistors.</p>
+
+  <h3>First, fix the gold light</h3>
+
+  <p>This is the loading problem from Section 4. Right now the gold light hangs straight
+  off CD4017 pin 1, dragging it down to about 2.5 V — too vague for another chip to read.
+  Rewire that one lamp:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3"><em>Remove the 220 Ω and yellow LED from CD4017 pin 1 first.</em></td></tr>
+      <tr><td>CD4017 <b>pin 1</b></td><td>10 kΩ → Q1 base (middle leg)</td>
+        <td>A light load, so the pin keeps its voltage</td></tr>
+      <tr><td>Q1 emitter (left leg)</td><td>− rail</td><td></td></tr>
+      <tr><td>+ rail</td><td>330 Ω → yellow LED long leg</td><td>Now powered from the rail</td></tr>
+      <tr><td>Yellow LED short leg</td><td>Q1 collector (right leg)</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up. The gold light should now be clearly brighter than the other nine as the dot
+  passes it. That difference is the point, not a fault.</p>
+
+  <h3>The two verdict gates</h3>
+
+  <p>Place the <b>CD4081</b> — 14 pins, + on 14, − on 7. We need <em>not gold</em> as well
+  as <em>gold</em>, and the CD40106 has five unused inverters, so we borrow one.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4081 <b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td>CD4081 <b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td>CD4017 <b>pin 1</b></td><td>CD40106 <b>pin 3</b></td><td>Gold into the spare inverter</td></tr>
+      <tr><td colspan="3"><b>WIN gate</b> — CD4081 gate 1</td></tr>
+      <tr><td>CD4013 <b>pin 1</b> (FROZEN)</td><td>CD4081 <b>pin 1</b></td><td>Have you committed?</td></tr>
+      <tr><td>CD4017 <b>pin 1</b> (GOLD)</td><td>CD4081 <b>pin 2</b></td><td>Are you on the gold one?</td></tr>
+      <tr><td colspan="3">Output: <b>CD4081 pin 3 = WIN</b></td></tr>
+      <tr><td colspan="3"><b>MISS gate</b> — CD4081 gate 2</td></tr>
+      <tr><td>CD4013 <b>pin 1</b> (FROZEN)</td><td>CD4081 <b>pin 5</b></td><td></td></tr>
+      <tr><td>CD40106 <b>pin 4</b> (NOT GOLD)</td><td>CD4081 <b>pin 6</b></td><td></td></tr>
+      <tr><td colspan="3">Output: <b>CD4081 pin 4 = MISS</b></td></tr>
+      <tr><td>CD4081 pins 8, 9, 12, 13</td><td>− rail</td><td>Two unused gates — rule 3</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Leave CD4081 pins 10 and 11 empty; they're the unused gates' outputs.</p>
+
+  <h3>The output block</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3"><b>Q2 — the win</b></td></tr>
+      <tr><td>CD4081 <b>pin 3</b> (WIN)</td><td>5.1 kΩ → Q2 base</td><td></td></tr>
+      <tr><td>Q2 emitter</td><td>− rail</td><td></td></tr>
+      <tr><td>+ rail</td><td>330 Ω → green LED long leg</td><td></td></tr>
+      <tr><td>Green LED short leg</td><td>Q2 collector</td><td></td></tr>
+      <tr><td>Buzzer + (long leg)</td><td>+ rail</td><td></td></tr>
+      <tr><td>Buzzer −</td><td>Q2 collector</td><td>One transistor drives both</td></tr>
+      <tr><td colspan="3"><b>Q3 — the miss</b></td></tr>
+      <tr><td>CD4081 <b>pin 4</b> (MISS)</td><td>5.1 kΩ → Q3 base</td><td></td></tr>
+      <tr><td>Q3 emitter</td><td>− rail</td><td></td></tr>
+      <tr><td>+ rail</td><td>330 Ω → red LED long leg</td><td>The tenth red LED</td></tr>
+      <tr><td>Red LED short leg</td><td>Q3 collector</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up, press RESET, and play. Green and a beep when you nail it; red when you
+  don't; nothing at all while the dot is still moving.</p>
+
+  <ul class="tick">
+    <li>Both verdict lamps dark while spinning — the AND valves are doing their job.</li>
+    <li>Exactly one of them lights when you press STOP. Never both, never neither.</li>
+    <li>The buzzer keeps going until you press RESET. That's deliberate: shutting it up
+      is the loser's job.</li>
+  </ul>
+
+  <div class="warn"><b>If the green lamp is unreliable — sometimes on, sometimes not, for
+  the same stop —</b> you almost certainly skipped the gold-light transistor at the top of
+  this stage, and CD4081 pin 2 is being fed a voltage that is neither a 0 nor a 1. This is
+  what "not enough drive" looks like in real life: not a dead circuit, but a moody one.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>Tune it</span>
+    <span>~15 min</span></div>
+  <h2>Make it as hard as you can stand</h2>
+  <p class="sub">One resistor decides whether this is a toy or a challenge.</p>
+
+  <p>The clock resistor is between CD40106 pin 2 and pin 1. To speed the game up, plug
+  more 1 MΩ resistors into those <em>same two holes</em>, side by side. More pipes, less
+  resistance, faster clock.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>1 MΩ resistors</th><th class="n">Behaves like</th>
+      <th class="n">Beats/sec</th><th class="n">Times round per second</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td class="n">1 MΩ</td><td class="n">≈ 12</td><td class="n">1.2</td>
+        <td>You'll win about a third of the time once you learn it</td></tr>
+      <tr><td>2 side by side</td><td class="n">500 kΩ</td><td class="n">≈ 25</td>
+        <td class="n">2.5</td><td>Properly hard</td></tr>
+      <tr><td>3 side by side</td><td class="n">333 kΩ</td><td class="n">≈ 37</td>
+        <td class="n">3.7</td><td>Mostly luck</td></tr>
+      <tr><td>4 side by side</td><td class="n">250 kΩ</td><td class="n">≈ 49</td>
+        <td class="n">4.9</td><td>Entirely luck. Good for tournaments</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now play it properly. Ten rounds each, one press per round, and keep score in the
+  <a href="worksheet.md">worksheet</a> — there's a table there that turns your hit rate
+  into an estimate of your own reaction time, which is a genuinely interesting number to
+  know about yourself.</p>
+
+  <div class="note"><b>You will get better at this, and not by reacting faster.</b> Your
+  reaction time is roughly fixed at about a quarter of a second — far longer than one step
+  of the ring. Winning means learning to press <em>before</em> the dot arrives, by about
+  three lamps. You're not beating the machine, you're predicting it. That's the same trick
+  a drummer uses.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>Three upgrades</span>
+    <span>~20 min each</span></div>
+  <h2>If you want to keep going</h2>
+
+  <h3>Keep score in hardware</h3>
+  <p>WIN goes high and stays high until RESET, which means it makes exactly one clean edge
+  per victory. Feed it into a <em>second</em> CD4017's clock (pin 14, with pin 13 and pin 15
+  to −) and wire ten blue LEDs to its outputs using the same table as Stage 2. Now the
+  machine counts your wins up to nine, in hardware, with no code anywhere. First to light
+  the fifth lamp is the champion.</p>
+
+  <h3>Let the room set the difficulty</h3>
+  <p>Take the 1 MΩ clock resistor out and put the <b>photoresistor</b> in its place. Its
+  resistance drops as light hits it, so the game gets faster in bright light and slower in
+  shadow — and you can control the speed by cupping your hand over it. Play against
+  someone who is allowed to adjust the lighting.</p>
+
+  <h3>Nine steps for a run of 90</h3>
+  <p>CD4017 pin 12 is <b>carry out</b>: it pulses once every ten counts. Feed it into
+  another CD4017's clock and the second chip counts tens while the first counts ones —
+  which is exactly how a two-digit counter works, and how the odometer in a car is
+  arranged. You now have 100 positions. Making a game out of that is up to you.</p>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 8</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Nearly always one of these. Full table in
+  <a href="README.md">README.md</a>.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing anywhere</td><td>Power not reaching a chip. Remember the CD4017
+        wants + on <b>16</b> and − on <b>8</b>.</td></tr>
+      <tr><td>A chip gets warm</td><td>Power in backwards, or an output grounded. Unplug
+        now.</td></tr>
+      <tr><td>Clock LED doesn't blink</td><td>The resistor must go from pin 2 <em>back to
+        pin 1</em>. If it goes to a rail instead, there's no feedback and no
+        oscillation.</td></tr>
+      <tr><td>Ring frozen at power-up</td><td>Normal. Press RESET.</td></tr>
+      <tr><td>Dot hops around out of order</td><td>LEDs wired in pin order. Use the Stage 2
+        table.</td></tr>
+      <tr><td>Two lamps lit at once</td><td>Two LEDs sharing one resistor, or a jumper
+        bridging two outputs.</td></tr>
+      <tr><td>STOP does nothing</td><td>Button legs not diagonal, or the 10 kΩ pull-down is
+        missing.</td></tr>
+      <tr><td>Green light moody or flickery</td><td>The gold LED is still hanging directly
+        off CD4017 pin 1. Stage 4 fixes it with a transistor.</td></tr>
+      <tr><td>Both green and red at once</td><td>CD40106 pin 3 isn't connected to CD4017
+        pin 1, so "not gold" is stuck.</td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away for five minutes, come
+        back and re-read one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ pinout drawings ============ */
+const IN='in', OUT='out', PWR='pwr', NC='nc';
+const ROLECOL = {in:'var(--w-blue)', out:'var(--teal)', pwr:'var(--w-red)',
+                 nc:'var(--line-2)'};
+
+const CHIPS = [
+  {name:'CD40106', sub:'Hex Schmitt-trigger inverter', pins:14, p:{
+    1:['in A',IN],   14:['+  VDD',PWR],
+    2:['out A',OUT], 13:['in F',IN],
+    3:['in B',IN],   12:['out F',OUT],
+    4:['out B',OUT], 11:['in E',IN],
+    5:['in C',IN],   10:['out E',OUT],
+    6:['out C',OUT],  9:['in D',IN],
+    7:['−  VSS',PWR], 8:['out D',OUT]}},
+  {name:'CD4017', sub:'Decade counter · 16 pins', pins:16, p:{
+    1:['count 5',OUT], 16:['+  VDD',PWR],
+    2:['count 1',OUT], 15:['reset',IN],
+    3:['count 0',OUT], 14:['clock',IN],
+    4:['count 2',OUT], 13:['inhibit',IN],
+    5:['count 6',OUT], 12:['carry out',OUT],
+    6:['count 7',OUT], 11:['count 9',OUT],
+    7:['count 3',OUT], 10:['count 4',OUT],
+    8:['−  VSS',PWR],   9:['count 8',OUT]}},
+  {name:'CD4013', sub:'Dual D flip-flop — memory', pins:14, p:{
+    1:['Q1',OUT],     14:['+  VDD',PWR],
+    2:['Q1 not',OUT], 13:['Q2',OUT],
+    3:['clock 1',IN], 12:['Q2 not',OUT],
+    4:['reset 1',IN], 11:['clock 2',IN],
+    5:['D1',IN],      10:['reset 2',IN],
+    6:['set 1',IN],    9:['D2',IN],
+    7:['−  VSS',PWR],  8:['set 2',IN]}},
+  {name:'CD4081', sub:'Quad 2-input AND', pins:14, p:{
+    1:['in A',IN],    14:['+  VDD',PWR],
+    2:['in B',IN],    13:['in H',IN],
+    3:['out A·B',OUT],12:['in G',IN],
+    4:['out C·D',OUT],11:['out G·H',OUT],
+    5:['in C',IN],    10:['out E·F',OUT],
+    6:['in D',IN],     9:['in F',IN],
+    7:['−  VSS',PWR],  8:['in E',IN]}}
+];
+
+function dipSVG(chip, scale){
+  const n = chip.pins, half = n/2, pitch = 21, bw = 104, bx = 96, top = 24;
+  const H = top + half*pitch + 24, W = 320;
+  let s = `<svg viewBox="0 0 ${W} ${H}"${scale ? ` width="${Math.round(W*scale)}"` : ''}
+    role="img" aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0"
+      style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : n-i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx+bw, x2 = left ? bx-18 : bx+bw+18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-4 : x2+4}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${bx+bw/2}" y="${H-6}"
+    text-anchor="middle">${chip.name}</text>`;
+  return s + '</svg>';
+}
+
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt style="color:var(--w-red)">Red</dt><dd>Power pins. Note which numbers they are
+         on each chip — the CD4017 is not like the others.</dd>
+       <dt style="color:var(--w-blue)">Blue</dt><dd>Inputs. Every one of these goes
+         somewhere, even on gates you don't use.</dd>
+       <dt style="color:var(--teal)">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+     </dl>`;
+}
+
+/* ============ the oscillator drawing ============ */
+function oscSVG(){
+  let s = `<svg viewBox="0 0 520 190" role="img"
+    aria-label="Schmitt inverter oscillator: one inverter, one resistor, one capacitor">`;
+  /* inverter triangle */
+  s += `<path class="gsym" d="M196,74 L246,99 L196,124 Z"/>`;
+  s += `<circle class="bub" cx="251" cy="99" r="5"/>`;
+  s += `<text class="sv-lbl" x="221" y="140" text-anchor="middle">CD40106</text>`;
+  /* input node and wire in */
+  s += `<path class="w" d="M120,99 H196"/>`;
+  s += `<circle cx="150" cy="99" r="3.4" fill="var(--ink-3)"/>`;
+  /* capacitor down to ground */
+  s += `<path class="w" d="M150,99 V132"/>`;
+  s += `<line x1="132" y1="132" x2="168" y2="132" stroke="var(--ink)" stroke-width="2.4"/>`;
+  s += `<line x1="132" y1="140" x2="168" y2="140" stroke="var(--ink)" stroke-width="2.4"/>`;
+  s += `<path class="w" d="M150,140 V162"/>`;
+  s += `<line x1="134" y1="162" x2="166" y2="162" stroke="var(--ink-2)" stroke-width="2.4"/>`;
+  s += `<line x1="140" y1="168" x2="160" y2="168" stroke="var(--ink-2)" stroke-width="2"/>`;
+  s += `<line x1="146" y1="174" x2="154" y2="174" stroke="var(--ink-2)" stroke-width="2"/>`;
+  s += `<text class="sv-lbl" x="124" y="139" text-anchor="end">0.1 µF — the bucket</text>`;
+  s += `<text class="sv-lbl" x="176" y="170">− rail</text>`;
+  /* output */
+  s += `<path class="w" d="M256,99 H372"/>`;
+  s += `<circle cx="330" cy="99" r="3.4" fill="var(--ink-3)"/>`;
+  s += `<text class="sv-cap" x="380" y="103">clock out</text>`;
+  s += `<text class="sv-lbl" x="380" y="118">to CD4017 pin 14</text>`;
+  /* feedback resistor: up from output node, left, down to input node */
+  s += `<path class="w" d="M330,99 V44 H262"/>`;
+  s += `<rect x="196" y="35" width="66" height="18" rx="3"
+    style="fill:var(--surface-2);stroke:var(--ink)" stroke-width="1.8"/>`;
+  s += `<path class="w" d="M196,44 H120 V99"/>`;
+  s += `<text class="sv-lbl" x="229" y="30" text-anchor="middle">1 MΩ — the pipe</text>`;
+  s += `<text class="sv-lbl" x="118" y="76" text-anchor="end">output feeds</text>`;
+  s += `<text class="sv-lbl" x="118" y="90" text-anchor="end">its own input</text>`;
+  return s + '</svg>';
+}
+function drawOsc(){
+  const h = $('osc-svg');
+  if (h) h.innerHTML = '<div class="scroller">' + oscSVG() + '</div>';
+}
+
+drawPinouts(); drawOsc();
+</script>
+
+<script>
+"use strict";
+/* ============ the game ============ */
+const RG = {pos:0, frozen:false, hz:12, wins:0, tries:0, running:true, timer:null};
+const GOLD = 5;                    /* ring position 6, count 5, CD4017 pin 1 */
+const CX = 170, CY = 185, RR = 118, HUB = 40;
+
+const ang = i => (-90 + 36*i) * Math.PI/180;
+const px  = (i, r) => CX + r*Math.cos(ang(i));
+const py  = (i, r) => CY + r*Math.sin(ang(i));
+
+function symAt(x, y, kind){
+  const d = kind === 'and'
+    ? 'M0,0 H22 A17,17 0 0 1 22,34 H0 Z'
+    : 'M0,0 L30,17 L0,34 Z';
+  const bub = kind === 'not' ? '<circle class="bub" cx="35" cy="17" r="4.4"/>' : '';
+  return `<g transform="translate(${x},${y})"><path class="gsym" d="${d}"/>${bub}</g>`;
+}
+
+function gameSVG(){
+  let s = `<svg viewBox="0 0 880 380" role="img"
+    aria-label="The Reaction Machine circuit: a ring of ten lamps, a counter, a latch and two verdict gates">`;
+
+  /* --- spokes and lamps --- */
+  for (let i = 0; i < 10; i++){
+    s += `<line class="spoke" id="sp${i}" x1="${px(i,HUB+2).toFixed(1)}"
+      y1="${py(i,HUB+2).toFixed(1)}" x2="${px(i,RR-14).toFixed(1)}"
+      y2="${py(i,RR-14).toFixed(1)}"/>`;
+  }
+  for (let i = 0; i < 10; i++){
+    s += `<circle class="lamp" id="rl${i}" cx="${px(i,RR).toFixed(1)}"
+      cy="${py(i,RR).toFixed(1)}" r="12"/>`;
+    s += `<text class="sv-num" x="${px(i,RR).toFixed(1)}"
+      y="${(py(i,RR)+3.4).toFixed(1)}" text-anchor="middle">${i+1}</text>`;
+  }
+  /* hub */
+  s += `<circle cx="${CX}" cy="${CY}" r="${HUB}"
+    style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.6"/>`;
+  s += `<text class="sv-cap" x="${CX}" y="${CY-3}" text-anchor="middle">CD4017</text>`;
+  s += `<text class="sv-lbl" x="${CX}" y="${CY+12}" text-anchor="middle">counter</text>`;
+  /* gold marker */
+  s += `<text class="sv-cap" x="${(px(GOLD,RR)-22).toFixed(1)}"
+    y="${(py(GOLD,RR)+26).toFixed(1)}" text-anchor="middle"
+    style="fill:var(--w-yellow)">GOLD</text>`;
+
+  /* --- clock block --- */
+  s += `<rect x="8" y="163" width="112" height="44" rx="7"
+    style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.6"/>`;
+  s += `<text class="sv-cap" x="64" y="182" text-anchor="middle">CD40106</text>`;
+  s += `<text class="sv-lbl" x="64" y="196" text-anchor="middle" id="hzlbl">clock</text>`;
+  s += `<path class="w" id="wclk" d="M120,185 H130"/>`;
+
+  /* --- buttons --- */
+  s += `<rect id="bxstop" class="mbox" x="300" y="40" width="90" height="32" rx="7"/>`;
+  s += `<text class="sv-cap" x="345" y="61" text-anchor="middle">STOP</text>`;
+  s += `<rect id="bxrst" class="mbox" x="300" y="96" width="90" height="32" rx="7"/>`;
+  s += `<text class="sv-cap" x="345" y="117" text-anchor="middle">RESET</text>`;
+  s += `<path class="w" d="M390,56 H410 V78 H430"/>`;
+  s += `<path class="w" d="M390,112 H410 V102 H430"/>`;
+
+  /* --- latch --- */
+  s += `<rect id="bxlatch" class="mbox" x="430" y="62" width="140" height="56" rx="7"/>`;
+  s += `<text class="sv-cap" x="500" y="84" text-anchor="middle">CD4013</text>`;
+  s += `<text class="sv-lbl" x="500" y="99" text-anchor="middle"
+    id="frzlbl">FROZEN = 0</text>`;
+  /* inhibit wire back to the hub */
+  s += `<path class="w" id="winh" d="M470,118 V185 H${CX+HUB}"/>`;
+  s += `<text class="sv-lbl" x="330" y="177" text-anchor="middle">inhibit — stop counting</text>`;
+
+  /* --- frozen out to both gates --- */
+  s += `<path class="w" id="wfz" d="M570,90 H620"/>`;
+  s += `<path class="w" id="wfz1" d="M620,90 V63.5 H650"/>`;
+  s += `<path class="w" id="wfz2" d="M620,90 V238.5 H650"/>`;
+
+  /* --- gold tap --- */
+  s += `<path class="w" id="wg0" d="M${CX},${CY+RR+12} V340 H628"/>`;
+  /* the little bump is a "hop": these two wires cross without touching */
+  s += `<path class="w" id="wg1" d="M628,340 V244.5 A6,6 0 0 0 628,232.5 V80.5 H650"/>`;
+  s += `<path class="w" id="wg2" d="M560,340 V255.5 H600"/>`;
+  s += `<circle cx="560" cy="340" r="3.4" fill="var(--ink-3)"/>`;
+  s += `<text class="sv-lbl" x="300" y="334">gold light — buffered by a transistor</text>`;
+
+  /* --- inverter + gates --- */
+  s += symAt(600, 238.5, 'not');
+  s += `<text class="sv-lbl" x="612" y="231" text-anchor="middle">CD40106</text>`;
+  s += `<path class="w" id="wng" d="M639,255.5 H650"/>`;
+  s += symAt(650, 55, 'and');
+  s += `<text class="sv-lbl" x="672" y="46" text-anchor="middle">CD4081</text>`;
+  s += symAt(650, 230, 'and');
+  s += `<path class="w" id="wwin" d="M689,72 H726"/>`;
+  s += `<path class="w" id="wmiss" d="M689,247 H726"/>`;
+
+  /* --- verdict lamps --- */
+  s += `<circle class="lamp" id="lwin" cx="742" cy="72" r="14"/>`;
+  s += `<text class="sv-cap" x="762" y="69">WIN</text>`;
+  s += `<text class="sv-lbl" x="762" y="83">green + buzzer</text>`;
+  s += `<circle class="lamp" id="lmiss" cx="742" cy="247" r="14"/>`;
+  s += `<text class="sv-cap" x="762" y="244">MISS</text>`;
+  s += `<text class="sv-lbl" x="762" y="258">red</text>`;
+  return s + '</svg>';
+}
+
+function hi(el, on, col){
+  if (!el) return;
+  el.style.stroke = on ? (col || 'var(--teal)') : '';
+  el.style.strokeWidth = on ? '2.8' : '';
+}
+
+function paint(){
+  const gold = RG.pos === GOLD;
+  const win  = RG.frozen && gold;
+  const miss = RG.frozen && !gold;
+
+  for (let i = 0; i < 10; i++){
+    const on = i === RG.pos, isG = i === GOLD;
+    const lamp = $('rl'+i), sp = $('sp'+i);
+    const col = isG ? 'var(--w-yellow)' : 'var(--w-red)';
+    lamp.style.fill   = on ? col : '';
+    lamp.style.stroke = on ? col : '';
+    sp.style.stroke      = on ? 'var(--teal)' : '';
+    sp.style.strokeWidth = on ? '2.4' : '';
+  }
+  $('frzlbl').textContent = 'FROZEN = ' + (RG.frozen ? 1 : 0);
+  $('bxlatch').classList.toggle('live', RG.frozen);
+  $('hzlbl').textContent = RG.hz + ' Hz';
+  hi($('winh'), RG.frozen);
+  hi($('wfz'),  RG.frozen); hi($('wfz1'), RG.frozen); hi($('wfz2'), RG.frozen);
+  hi($('wg0'),  gold, 'var(--w-yellow)');
+  hi($('wg1'),  gold, 'var(--w-yellow)');
+  hi($('wg2'),  gold, 'var(--w-yellow)');
+  hi($('wng'), !gold);
+  hi($('wwin'),  win);
+  hi($('wmiss'), miss);
+
+  const lw = $('lwin'), lm = $('lmiss');
+  lw.style.fill = lw.style.stroke = win ? 'var(--green)' : '';
+  lm.style.fill = lm.style.stroke = miss ? 'var(--red)' : '';
+  lw.classList.toggle('ringing', win);
+
+  let m;
+  if (!RG.frozen) m = RG.running ? 'Spinning — hit STOP on the gold light.' : 'Paused.';
+  else if (win)   m = 'HIT! Dead on the gold one.';
+  else {
+    const d = Math.abs(RG.pos - GOLD);
+    m = 'Missed by ' + Math.min(d, 10-d) + '. Press RESET.';
+  }
+  if (RG.tries) m += '  ·  ' + RG.wins + ' of ' + RG.tries;
+  $('sim-msg').textContent = m;
+}
+
+function tick(){ if (RG.running && !RG.frozen){ RG.pos = (RG.pos+1) % 10; paint(); } }
+
+function retime(){
+  if (RG.timer) clearInterval(RG.timer);
+  RG.timer = setInterval(tick, Math.round(1000/RG.hz));
+}
+
+function flash(id){
+  const el = $(id); if (!el) return;
+  el.classList.add('live');
+  setTimeout(() => el.classList.remove('live'), 160);
+}
+
+function initGame(){
+  if (!$('sim-svg')) return;
+  $('sim-svg').innerHTML = '<div class="scroller">' + gameSVG() + '</div>';
+
+  $('btn-stop').addEventListener('click', () => {
+    flash('bxstop');
+    if (RG.frozen) return;
+    RG.frozen = true; RG.tries++;
+    if (RG.pos === GOLD) RG.wins++;
+    paint();
+  });
+  $('btn-reset').addEventListener('click', () => {
+    flash('bxrst'); RG.frozen = false; paint();
+  });
+  $('btn-pause').addEventListener('click', e => {
+    RG.running = !RG.running;
+    e.currentTarget.textContent = RG.running ? 'Pause' : 'Resume';
+    paint();
+  });
+  const speeds = {'sp-easy':12, 'sp-hard':25, 'sp-brutal':49};
+  Object.keys(speeds).forEach(id => $(id).addEventListener('click', () => {
+    RG.hz = speeds[id];
+    Object.keys(speeds).forEach(o => $(o).classList.toggle('sel', o === id));
+    retime(); paint();
+  }));
+
+  if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches){
+    RG.running = false;
+    $('btn-pause').textContent = 'Resume';
+  }
+  retime(); paint();
+}
+initGame();
+</script>
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the timing measurements and
+  the score sheet. Every pin number here was read off the Texas Instruments datasheet
+  drawings — CD40106B, CD4017B, CD4013B and CD4081B.</p>
+</div></footer>
