@@ -9,7 +9,7 @@ Press **OPEN** with the wrong code and a buzzer screams.
 Built for a curious 12-year-old, using nothing but CD4000-series logic chips, a breadboard
 and a handful of LEDs.
 
-**Open [`guide.html`](guide.html) in a browser** — that's the real guide, with diagrams and a
+**Open [`guide.html`](https://guddis.github.io/breadboard-lab/projects/logic-vault/guide.html) in a browser** — that's the real guide, with diagrams and a
 working simulator you can play with before you build anything. This file is the bench
 reference: parts, wire lists, troubleshooting.
 

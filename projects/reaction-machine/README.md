@@ -9,7 +9,7 @@ decides which light is on, and a flip-flop remembers that you pressed.
 Built for a curious 10-to-12-year-old, using CD4000-series logic chips, a breadboard and a
 dozen LEDs.
 
-**Open [`guide.html`](guide.html) in a browser** — that's the real guide, and the game is
+**Open [`guide.html`](https://guddis.github.io/breadboard-lab/projects/reaction-machine/guide.html) in a browser** — that's the real guide, and the game is
 playable on the page before you build anything. This file is the bench reference: parts,
 wire lists, troubleshooting.
 

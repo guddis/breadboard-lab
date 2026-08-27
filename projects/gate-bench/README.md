@@ -9,7 +9,7 @@ out which chip somebody plugged in while you weren't looking, in three tests.
 Built for a curious 11-year-old, using CD4000-series logic chips, a breadboard, five LEDs
 and no transistors at all.
 
-**Open [`guide.html`](guide.html) in a browser** — that's the real guide, with diagrams and
+**Open [`guide.html`](https://guddis.github.io/breadboard-lab/projects/gate-bench/guide.html) in a browser** — that's the real guide, with diagrams and
 a working bench simulator you can play with before you touch a wire. This file is the bench
 reference: parts, wire lists, troubleshooting.
 
