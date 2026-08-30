@@ -1,0 +1,1086 @@
+<meta charset="utf-8">
+<title>The Siren Box</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+tr.gold td{background:var(--copper-soft)}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+.unk{color:var(--line-2)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+.simbar.tight{margin-top:.55rem;padding-top:0;border-top:none}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+button.sel{border-color:var(--copper);color:var(--copper)}
+button .pn{font:500 .68rem/1 var(--fm);color:var(--ink-3);margin-left:.3rem}
+button.prim .pn{color:var(--teal-soft)}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.w.dash{stroke-dasharray:4 4}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.mbox.live{stroke:var(--teal);stroke-width:2.2}
+.spoke{stroke:var(--line);stroke-width:1.2}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.3}}
+.ringing{animation:ring .28s infinite}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Frequency &amp; sound &middot; Project 04</p>
+  <h1>The Siren<br>Box</h1>
+  <p class="lead">A blinking LED and a musical note are the same circuit. The only
+  difference is how fast. Build one oscillator a thousand times faster than the one in
+  Project 03, hang a buzzer on it, and you have an instrument. Then put a second
+  oscillator in charge of the first one and you have a police siren.</p>
+  <div class="facts">
+    <span><b>Age</b> 10–12, with an adult nearby for the first hour</span>
+    <span><b>Time</b> 1½–2 hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V — nothing dangerous</span>
+    <span><b>Chips</b> CD40106, CD4066</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">This one makes actual noise in your browser. Turn your volume down first.</p>
+
+  <p>Four buttons, four notes. A photoresistor you wave your hand over to bend the pitch.
+  And two switches that put a second and third oscillator in charge — one that flips the
+  pitch back and forth to make a siren, one that chops the sound into beeps.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="n0" class="prim">Hold <span class="pn">10 kΩ</span></button>
+      <button id="n1" class="prim">Hold <span class="pn">5.1 kΩ</span></button>
+      <button id="n2" class="prim">Hold <span class="pn">2 kΩ</span></button>
+      <button id="n3" class="prim">Hold <span class="pn">1 kΩ</span></button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <button id="t-wail">WAIL <span class="pn">off</span></button>
+      <button id="t-chop">CHOP <span class="pn">off</span></button>
+      <span class="msg" id="sim-hz"></span>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">Hold a button to make a sound, like holding a
+  piano key. The frequencies shown are worked out from the same formula as the guide, using
+  the resistors you'll actually plug in — so what you hear here is what the box does.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A resistor and a capacitor set a
+  speed. At 1 beat per second you see a blink; at 1000 beats per second you hear a note.
+  Nothing else changes. And an oscillator's output is just a signal — so it can be wired to
+  control <em>another</em> oscillator.</div>
+</section>
+
+<section id="fast">
+  <span class="snum">Section 2</span>
+  <h2>Sound is just blinking, sped up</h2>
+  <p class="sub">If you built Project 03, you have already built this circuit once.</p>
+
+  <p>Here is the oscillator from the Reaction Machine, unchanged: one Schmitt-trigger
+  inverter, one resistor, one capacitor, output fed back to its own input. It fills the
+  capacitor until the input counts as a 1, flips, empties it until the input counts as a 0,
+  flips back, and never settles.</p>
+
+  <figure>
+    <div id="osc-svg"></div>
+    <figcaption>The audio oscillator. The only change from Project 03 is a much smaller
+    resistor — which makes it about a thousand times faster.</figcaption>
+  </figure>
+
+  <p>In Project 03 the resistor was 1 MΩ and you got 12 beats a second, which your eye sees
+  as a blinking light. Make the resistor 10 kΩ — a hundred times smaller — and you get
+  about 1100 beats a second. Your eye can't follow that at all. But a buzzer can, and your
+  ear hears it as a note.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Resistor</th><th class="n">Beats per second</th><th>What it is</th></tr></thead>
+    <tbody>
+      <tr><td>1 MΩ</td><td class="n">12</td><td>A blinking light (Project 03)</td></tr>
+      <tr><td>100 kΩ</td><td class="n">123</td><td>A low buzzing growl — the bottom of hearing</td></tr>
+      <tr><td>10 kΩ</td><td class="n">1 133</td><td>A clear note, roughly two octaves above middle C</td></tr>
+      <tr><td>5.1 kΩ</td><td class="n">2 040</td><td>Piercing. Also the loudest, and there's a reason</td></tr>
+      <tr><td>2 kΩ</td><td class="n">4 168</td><td>A shriek</td></tr>
+      <tr><td>1 kΩ</td><td class="n">6 295</td><td>Horrible. Some adults can barely hear it</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="why"><b>Why the 5.1 kΩ note is the loudest.</b> A buzzer is a physical object
+  with a size and a stiffness, so like a bell or a guitar string it has one frequency it
+  likes best. For most small buzzers that's somewhere around 2 kHz. Feed it its favourite
+  frequency and it gives you far more noise for the same electricity. Engineers call it
+  <em>resonance</em>, and it's why a buzzer's datasheet quotes one frequency.</div>
+
+  <h3>The formula, with the honest correction</h3>
+
+  <p>The clean version is <b>f ≈ 1.23 ÷ (R × C)</b>. For the slow oscillators in this
+  project that's accurate. For the fast one it is not, and the reason is worth knowing.</p>
+
+  <p>A CD4000 output isn't a perfect 0 V or 5 V — it behaves as if it has about
+  <b>1 kΩ</b> of resistance built into it. When your timing resistor was 1 MΩ, an extra
+  1 kΩ made no difference at all. But when your timing resistor is 2 kΩ, that hidden
+  kilohm is a third of the total, and your note comes out noticeably flat. So:</p>
+
+  <div class="card" style="text-align:center;font-family:var(--fd);font-size:1.1rem">
+    f ≈ 1.23 ÷ ( (R + 1 kΩ) × C )
+  </div>
+
+  <p>Every number in the table above already has that correction in it. In the worksheet you
+  will measure your own notes, compare them with both formulas, and work backwards to the
+  hidden resistance inside your own chip — which is a genuinely respectable piece of
+  reverse-engineering for an afternoon.</p>
+</section>
+
+<section id="mod">
+  <span class="snum">Section 3</span>
+  <h2>One oscillator in charge of another</h2>
+  <p class="sub">The idea that turns a beeper into a siren.</p>
+
+  <p>An oscillator's output is an ordinary signal: high, low, high, low. So it can be wired
+  to anything a signal can control. Wire a slow one to something that changes the fast one,
+  and the fast one starts changing all by itself.</p>
+
+  <figure>
+    <div id="blk-svg"></div>
+    <figcaption>Three oscillators. The fast one makes the sound; the two slow ones boss it
+    around. This is the whole box.</figcaption>
+  </figure>
+
+  <p>There are two different jobs the slow oscillators do, and they sound completely
+  different:</p>
+
+  <ol class="steps">
+    <li><b>WAIL — change the pitch</b>
+      Switch a second resistor in and out of the fast oscillator's timing path. Two
+      resistors side by side make a smaller resistance, so the pitch jumps up, then back
+      down, about once a second. That two-tone <em>nee-naw</em> is a European police
+      siren.</li>
+    <li><b>CHOP — interrupt the sound</b>
+      Leave the pitch alone and switch the buzzer itself on and off about twelve times a
+      second. Same note, cut into pieces. That's an alarm clock, or a stutter.</li>
+  </ol>
+
+  <p>Turn both on and you get warbling beeps. Four combinations, four characters:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th class="n">WAIL</th><th class="n">CHOP</th><th>What you hear</th></tr></thead>
+    <tbody>
+      <tr><td class="n off">off</td><td class="n off">off</td>
+        <td>A steady note. An instrument</td></tr>
+      <tr><td class="n on">on</td><td class="n off">off</td>
+        <td><b>Police siren</b> — two tones, nee-naw, nee-naw</td></tr>
+      <tr><td class="n off">off</td><td class="n on">on</td>
+        <td><b>Alarm clock</b> — one note, beep beep beep</td></tr>
+      <tr><td class="n on">on</td><td class="n on">on</td>
+        <td><b>Ambulance</b> — warbling beeps, the worst of them all</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Why the pitch needs a switch, and not just a wire</h3>
+
+  <p>The obvious idea is to run a wire from the slow oscillator into the fast oscillator's
+  capacitor and let it push the voltage about. It doesn't work, and the reason is neat: the
+  capacitor has to fill <em>and</em> empty every cycle. Pushing the voltage up makes the
+  filling faster and the emptying slower by almost exactly the same amount, so the total
+  time barely changes. Push hard enough to matter and the capacitor can no longer empty far
+  enough to trip the inverter, so the sound stops altogether.</p>
+
+  <p>To change the pitch you have to change the resistor. That needs something that can be
+  a wire when you want it and not a wire when you don't — which is exactly what the
+  <b>CD4066</b> is. It holds four <em>analog switches</em>: put 5 V on a switch's control
+  pin and its two signal pins are connected; put 0 V on it and they aren't.</p>
+
+  <div class="note"><b>An analog switch is not a gate.</b> A gate looks at its inputs and
+  drives its output to a fresh 1 or 0. A CD4066 switch doesn't look at anything and drives
+  nothing — it just joins two pins together, and whatever was flowing keeps flowing, in
+  either direction. It's a relay with no moving parts. That's why it can sit inside a timing
+  network where a gate would wreck it.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 4</span>
+  <h2>What you need</h2>
+  <p class="sub">All from the kit. Full wire list in <a href="README.md">README.md</a>.</p>
+
+  <h3>Chips</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>What it holds</th><th>Job here</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD40106</code></td><td>Six Schmitt-trigger inverters</td>
+        <td>All three oscillators — sound, wail and chop</td></tr>
+      <tr><td><code>CD4066</code></td><td>Four analog switches</td>
+        <td>Switches the second timing resistor in and out</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Everything else</h3>
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td><b>Passive</b> buzzer</td>
+        <td>The one that stays silent on plain DC. Not the active one</td></tr>
+      <tr><td class="n">2</td><td>PN2222 transistor</td>
+        <td>Flat side toward you, legs down: <b>E – B – C</b></td></tr>
+      <tr><td class="n">1</td><td>Photoresistor</td><td>The theremin</td></tr>
+      <tr><td class="n">4</td><td>Push button (small)</td><td>The four notes</td></tr>
+      <tr><td class="n">1</td><td>100 Ω resistor</td><td>In series with the buzzer — see the note below</td></tr>
+      <tr><td class="n">2</td><td>1 kΩ resistor</td><td>Top note, and the photoresistor's floor</td></tr>
+      <tr><td class="n">1</td><td>2 kΩ resistor</td><td>Note 3</td></tr>
+      <tr><td class="n">1</td><td>5.1 kΩ resistor</td><td>Note 2</td></tr>
+      <tr><td class="n">6</td><td>10 kΩ resistor</td>
+        <td>Note 1, siren resistor, chop timing, two transistor bases, one pull-down</td></tr>
+      <tr><td class="n">1</td><td>100 kΩ resistor</td><td>Wail timing</td></tr>
+      <tr><td class="n">1</td><td>1 MΩ resistor</td><td>The bleed resistor that keeps the input from floating</td></tr>
+      <tr><td class="n">3</td><td>0.1 µF ceramic ("104")</td>
+        <td>One across each chip's power pins, plus the audio timing capacitor</td></tr>
+      <tr><td class="n">2</td><td>10 µF electrolytic</td><td>Wail and chop timing — <b>stripe to −</b></td></tr>
+      <tr><td class="n">1</td><td>100 µF electrolytic</td><td>Across the rails — <b>stripe to −</b></td></tr>
+      <tr><td class="n">1</td><td>Breadboard</td><td>Half-size is enough</td></tr>
+      <tr><td class="n">~30</td><td>Jumper wires</td><td>Red for +, black for −, colours for signals</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn"><b>The 100 Ω resistor in series with the buzzer is not optional.</b>
+  Some passive buzzers are a coil of wire with a resistance of only about 16 Ω. Wired
+  straight across 5 V that's a third of an amp, which will cook the transistor and flatten
+  your batteries. The 100 Ω holds it to a sensible 40 mA. If yours comes out too quiet, try
+  the 10 Ω instead — but if the transistor gets warm, put the 100 Ω back and leave it
+  there.</div>
+
+  <h3>Power</h3>
+  <p><b>4.5 V to 5 V.</b> Three AA cells, or the MB102 module set to 5 V. Both chips run
+  from 3 V to 18 V. Nothing here goes near mains electricity.</p>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 5</span>
+  <h2>Rules for not breaking things — including your ears</h2>
+
+  <ol class="steps">
+    <li><b>Don't hold the buzzer against your ear</b>
+      This is the one real hazard in the whole series. A small buzzer a centimetre from
+      your ear is genuinely loud enough to be unpleasant, and the 2 kHz note is the loudest
+      one. Keep it at arm's length. Test at arm's length. Especially don't do it to somebody
+      else as a joke.</li>
+    <li><b>Unplug the power before you rewire</b>
+      Every single time.</li>
+    <li><b>Both chips are 14-pin, + on 14 and − on 7</b>
+      A relief after Project 03. Notch to the left, pin 1 bottom-left, numbers run
+      anticlockwise.</li>
+    <li><b>Never leave an input dangling</b>
+      Every unused inverter input goes to −, and every unused CD4066 <em>control</em> pin
+      goes to − as well. The CD4066's signal pins are different — they aren't inputs, and
+      they can be left empty.</li>
+    <li><b>Never wire an output straight to + or −</b>
+      That's a short circuit through the chip.</li>
+    <li><b>The electrolytic capacitors have a right way round</b>
+      The stripe marks the negative leg. Backwards, they can pop.</li>
+    <li><b>Warm chip means stop</b>
+      Pull the power and check the wiring — and check that 100 Ω is really in series with
+      the buzzer.</li>
+  </ol>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 6</span>
+  <h2>The two pinouts</h2>
+  <p class="sub">Pin numbering and breadboard rows are covered in
+  <a href="../gate-bench/guide.html">Project 01</a> if you need them.</p>
+
+  <div id="pinouts"></div>
+
+  <div class="note"><b>Read the CD4066 carefully.</b> Its pins come in an order nobody would
+  guess: switch A is pins 1 and 2 but its control is pin <b>13</b>, at the other end of the
+  chip. Switch B is pins 3 and 4 with control on pin 5. Copy the drawing; don't reason
+  about it.</div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>One note</span>
+    <span>~20 min</span></div>
+  <h2>Make a sound on purpose</h2>
+  <p class="sub">Five components and you have an instrument.</p>
+
+  <p>Power the rails: supply + to the top red rail, supply − to the top blue rail, then
+  jumper across to the bottom rails. Put the 100 µF across the rails, <b>stripe to −</b>.</p>
+
+  <p>Place the <b>CD40106</b>, notch to the left:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td>10 kΩ</td><td>pin 2 → pin 1</td><td>Timing resistor</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 1 → − rail</td><td>Timing capacitor</td></tr>
+      <tr><td>pins 5, 9, 11, 13</td><td>− rail</td><td>Unused inputs — for now</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Pin 3 gets used in Stage 4 and pin 5 in Stage 5, so leave those two easy to reach.
+  Now the buzzer, which needs a transistor because a logic chip can only push about 2½ mA
+  and a buzzer wants twenty times that:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD40106 <b>pin 2</b></td><td>10 kΩ → Q1 base (middle leg)</td><td>The note</td></tr>
+      <tr><td>Q1 emitter (left leg)</td><td>− rail</td><td>Changes in Stage 5</td></tr>
+      <tr><td>+ rail</td><td>100 Ω → buzzer leg</td><td>Current limit — see the warning</td></tr>
+      <tr><td>Buzzer other leg</td><td>Q1 collector (right leg)</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up. You should get a clear, unpleasant note. Hold the board at arm's length.</p>
+
+  <ul class="tick">
+    <li>Swap the 10 kΩ for the 100 kΩ. The note drops to a low growl.</li>
+    <li>Swap it for the 1 kΩ. The note becomes a shriek. Ask an adult whether they can hear
+      it; there's a fair chance they can't hear it as well as you can.</li>
+    <li>Swap it for the 1 MΩ. The note disappears and becomes a slow ticking — you are back
+      to Project 03's blinking speed, and the buzzer is clicking once per beat.</li>
+    <li>Put the 10 kΩ back.</li>
+  </ul>
+
+  <div class="why"><b>That last one is the point of the whole project.</b> Nothing changed
+  but one resistor. Ticking, growling, a note, a shriek — one circuit, four things,
+  separated only by speed. Frequency isn't a different kind of thing from blinking; it's the
+  same thing counted faster than you can see.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>Four notes</span>
+    <span>~20 min</span></div>
+  <h2>A keyboard with four keys</h2>
+  <p class="sub">Same oscillator. You just get to choose the resistor while it's running.</p>
+
+  <p>Take out the 10 kΩ timing resistor and build this instead. The <b>1 MΩ</b> stays in
+  permanently; each button adds its own resistor <em>beside</em> it, between the same two
+  pins.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>✓</th><th>From</th><th>To</th><th>Note you get</th></tr></thead>
+    <tbody>
+      <tr><td>☐</td><td>1 MΩ</td><td>pin 2 → pin 1</td><td>Silence (a faint tick)</td></tr>
+      <tr><td>☐</td><td>pin 2 → button 1 → 10 kΩ</td><td>pin 1</td><td>1 133 Hz</td></tr>
+      <tr><td>☐</td><td>pin 2 → button 2 → 5.1 kΩ</td><td>pin 1</td><td>2 040 Hz</td></tr>
+      <tr><td>☐</td><td>pin 2 → button 3 → 2 kΩ</td><td>pin 1</td><td>4 168 Hz</td></tr>
+      <tr><td>☐</td><td>pin 2 → button 4 → 1 kΩ</td><td>pin 1</td><td>6 295 Hz</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Use <b>diagonally opposite legs</b> on each button — a 4-leg tactile button has its
+  legs joined in hidden pairs, and diagonal is the choice that's always right.</p>
+
+  <p>Press one button at a time and you get four notes. Press two at once and you get a
+  fifth, higher than either — because two resistors side by side make a smaller resistance,
+  and smaller means faster.</p>
+
+  <ul class="tick">
+    <li>All four buttons give clearly different notes.</li>
+    <li>No button pressed gives a faint tick, not silence, and not a note.</li>
+    <li>Pressing two buttons gives a higher note than either alone.</li>
+    <li>Fill in the pitches you actually hear in the <a href="worksheet.md">worksheet</a>
+      and compare them with both formulas.</li>
+  </ul>
+
+  <div class="note"><b>Why the 1 MΩ has to stay in.</b> Without it, letting go of every
+  button would leave pin 1 connected to nothing but a capacitor — a floating input, which is
+  against the rules and makes the chip pick up radio noise and squeal. The 1 MΩ is a
+  <em>bleed</em> resistor: too weak to make a note, strong enough to keep the input
+  honest.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>The theremin</span>
+    <span>~15 min</span></div>
+  <h2>Play it with your hands</h2>
+  <p class="sub">One component swap, and the best five minutes in the project.</p>
+
+  <p>A <b>photoresistor</b> is a resistor whose value depends on light: a few kilohms in
+  bright light, hundreds of kilohms in shadow. It is exactly the part this oscillator wants,
+  because the oscillator's speed is set by a resistance.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD40106 pin 2</td><td>1 kΩ → photoresistor leg</td><td>Stops the pitch going stupidly high</td></tr>
+      <tr><td>Photoresistor other leg</td><td>CD40106 pin 1</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Leave the 1 MΩ and the four buttons in place — the photoresistor just joins the crowd.
+  Now move your hand slowly over the sensor. Shadow lowers the pitch, light raises it.</p>
+
+  <ul class="tick">
+    <li>Aim a phone torch at it: the pitch should jump right up.</li>
+    <li>Cup your hand tightly over it: the pitch should fall to a growl or a tick.</li>
+    <li>Try to play a tune. You will not manage it, and neither can anybody else — this is
+      why real theremins are famously hard.</li>
+  </ul>
+
+  <div class="why"><b>Why the 1 kΩ is there.</b> In bright sunlight a photoresistor can drop
+  to a few hundred ohms, and this chip can't push enough current through a resistor that
+  small — the oscillator would go weak and unreliable instead of high. The 1 kΩ sits in
+  series as a floor, so the total can never go below it. It's a limit you choose on purpose
+  so the circuit can't be pushed somewhere it doesn't work. Real designs are full of
+  them.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>The wail</span>
+    <span>~25 min</span></div>
+  <h2>A second oscillator takes charge</h2>
+  <p class="sub">Two chips, and suddenly it's a siren.</p>
+
+  <p>The second oscillator is the same three components as the first, but slow: it uses the
+  <b>10 µF</b> capacitor instead of the little ceramic, which is a hundred times bigger, so
+  it runs about a thousand times slower.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3"><em>First, remove the wire from CD40106 pin 5 to −; you need pin 5
+        in Stage 5. Leave pins 9, 11 and 13 grounded.</em></td></tr>
+      <tr><td>100 kΩ</td><td>pin 4 → pin 3</td><td>Wail timing resistor</td></tr>
+      <tr><td>10 µF <b>+ leg</b></td><td>pin 3</td><td>Wail timing capacitor</td></tr>
+      <tr><td>10 µF <b>stripe leg</b></td><td>− rail</td><td>Polarity matters</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>pin 4</b> is now going high and low about 1.2 times a second. Now place the
+  <b>CD4066</b>, notch to the left, and use switch A to put a second resistor into the
+  audio oscillator's timing path:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4066 <b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td>CD4066 <b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td>CD40106 pin 2</td><td>10 kΩ → CD4066 <b>pin 1</b></td><td>The siren resistor</td></tr>
+      <tr><td>CD4066 <b>pin 2</b></td><td>CD40106 <b>pin 1</b></td><td>Back to the timing node</td></tr>
+      <tr><td>CD4066 <b>pin 13</b></td><td><b>WAIL jumper</b></td><td>Switch A's control</td></tr>
+      <tr><td>CD4066 pins 5, 6, 12</td><td>− rail</td><td>Unused controls — rule 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Leave CD4066 pins 3, 4, 8, 9, 10 and 11 empty. The <b>WAIL jumper</b> is a single wire
+  you move between two holes, and it is how you choose the sound:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>WAIL jumper in…</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td><b>− rail</b></td><td>Switch open. One steady note</td></tr>
+      <tr><td><b>CD40106 pin 4</b></td><td>Switch opens and closes 1.2 times a second — siren</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Hold button 1 and move the jumper to pin 4. Nee-naw, nee-naw.</p>
+
+  <ul class="tick">
+    <li>Two clear alternating pitches, about one swap per second.</li>
+    <li>The higher of the two should be the one where the switch is closed — two resistors
+      in parallel, so less resistance, so faster.</li>
+    <li>Swap the 100 kΩ for the 10 kΩ and the siren gets frantic. Swap it back.</li>
+  </ul>
+
+  <div class="why"><b>You just built a modulator.</b> One oscillator changing another one's
+  frequency is called <em>frequency modulation</em>, and it is how FM radio carries sound,
+  how the FM synthesisers behind most 1980s pop music worked, and how a great many
+  electronic instruments make interesting noises. Yours does it once a second with a 10 kΩ
+  resistor. A radio station does it 100 million times a second. Same idea.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>The chop</span>
+    <span>~20 min</span></div>
+  <h2>Cut it into pieces</h2>
+  <p class="sub">A third oscillator, a second transistor, and four different machines.</p>
+
+  <p>Chopping is a different job from wailing: instead of changing the note, we switch the
+  buzzer itself on and off. Two transistors in series do it — the buzzer only sounds when
+  <em>both</em> are turned on, so Q2 becomes a gate on the sound.</p>
+
+  <p>Third oscillator first, on the last free inverter:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>10 kΩ</td><td>pin 6 → pin 5</td><td>Chop timing resistor — about 12 a second</td></tr>
+      <tr><td>10 µF <b>+ leg</b></td><td>pin 5</td><td>Chop timing capacitor</td></tr>
+      <tr><td>10 µF <b>stripe leg</b></td><td>− rail</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now put Q2 underneath Q1. This is the one wire from Stage 1 that has to move:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3"><em>Remove the wire from Q1's emitter to the − rail.</em></td></tr>
+      <tr><td>Q1 emitter</td><td>Q2 collector (right leg)</td><td>Stacked, so both must be on</td></tr>
+      <tr><td>Q2 emitter (left leg)</td><td>− rail</td><td></td></tr>
+      <tr><td>Q2 base (middle leg)</td><td>10 kΩ → <b>CHOP jumper</b></td><td>What decides</td></tr>
+      <tr><td>Q2 base</td><td>10 kΩ → − rail</td><td>Keeps Q2 off if the jumper is out</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="scroller"><table>
+    <thead><tr><th>CHOP jumper in…</th><th>What happens</th></tr></thead>
+    <tbody>
+      <tr><td><b>+ rail</b></td><td>Q2 always on. Sound passes through — no chopping</td></tr>
+      <tr><td><b>CD40106 pin 6</b></td><td>Q2 switches 12 times a second — beeping</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now you have two jumpers and four machines. Hold a note button and try all four:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>WAIL</th><th>CHOP</th><th>Sound</th></tr></thead>
+    <tbody>
+      <tr><td>− rail</td><td>+ rail</td><td>A steady note — an instrument</td></tr>
+      <tr><td>pin 4</td><td>+ rail</td><td><b>Police siren</b></td></tr>
+      <tr><td>− rail</td><td>pin 6</td><td><b>Alarm clock</b></td></tr>
+      <tr><td>pin 4</td><td>pin 6</td><td><b>Ambulance</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>Why Q1 sits on top of Q2 and not the other way round.</b> Q1's base is
+  driven by the audio oscillator, which swings the whole way from 0 V to 5 V, so it has
+  plenty of voltage to spare above whatever Q2's collector is sitting at. Stack them the
+  other way and the note would come out weak and distorted. When you stack transistors, the
+  one with the strongest drive goes on top.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>Three more</span>
+    <span>~10 min each</span></div>
+  <h2>If you haven't been told off yet</h2>
+
+  <h3>A hearing test that actually works</h3>
+  <p>Hold button 4 — about 6 300 Hz — and ask everybody in the house whether they can hear
+  it, then work down to button 1. Hearing for high frequencies fades with age, so there is a
+  good chance you can hear something your parents genuinely cannot. Write down who hears
+  what at each note; that's a real audiogram, roughly.</p>
+
+  <h3>Swap the timing capacitor for the 22 pF</h3>
+  <p>Five thousand times smaller than the "104". The formula says the pitch should go up
+  five thousand times, which is far above hearing — and it won't, because at that size the
+  stray capacitance of the breadboard itself is bigger than your capacitor. You will get
+  something unpredictable that changes when you move your hand near the board. That is a
+  genuine and famous limit: past a certain speed the wiring becomes part of the circuit.</p>
+
+  <h3>Put the active buzzer in instead</h3>
+  <p>Swap the passive buzzer for the active one and every sound turns into the same
+  one-note beep, no matter which button you press. An active buzzer has its own oscillator
+  sealed inside it, so it ignores yours completely and only obeys on and off. Now you know
+  the difference between the two, which the packet usually doesn't tell you.</p>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 7</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Full table in <a href="README.md">README.md</a>.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you hear</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing at all, ever</td><td>The active buzzer in place of the passive one, or
+        the 100 Ω not connected. Check the buzzer with a jumper straight to + and − — if it
+        beeps, it's the active one.</td></tr>
+      <tr><td>One fixed beep whatever you press</td><td>That's the active buzzer. Use the
+        passive one.</td></tr>
+      <tr><td>A tick instead of a note</td><td>The 1 MΩ is doing the timing — no button
+        resistor is actually reaching pin 1.</td></tr>
+      <tr><td>A squeal that changes when you touch the board</td><td>Pin 1 is floating. The
+        1 MΩ bleed resistor is missing.</td></tr>
+      <tr><td>Note is much lower than the table says</td><td>Expected on the top two notes —
+        that's the chip's own 1 kΩ. If <em>all</em> notes are low, your capacitor is bigger
+        than 0.1 µF.</td></tr>
+      <tr><td>Siren doesn't wail, just one note</td><td>WAIL jumper in the − rail, or
+        CD4066 pin 2 not reaching CD40106 pin 1.</td></tr>
+      <tr><td>Wail changes the volume but not the pitch</td><td>The siren resistor is wired
+        to the wrong side — it must go from pin 2 through the switch to pin 1.</td></tr>
+      <tr><td>Chop doesn't chop</td><td>CHOP jumper in the + rail, or Q1's emitter is still
+        wired to − instead of to Q2.</td></tr>
+      <tr><td>Silent after adding Q2</td><td>Q2 in backwards. Flat side toward you: E – B – C
+        left to right.</td></tr>
+      <tr><td>A chip gets warm</td><td>Unplug now. Power backwards, or the buzzer's 100 Ω is
+        missing.</td></tr>
+      <tr><td>Everybody is annoyed with you</td><td>Working as designed. Try the 1 MΩ.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ pinout drawings ============ */
+const IN='in', OUT='out', PWR='pwr', SIG='sig';
+const ROLECOL = {in:'var(--w-blue)', out:'var(--teal)', pwr:'var(--w-red)',
+                 sig:'var(--w-violet)'};
+
+const CHIPS = [
+  {name:'CD40106', sub:'Hex Schmitt-trigger inverter', pins:14, p:{
+    1:['in A',IN],   14:['+  VDD',PWR],
+    2:['out A',OUT], 13:['in F',IN],
+    3:['in B',IN],   12:['out F',OUT],
+    4:['out B',OUT], 11:['in E',IN],
+    5:['in C',IN],   10:['out E',OUT],
+    6:['out C',OUT],  9:['in D',IN],
+    7:['−  VSS',PWR], 8:['out D',OUT]}},
+  {name:'CD4066', sub:'Quad analog switch', pins:14, p:{
+    1:['switch A',SIG], 14:['+  VDD',PWR],
+    2:['switch A',SIG], 13:['control A',IN],
+    3:['switch B',SIG], 12:['control D',IN],
+    4:['switch B',SIG], 11:['switch D',SIG],
+    5:['control B',IN], 10:['switch D',SIG],
+    6:['control C',IN],  9:['switch C',SIG],
+    7:['−  VSS',PWR],    8:['switch C',SIG]}}
+];
+
+function dipSVG(chip){
+  const n = chip.pins, half = n/2, pitch = 21, bw = 104, bx = 96, top = 24;
+  const H = top + half*pitch + 24, W = 320;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0"
+      style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : n-i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx+bw, x2 = left ? bx-18 : bx+bw+18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-4 : x2+4}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${bx+bw/2}" y="${H-6}"
+    text-anchor="middle">${chip.name}</text>`;
+  return s + '</svg>';
+}
+
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt style="color:var(--w-red)">Red</dt><dd>Power. Both chips: + on 14, − on 7.</dd>
+       <dt style="color:var(--w-blue)">Blue</dt><dd>Inputs. Every one goes somewhere,
+         including the CD4066's control pins.</dd>
+       <dt style="color:var(--teal)">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+       <dt style="color:var(--w-violet)">Violet</dt><dd>Switch pins. Not inputs and not
+         outputs — just two ends of a wire that can be turned off. Safe to leave empty.</dd>
+     </dl>`;
+}
+
+/* ============ the audio oscillator schematic ============ */
+function oscSVG(){
+  let s = `<svg viewBox="0 0 520 190" role="img"
+    aria-label="Schmitt inverter oscillator with a small resistor for audio frequency">`;
+  s += `<path class="gsym" d="M196,74 L246,99 L196,124 Z"/>`;
+  s += `<circle class="bub" cx="251" cy="99" r="5"/>`;
+  s += `<text class="sv-lbl" x="221" y="142" text-anchor="middle">CD40106</text>`;
+  s += `<path class="w" d="M120,99 H196"/>`;
+  s += `<circle cx="150" cy="99" r="3.4" fill="var(--ink-3)"/>`;
+  s += `<path class="w" d="M150,99 V132"/>`;
+  s += `<line x1="132" y1="132" x2="168" y2="132" stroke="var(--ink)" stroke-width="2.4"/>`;
+  s += `<line x1="132" y1="140" x2="168" y2="140" stroke="var(--ink)" stroke-width="2.4"/>`;
+  s += `<path class="w" d="M150,140 V162"/>`;
+  s += `<line x1="134" y1="162" x2="166" y2="162" stroke="var(--ink-2)" stroke-width="2.4"/>`;
+  s += `<line x1="140" y1="168" x2="160" y2="168" stroke="var(--ink-2)" stroke-width="2"/>`;
+  s += `<line x1="146" y1="174" x2="154" y2="174" stroke="var(--ink-2)" stroke-width="2"/>`;
+  s += `<text class="sv-lbl" x="124" y="139" text-anchor="end">0.1 µF — same as before</text>`;
+  s += `<text class="sv-lbl" x="176" y="170">− rail</text>`;
+  s += `<path class="w" d="M256,99 H372"/>`;
+  s += `<circle cx="330" cy="99" r="3.4" fill="var(--ink-3)"/>`;
+  s += `<text class="sv-cap" x="380" y="103">to the buzzer</text>`;
+  s += `<text class="sv-lbl" x="380" y="118">via a transistor</text>`;
+  s += `<path class="w" d="M330,99 V44 H262"/>`;
+  s += `<rect x="196" y="35" width="66" height="18" rx="3"
+    style="fill:var(--surface-2);stroke:var(--ink)" stroke-width="1.8"/>`;
+  s += `<path class="w" d="M196,44 H120 V99"/>`;
+  s += `<text class="sv-lbl" x="229" y="30" text-anchor="middle">10 kΩ — 100× smaller</text>`;
+  s += `<text class="sv-lbl" x="118" y="76" text-anchor="end">1 133 times</text>`;
+  s += `<text class="sv-lbl" x="118" y="90" text-anchor="end">a second</text>`;
+  return s + '</svg>';
+}
+
+/* ============ block diagram, shared by section 3 and the simulator ============ */
+const NOTE_LBL = ['10 kΩ','5.1 kΩ','2 kΩ','1 kΩ'];
+
+function blkSVG(live){
+  const id = n => live ? ` id="${n}"` : '';
+  let s = `<svg viewBox="0 0 840 300" role="img"
+    aria-label="Block diagram: three oscillators, an analog switch, two transistors and a buzzer">`;
+  const box = (n,x,y,w,h,t1,t2) => `<rect class="mbox"${id(n)} x="${x}" y="${y}"
+      width="${w}" height="${h}" rx="8"/>
+    <text class="sv-cap" x="${x+w/2}" y="${y+h/2-2}" text-anchor="middle">${t1}</text>` +
+    (t2 ? `<text class="sv-lbl"${id(n+'t')} x="${x+w/2}" y="${y+h/2+14}"
+      text-anchor="middle">${t2}</text>` : '');
+  const arrow = (n,d) => `<path class="w"${id(n)} d="${d}" marker-end="url(#ah)"/>`;
+
+  s += `<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5"
+    markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M0,1 L9,5 L0,9 z" fill="var(--line-2)"/></marker></defs>`;
+
+  /* row 1: wail oscillator -> analog switch */
+  s += box('bWail', 40, 40, 170, 52, 'WAIL OSC', '1.2 per second');
+  s += arrow('wWail', 'M210,66 H255');
+  s += box('bSwitch', 260, 40, 180, 52, 'CD4066 switch', '+ 10 kΩ');
+  s += arrow('wSw', 'M350,92 V115');
+  s += `<text class="sv-lbl" x="360" y="108">changes the pitch</text>`;
+
+  /* row 2: audio oscillator with its four note keys */
+  s += `<rect class="mbox"${id('bAud')} x="40" y="118" width="430" height="88" rx="8"/>`;
+  s += `<text class="sv-cap" x="60" y="140">AUDIO OSCILLATOR</text>`;
+  s += `<text class="sv-lbl"${id('fLbl')} x="460" y="140" text-anchor="end">1 133 Hz</text>`;
+  for (let i = 0; i < 4; i++){
+    const x = 56 + i*102;
+    s += `<rect class="mbox"${id('bn'+i)} x="${x}" y="${162}" width="92" height="30" rx="6"/>`;
+    s += `<text class="sv-lbl" x="${x+46}" y="${181}"
+      text-anchor="middle">${NOTE_LBL[i]}</text>`;
+  }
+  s += arrow('wAud', 'M470,150 H555');
+
+  /* row 3: chop oscillator -> Q2 */
+  s += box('bChop', 40, 230, 170, 52, 'CHOP OSC', '11 per second');
+  s += arrow('wChop', 'M210,256 H540 V231 H555');
+
+  /* transistors, stacked */
+  s += box('bQ1', 560, 122, 90, 52, 'Q1', 'the note');
+  s += box('bQ2', 560, 204, 90, 52, 'Q2', 'the gate');
+  s += `<path class="w" d="M605,174 V204"/>`;
+  s += `<text class="sv-lbl" x="614" y="186">both must</text>`;
+  s += `<text class="sv-lbl" x="614" y="198">be on</text>`;
+  s += arrow('wBuzz', 'M650,148 H700');
+  s += box('bBuzz', 705, 122, 100, 52, 'BUZZER', 'passive');
+  return s + '</svg>';
+}
+
+function drawStatics(){
+  const o = $('osc-svg');
+  if (o) o.innerHTML = '<div class="scroller">' + oscSVG() + '</div>';
+  const b = $('blk-svg');
+  if (b) b.innerHTML = '<div class="scroller">' + blkSVG(false) + '</div>';
+}
+
+drawPinouts(); drawStatics();
+</script>
+
+<script>
+"use strict";
+/* ============ the siren box, in your browser ============
+   Every frequency below comes from the same formula the guide states, applied to the
+   same resistors the wire list uses, so the page cannot contradict the bench. */
+const CAUD = 1e-7;      /* 0.1 µF "104" — the audio timing capacitor */
+const CSLOW = 1e-5;     /* 10 µF — both slow oscillators */
+const ROUT = 955;       /* the CD40106's own output resistance at 5 V */
+const RON = 470;        /* CD4066 on-resistance at 5 V, from the datasheet */
+const RBASE = 1e6;      /* the bleed resistor that is always in circuit */
+const RSIREN = 10e3;    /* switched in and out by the CD4066 */
+const NOTES = [10e3, 5.1e3, 2e3, 1e3];
+
+const par  = (a, b) => a*b/(a + b);
+const freq = (R, C) => 1.23/((R + ROUT)*C);
+
+function audioR(note, closed){
+  let r = RBASE;
+  if (note !== null)  r = par(r, NOTES[note]);
+  if (closed)         r = par(r, RSIREN + RON);
+  return r;
+}
+const noteHz = (note, closed) => freq(audioR(note, closed), CAUD);
+const F_WAIL = freq(100e3, CSLOW);   /* 100 kΩ + 10 µF */
+const F_CHOP = freq(10e3,  CSLOW);   /*  10 kΩ + 10 µF */
+
+const S = {note:null, wail:false, chop:false};
+let AC = null, OSC = null, GAIN = null, loop = null;
+
+function startAudio(){
+  if (AC) return true;
+  const Ctor = window.AudioContext || window.webkitAudioContext;
+  if (!Ctor) return false;
+  AC = new Ctor();
+  OSC = AC.createOscillator(); OSC.type = 'square';
+  GAIN = AC.createGain(); GAIN.gain.value = 0;
+  OSC.connect(GAIN); GAIN.connect(AC.destination); OSC.start();
+  return true;
+}
+
+/* both slow oscillators are square waves, so their phase is a matter of arithmetic */
+const phase = (f, t) => Math.floor(t*f*2) % 2 === 0;
+
+function update(){
+  const t = AC ? AC.currentTime : 0;
+  const closed = S.wail ? phase(F_WAIL, t) : false;
+  const open   = S.chop ? phase(F_CHOP, t) : true;
+  const hz = noteHz(S.note, closed);
+  const sounding = S.note !== null && open;
+
+  if (OSC)  OSC.frequency.setTargetAtTime(hz, t, 0.001);
+  if (GAIN) GAIN.gain.setTargetAtTime(sounding ? 0.05 : 0, t, 0.004);
+
+  const set = (n, on) => { const e = $(n); if (e) e.classList.toggle('live', on); };
+  set('bWail', S.wail && closed);
+  set('bChop', S.chop && open);
+  set('bSwitch', closed);
+  set('bBuzz', sounding);
+  set('bQ1', S.note !== null);
+  set('bQ2', open);
+  set('bAud', S.note !== null);
+  for (let i = 0; i < 4; i++) set('bn'+i, S.note === i);
+
+  const f = $('fLbl');
+  if (f) f.textContent = S.note === null
+    ? Math.round(hz) + ' Hz — a tick'
+    : Math.round(hz) + ' Hz';
+}
+
+function readout(){
+  const m = $('sim-msg'), h = $('sim-hz');
+  if (m) m.textContent = S.note === null
+    ? 'Nothing held — the 1 MΩ bleed resistor gives a 12 Hz tick.'
+    : 'Holding ' + NOTE_LBL[S.note] + '.';
+  if (!h) return;
+  if (S.note === null){ h.textContent = ''; return; }
+  const lo = Math.round(noteHz(S.note, false)), hi = Math.round(noteHz(S.note, true));
+  h.textContent = S.wail
+    ? 'wail ' + lo + ' ↔ ' + hi + ' Hz, ' + F_WAIL.toFixed(1) + ' times a second'
+    : lo + ' Hz steady';
+}
+
+function initSim(){
+  if (!$('sim-svg')) return;
+  $('sim-svg').innerHTML = '<div class="scroller">' + blkSVG(true) + '</div>';
+
+  const hold = (i, on) => {
+    if (on && !startAudio()){
+      const m = $('sim-msg');
+      if (m) m.textContent = 'This browser will not make sound. The diagram still works.';
+    }
+    S.note = on ? i : (S.note === i ? null : S.note);
+    if (!loop) loop = setInterval(update, 15);
+    readout(); update();
+  };
+  for (let i = 0; i < 4; i++){
+    const b = $('n'+i); if (!b) continue;
+    b.addEventListener('pointerdown', e => { e.preventDefault(); hold(i, true); });
+    ['pointerup','pointerleave','pointercancel'].forEach(ev =>
+      b.addEventListener(ev, () => hold(i, false)));
+    b.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); hold(i, true); }
+    });
+    b.addEventListener('keyup', e => {
+      if (e.key === 'Enter' || e.key === ' ') hold(i, false);
+    });
+  }
+  const toggle = (id, key, label) => {
+    const b = $(id); if (!b) return;
+    b.addEventListener('click', () => {
+      S[key] = !S[key];
+      b.classList.toggle('sel', S[key]);
+      b.innerHTML = label + ' <span class="pn">' + (S[key] ? 'on' : 'off') + '</span>';
+      readout(); update();
+    });
+  };
+  toggle('t-wail', 'wail', 'WAIL');
+  toggle('t-chop', 'chop', 'CHOP');
+  readout(); update();
+}
+initSim();
+</script>
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the pitch measurements and
+  the hearing test. Pin numbers read off the Texas Instruments datasheet drawings —
+  CD40106B and CD4066B.</p>
+</div></footer>
