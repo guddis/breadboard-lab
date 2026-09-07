@@ -15,12 +15,14 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 | [Logic Vault](projects/logic-vault/) | Logic gates, comparators, side channels | 12+ | 2–3 h | CD4077, CD4012, CD4081 |
 | [Reaction Machine](projects/reaction-machine/) | Clocks, counting, one bit of memory | 10–12 | 2–2½ h | CD40106, CD4017, CD4013, CD4081 |
 | [Siren Box](projects/siren-box/) | Frequency, sound, one circuit driving another | 10–12 | 1½–2 h | CD40106, CD4066 |
+| [Quiz Buzzer](projects/quiz-buzzer/) | Arbitration, race conditions, propagation delay | 10–12 | 2 h | CD4013 × 2, CD4012 |
 
 The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
 time, and the **Logic Vault** puts them to work. Both are combinational — they answer
 instantly and forget instantly. The **Reaction Machine** breaks out of that: it makes its
 own beat, counts, and remembers. The **Siren Box** takes that same beat and runs it a
-thousand times faster, until you can hear it.
+thousand times faster, until you can hear it. The **Quiz Buzzer** is the one you'll keep on
+the shelf: four players, one winner, decided in less than a millionth of a second.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is

@@ -1,0 +1,1064 @@
+<meta charset="utf-8">
+<title>The Quiz Buzzer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+tr.gold td{background:var(--copper-soft)}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+.unk{color:var(--line-2)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+.simbar.tight{margin-top:.55rem;padding-top:0;border-top:none}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+button.sel{border-color:var(--copper);color:var(--copper)}
+button .pn{font:500 .68rem/1 var(--fm);color:var(--ink-3);margin-left:.3rem}
+button.prim .pn{color:var(--teal-soft)}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.w.dash{stroke-dasharray:4 4}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.mbox.live{stroke:var(--teal);stroke-width:2.2}
+.spoke{stroke:var(--line);stroke-width:1.2}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.3}}
+.ringing{animation:ring .28s infinite}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Arbitration &middot; Project 05</p>
+  <h1>The Quiz<br>Buzzer</h1>
+  <p class="lead">Four buttons, four lamps, one buzzer. The first person to press lights
+  their lamp — and the other three buttons go completely dead until the host resets. The
+  interesting part isn't the lamp. It's that the machine decides who was first in less than
+  a millionth of a second, which is why it never gets it wrong.</p>
+  <div class="facts">
+    <span><b>Age</b> 10–12, with an adult nearby for the first hour</span>
+    <span><b>Time</b> about 2 hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V — nothing dangerous</span>
+    <span><b>Chips</b> CD4013 × 2, CD4012</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Play it here first — including the part where you try to cheat.</p>
+
+  <p>This is a device you will actually use. Four players, one question, and whoever gets
+  there first is the only one who gets to answer. The host presses RESET and the next
+  question starts.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="p0" class="prim">Player 1</button>
+      <button id="p1" class="prim">Player 2</button>
+      <button id="p2" class="prim">Player 3</button>
+      <button id="p3" class="prim">Player 4</button>
+      <button id="p-reset">RESET</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <button id="p-tie">Force a dead heat</button>
+      <span class="msg" id="sim-hz"></span>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">Try to tie by clicking two players as fast as you
+  can — the page will tell you how close you got, and how much closer you would need to be.
+  <b>Force a dead heat</b> does what your fingers cannot.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> Four one-bit memories, and a gate that
+  watches all four at once. The instant any of them remembers a press, that gate tells the
+  other three to stop listening.</div>
+</section>
+
+<section id="how">
+  <span class="snum">Section 2</span>
+  <h2>How it knows who was first</h2>
+  <p class="sub">Three chips, and one idea you haven't met yet.</p>
+
+  <p>Each player gets a <b>flip-flop</b> — the one-bit memory from Project 03. Pressing the
+  button stores a 1 in it, and it stays stored after you let go. That much you have built
+  before.</p>
+
+  <p>What's new is that the four memories have to <em>compete</em>. Exactly one of them may
+  win, and none of them can know what the others are doing. Engineers call this
+  <b>arbitration</b>, and every computer in the world contains circuits that do it — deciding
+  which program gets the processor next, which device gets to use a shared wire, which of two
+  clicks arrived first.</p>
+
+  <figure>
+    <div id="blk-svg"></div>
+    <figcaption>The lockout loop. Any lamp coming on pulls READY down, and READY is what all
+    four buttons need in order to work.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><b>Every flip-flop reports whether it is still empty</b>
+      A CD4013 gives you two outputs: <b>Q</b>, which is 1 when it has stored a press, and
+      <b>Q&#773;</b> ("Q-bar"), which is the exact opposite. Q lights the player's lamp.
+      Q&#773; goes off to do the thinking.</li>
+    <li><b>One gate watches all four at once</b>
+      The four Q&#773; wires go into a single <b>4-input NAND</b> gate. Its output is 0 only
+      while every one of them is 1 — that is, only while all four memories are still empty.
+      The moment anybody buzzes, their Q&#773; drops and the NAND's output jumps to 1. Call
+      that signal <b>LOCKED</b>.</li>
+    <li><b>Flip it to get permission</b>
+      LOCKED is backwards for what we need, so invert it. The answer is called
+      <b>READY</b>: 1 when nobody has buzzed, 0 the instant somebody has.</li>
+    <li><b>READY is what the buttons are actually asking for</b>
+      Here is the trick. A player's button doesn't decide what gets stored — it only decides
+      <em>when</em> to store. What gets stored is READY. Press while READY is 1 and you store
+      a 1: your lamp lights. Press a microsecond later, when READY has already dropped to 0,
+      and you store a 0: nothing happens at all.</li>
+  </ol>
+
+  <div class="note"><b>Why that last point matters more than it looks.</b> The obvious design
+  is to put a gate in front of each button so a late press can't get through. It works, but
+  it has a hole in it: a player who <em>holds their button down</em> through the host's reset
+  gets buzzed in the instant the reset ends, before anyone else has a chance. Storing READY
+  instead closes that hole, because a flip-flop only stores on the <em>moment</em> a button
+  goes down, not for as long as it's held. Hold it all you like — nothing happens until you
+  let go and press again.</div>
+
+  <div class="why"><b>The free inverter, again.</b> We need exactly one NOT gate, and putting
+  a whole chip on the board for it would be silly. The CD4012 holds <em>two</em> 4-input
+  NANDs and we only need one, so tie all four inputs of the spare together and feed it
+  LOCKED. A NAND with its inputs tied is an inverter. Project 02 used the same trick for the
+  same reason.</div>
+</section>
+
+<section id="race">
+  <span class="snum">Section 3</span>
+  <h2>How fast is "first"?</h2>
+  <p class="sub">This is the number that makes the whole device work, and you can calculate
+  it from the datasheets.</p>
+
+  <p>When somebody presses, the lockout doesn't happen instantly. The signal has to travel:
+  through the flip-flop, through the NAND, through the inverter, and back to the other three
+  flip-flops. Each step takes time. The datasheets say how much, at 5 V:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Step</th><th>Chip</th><th class="n">Typical</th><th class="n">Worst allowed</th></tr></thead>
+    <tbody>
+      <tr><td>Button edge → Q&#773; drops</td><td>CD4013</td><td class="n">150 ns</td><td class="n">300 ns</td></tr>
+      <tr><td>Q&#773; → LOCKED rises</td><td>CD4012</td><td class="n">125 ns</td><td class="n">250 ns</td></tr>
+      <tr><td>LOCKED → READY drops</td><td>CD4012</td><td class="n">125 ns</td><td class="n">250 ns</td></tr>
+      <tr><td><b>Total — the lockout window</b></td><td></td>
+        <td class="n"><b>400 ns</b></td><td class="n"><b>800 ns</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>A nanosecond is a thousandth of a millionth of a second. So the window is about
+  <b>0.4 microseconds</b> — and the datasheets promise it is never worse than 0.8.</p>
+
+  <p>Now compare that with people. Two players trying their hardest to press at the same
+  instant will still be a few <b>milliseconds</b> apart. One millisecond is a thousand
+  microseconds. So:</p>
+
+  <div class="card" style="text-align:center;font-family:var(--fd);font-size:1.05rem">
+    the machine decides in 0.0004 ms<br>
+    two people tie no closer than about 2 ms<br>
+    <b>the machine is roughly 5 000 times faster than the closest possible tie</b>
+  </div>
+
+  <p>That is the whole reason this device is fair. Not because it's clever — because
+  electricity is absurdly faster than fingers. You cannot produce a tie by hand. In Stage 5
+  you will try, fail, and then cheat with a jumper wire to see what a real tie looks like.</p>
+
+  <div class="why"><b>And this is a real problem, not a toy one.</b> Inside a computer,
+  things that are equally fast collide all the time — two processor cores reaching for the
+  same memory in the same clock cycle. When two signals arrive inside a flip-flop's window,
+  it can end up briefly stuck between 0 and 1, a state called <em>metastability</em>, and it
+  settles randomly. Real chips contain dedicated <em>arbiter</em> circuits whose only job is
+  to resolve those collisions cleanly. Yours resolves them by being far faster than its
+  users, which is the cheapest arbiter there is.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 4</span>
+  <h2>What you need</h2>
+  <p class="sub">All from the kit. Full wire list in <a href="README.md">README.md</a>.</p>
+
+  <h3>Chips</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>What it holds</th><th>Job here</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD4013</code> × 2</td><td>Two D-type flip-flops each</td>
+        <td>One one-bit memory per player</td></tr>
+      <tr><td><code>CD4012</code></td><td>Two 4-input NAND gates</td>
+        <td>Watches all four memories, plus the free inverter</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Everything else</h3>
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="n">4</td><td>LED — red, yellow, green, blue</td>
+        <td>One per player, so everyone knows which is theirs</td></tr>
+      <tr><td class="n">1</td><td>White LED</td><td>READY — the host's "board is armed" lamp</td></tr>
+      <tr><td class="n">2</td><td>PN2222 transistor</td>
+        <td>Buzzer and READY lamp. Flat side toward you: <b>E – B – C</b></td></tr>
+      <tr><td class="n">1</td><td>Active buzzer</td><td>The kind that beeps on plain DC</td></tr>
+      <tr><td class="n">5</td><td>Push button (small)</td><td>Four players and the host's RESET</td></tr>
+      <tr><td class="n">4</td><td>220 Ω resistor</td><td>The four player lamps</td></tr>
+      <tr><td class="n">1</td><td>330 Ω resistor</td><td>The READY lamp</td></tr>
+      <tr><td class="n">7</td><td>10 kΩ resistor</td><td>Five button pull-downs, two transistor bases</td></tr>
+      <tr><td class="n">3</td><td>0.1 µF ceramic ("104")</td><td>One across each chip's power pins</td></tr>
+      <tr><td class="n">1</td><td>100 µF electrolytic</td><td>Across the rails — <b>stripe to −</b></td></tr>
+      <tr><td class="n">1</td><td>Breadboard</td><td>Full-size is comfier</td></tr>
+      <tr><td class="n">~45</td><td>Jumper wires</td><td>Red for +, black for −, colours for signals</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>About the four player lamps.</b> They run straight off the flip-flops
+  at about 2½ mA, so they glow rather than blaze. That's fine here — you only need to see
+  <em>which</em> of four lamps changed, not read it across a room. The blue one will be the
+  dimmest of the four, because blue LEDs need the most voltage to start. If you want them
+  bright, the bonus section adds a transistor each.</div>
+
+  <h3>Power</h3>
+  <p><b>4.5 V to 5 V.</b> Three AA cells, or the MB102 module set to 5 V. Both chip types run
+  from 3 V to 18 V. Nothing here goes near mains electricity.</p>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 5</span>
+  <h2>Rules for not breaking things</h2>
+  <p class="sub">Rule 4 has changed since the last four projects. Read it properly.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you rewire</b>
+      Every single time.</li>
+    <li><b>All three chips are 14-pin, + on 14 and − on 7</b>
+      Notch to the left, pin 1 bottom-left, numbers run anticlockwise. No 16-pin surprises
+      in this one.</li>
+    <li><b>Never leave an input dangling</b>
+      Including the SET pins you aren't using, and both ends of every button.</li>
+    <li><b>An unused input goes to whichever rail the gate ignores</b>
+      This is new, and it matters in Stage 3. Until now the rule has been "unused inputs go
+      to −", which is right for a gate you aren't using at all. But an unused input on a gate
+      you <em>are</em> using has to go wherever it won't interfere: on an <b>AND</b> or
+      <b>NAND</b> that means <b>+</b>, because those gates only care about inputs that are 0.
+      On an <b>OR</b> or <b>NOR</b> it means <b>−</b>. Put a NAND's spare input to − and the
+      gate is jammed, permanently.</li>
+    <li><b>Never wire an output straight to + or −</b>
+      That's a short circuit through the chip. The CD4013's Q and Q&#773; are outputs.</li>
+    <li><b>The electrolytic capacitor has a right way round</b>
+      The stripe marks the negative leg. Backwards, it can pop.</li>
+    <li><b>Touch something metal before handling chips</b>
+      Static kills CMOS.</li>
+    <li><b>Warm chip means stop</b>
+      Pull the power and re-check rules 2 and 5.</li>
+  </ol>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 6</span>
+  <h2>The two pinouts</h2>
+  <p class="sub">Pin numbering and breadboard rows are in
+  <a href="../gate-bench/guide.html">Project 01</a> if you need reminding.</p>
+
+  <div id="pinouts"></div>
+
+  <div class="warn"><b>The CD4012's pins 6 and 8 are "no connection".</b> They go nowhere
+  inside the chip. Leave them empty — don't ground them out of habit, and don't count along
+  the row assuming every pin does something.</div>
+
+  <p>You will use each CD4013 flip-flop like this, and the two halves of the chip are
+  wired identically apart from their pin numbers:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Pin job</th><th>Goes to</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>D</b></td><td>READY</td><td>What gets stored: 1 if nobody has buzzed yet</td></tr>
+      <tr><td><b>CLOCK</b></td><td>The player's button</td><td><em>When</em> to store it</td></tr>
+      <tr><td><b>RESET</b></td><td>The host's button</td><td>Clears it back to 0</td></tr>
+      <tr><td><b>SET</b></td><td>− rail</td><td>Not used — but it must be held at 0</td></tr>
+      <tr><td><b>Q</b></td><td>The player's lamp</td><td>1 means "this player buzzed"</td></tr>
+      <tr><td><b>Q&#773;</b></td><td>The CD4012</td><td>1 means "this one is still empty"</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="why"><b>Why the lamp goes on Q and the logic on Q&#773;.</b> An LED drags
+  whatever drives it down to about 2½ volts, which is too vague for another chip to read
+  reliably — that was the hard-won lesson of Project 03. Here you get it for free: the
+  flip-flop has two separate outputs, so the loaded one lights the lamp and the clean one
+  does the thinking. Look for spare complementary outputs; they solve this problem
+  constantly.</div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>One player</span>
+    <span>~30 min</span></div>
+  <h2>A button that stays pressed</h2>
+  <p class="sub">Get one player working end to end before you build four of anything.</p>
+
+  <p>Power the rails: supply + to the top red rail, supply − to the top blue rail, then
+  jumper across to the bottom rails. Put the 100 µF across the rails, <b>stripe to −</b>.</p>
+
+  <p>Place the first <b>CD4013</b>, notch to the left. You are using its flip-flop 1:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td><b>pin 6</b> (SET1)</td><td>− rail</td><td>Not used, but never left floating</td></tr>
+      <tr><td><b>pin 5</b> (D1)</td><td><b>+ rail</b></td><td><em>Temporary.</em> Becomes READY in Stage 3</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now the two buttons. Use <b>diagonally opposite legs</b> on each — a 4-leg tactile
+  button has its legs joined in hidden pairs, and diagonal is the one choice that is always
+  right.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Player 1 button leg</td><td>+ rail</td><td>Pressing means 1</td></tr>
+      <tr><td>Player 1 diagonal leg</td><td>P1 node</td><td></td></tr>
+      <tr><td>P1 node</td><td>10 kΩ → − rail</td><td>Holds it at 0 when not pressed</td></tr>
+      <tr><td>P1 node</td><td>CD4013 <b>pin 3</b> (CLOCK1)</td><td>The moment of pressing</td></tr>
+      <tr><td>RESET button leg</td><td>+ rail</td><td></td></tr>
+      <tr><td>RESET diagonal leg</td><td>RESET node</td><td></td></tr>
+      <tr><td>RESET node</td><td>10 kΩ → − rail</td><td></td></tr>
+      <tr><td>RESET node</td><td>CD4013 <b>pin 4</b> (RESET1)</td><td>Clears it</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>And the lamp:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>CD4013 <b>pin 1</b> (Q1)</td><td>220 Ω → red LED long leg</td></tr>
+      <tr><td>Red LED short leg</td><td>− rail</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up and press RESET first. Then press player 1.</p>
+
+  <ul class="tick">
+    <li>The lamp comes on and <b>stays on</b> after you let go.</li>
+    <li>Pressing player 1 again changes nothing — it's already stored.</li>
+    <li>RESET turns it off.</li>
+    <li>Holding player 1 down and pressing RESET: the lamp goes out and stays out until you
+      release and press again. Try it — that behaviour is deliberate, and Stage 3 explains
+      what it's protecting you from.</li>
+  </ul>
+
+  <div class="warn"><b>Press RESET after every power-up.</b> A flip-flop wakes up holding
+  whatever it likes — that's what makes it memory, and nobody told it anything before the
+  power came on. A lamp lit at switch-on isn't a fault.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>Two players</span>
+    <span>~20 min</span></div>
+  <h2>Build the problem on purpose</h2>
+  <p class="sub">The second half of the same chip. Then you'll see why the rest of the
+  project exists.</p>
+
+  <p>The CD4013 has a second flip-flop with the same jobs on different pins. Wire player 2
+  onto it:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Same job as…</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 8</b> (SET2)</td><td>− rail</td><td>pin 6</td></tr>
+      <tr><td><b>pin 9</b> (D2)</td><td><b>+ rail</b></td><td>pin 5 — temporary again</td></tr>
+      <tr><td>P2 button → P2 node</td><td>+ rail / 10 kΩ → − rail</td><td>as player 1</td></tr>
+      <tr><td>P2 node</td><td><b>pin 11</b> (CLOCK2)</td><td>pin 3</td></tr>
+      <tr><td>RESET node</td><td><b>pin 10</b> (RESET2)</td><td>pin 4</td></tr>
+      <tr><td><b>pin 13</b> (Q2)</td><td>220 Ω → yellow LED → − rail</td><td>pin 1</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Leave pins 2 and 12 empty for now — those are the Q&#773; outputs, and they get their
+  job in Stage 3.</p>
+
+  <p>Now play a round with somebody. Ask a question. Both of you press.</p>
+
+  <ul class="tick">
+    <li>Both lamps light.</li>
+    <li>Neither lamp cares that the other one is on.</li>
+    <li>There is no way to tell who was first. The machine has no opinion.</li>
+  </ul>
+
+  <div class="note"><b>This is the whole problem, and it's worth sitting with for a minute.</b>
+  Each flip-flop is doing its job perfectly. Nothing is broken. What's missing is that
+  neither of them knows the other exists — and remembering something is not the same as
+  competing for the right to remember it. Everything in Stage 3 is about connecting the two
+  so that the first one to fire shuts the other up.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>The lockout</span>
+    <span>~30 min</span></div>
+  <h2>One gate that watches everybody</h2>
+  <p class="sub">Add the CD4012 and the machine gets an opinion.</p>
+
+  <p>Place the <b>CD4012</b>, notch to the left. Its first 4-input NAND takes the Q&#773;
+  outputs; you only have two so far, so the spare inputs go to <b>+</b> — see rule 4, this is
+  exactly the case it's about.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4012 <b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td>CD4012 <b>pin 7</b></td><td>− rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 µF ("104")</td><td>pin 14 → pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td>CD4013 <b>pin 2</b> (Q&#773;1)</td><td>CD4012 <b>pin 2</b></td><td>Is player 1 still empty?</td></tr>
+      <tr><td>CD4013 <b>pin 12</b> (Q&#773;2)</td><td>CD4012 <b>pin 3</b></td><td>Is player 2 still empty?</td></tr>
+      <tr><td>CD4012 <b>pins 4 and 5</b></td><td><b>+ rail</b></td>
+        <td><b>Temporary.</b> Players 3 and 4 take these in Stage 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Output <b>pin 1 is LOCKED</b>: 0 while everybody is still empty, 1 the moment anyone
+  buzzes. Now make the free inverter out of the second NAND:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4012 pin 1</td><td>CD4012 <b>pin 9</b></td><td rowspan="4">All four inputs of
+        the spare gate tied to the same wire. A NAND wired like this is a NOT gate</td></tr>
+      <tr><td>CD4012 pin 1</td><td>CD4012 <b>pin 10</b></td></tr>
+      <tr><td>CD4012 pin 1</td><td>CD4012 <b>pin 11</b></td></tr>
+      <tr><td>CD4012 pin 1</td><td>CD4012 <b>pin 12</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Output <b>pin 13 is READY</b>. Pins 6 and 8 stay empty — they're the no-connection
+  pins. Finally, take both D inputs off the + rail and give them READY instead:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3"><em>Remove the two wires from CD4013 pins 5 and 9 to the + rail.</em></td></tr>
+      <tr><td>CD4012 <b>pin 13</b> (READY)</td><td>CD4013 <b>pin 5</b> (D1)</td><td>Player 1 stores permission</td></tr>
+      <tr><td>CD4012 <b>pin 13</b> (READY)</td><td>CD4013 <b>pin 9</b> (D2)</td><td>Player 2 stores permission</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up, press RESET, and play a round.</p>
+
+  <ul class="tick">
+    <li>The first person to press lights their lamp.</li>
+    <li>The other player's button now does <em>nothing at all</em>, however hard they mash
+      it.</li>
+    <li>RESET clears both and the next round starts.</li>
+    <li>Now the cheat test: have player 2 hold their button down <em>before</em> you press
+      RESET. Press RESET. Player 2's lamp should stay dark. They have to let go and press
+      again like everybody else.</li>
+  </ul>
+
+  <div class="why"><b>That last test is the design working.</b> The flip-flop stores on the
+  instant its clock input goes up, not while it's held there. A held button has already gone
+  up — there's no fresh moment for the chip to notice. Engineers call the difference
+  <em>edge-triggered</em> versus <em>level-triggered</em>, and choosing between them is one
+  of the most consequential decisions in digital design. Here it's the difference between a
+  fair game and a game where the sneakiest player always wins.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>Four players</span>
+    <span>~25 min</span></div>
+  <h2>Two more of exactly the same thing</h2>
+  <p class="sub">No new ideas in this stage. That's what makes it a good design.</p>
+
+  <p>Place the second <b>CD4013</b>. Everything in it is a copy of the first chip, and the
+  two spare NAND inputs on the CD4012 are already waiting.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>✓</th><th>From</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>☐</td><td>pin 14 / pin 7</td><td>+ rail / − rail, with a 0.1 µF across them</td></tr>
+      <tr><td>☐</td><td>pins 6 and 8 (both SETs)</td><td>− rail</td></tr>
+      <tr><td>☐</td><td>CD4012 pin 13 (READY)</td><td>pins 5 and 9 (both Ds)</td></tr>
+      <tr><td>☐</td><td>RESET node</td><td>pins 4 and 10 (both RESETs)</td></tr>
+      <tr><td>☐</td><td>P3 button node</td><td>pin 3 (CLOCK1)</td></tr>
+      <tr><td>☐</td><td>P4 button node</td><td>pin 11 (CLOCK2)</td></tr>
+      <tr><td>☐</td><td>pin 1 (Q1)</td><td>220 Ω → green LED → − rail</td></tr>
+      <tr><td>☐</td><td>pin 13 (Q2)</td><td>220 Ω → blue LED → − rail</td></tr>
+      <tr><td>☐</td><td colspan="2"><em>Remove the wires from CD4012 pins 4 and 5 to +.</em></td></tr>
+      <tr><td>☐</td><td>pin 2 (Q&#773;1)</td><td>CD4012 <b>pin 4</b></td></tr>
+      <tr><td>☐</td><td>pin 12 (Q&#773;2)</td><td>CD4012 <b>pin 5</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Don't forget the two P3 and P4 buttons, each with its own 10 kΩ pull-down to −, wired
+  exactly like players 1 and 2.</p>
+
+  <ul class="tick">
+    <li>All four lamps work, and exactly one can be on at a time.</li>
+    <li>Any player can win. Try each of them.</li>
+    <li>The blue lamp is dimmer than the others. That's the LED, not a fault.</li>
+    <li>If you forgot to remove a + wire from CD4012 pin 4 or 5, that player will be
+      permanently locked out — a stuck 1 there tells the NAND that player has already
+      buzzed.</li>
+  </ul>
+
+  <div class="why"><b>Four players cost you no new thinking, and that's the point.</b> The
+  lockout gate had four inputs from the start, so going from two players to four was
+  copying, not designing. Good digital design looks like this: get one channel right, then
+  repeat it. It's also why a chip with 4 gates in it costs about the same as a chip with
+  one.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>Buzzer, and breaking it</span>
+    <span>~25 min</span></div>
+  <h2>Make it loud, then try to beat it</h2>
+
+  <p>Two transistors: one for the buzzer, one for the host's READY lamp. Both signals have
+  other chips listening to them, so neither can drive a lamp directly — that's the Project 03
+  lesson.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td colspan="3"><b>Q1 — the buzzer, on LOCKED</b></td></tr>
+      <tr><td>CD4012 <b>pin 1</b> (LOCKED)</td><td>10 kΩ → Q1 base (middle leg)</td>
+        <td>A light load, so pin 1 stays a clean 1 for the inverter</td></tr>
+      <tr><td>Q1 emitter (left leg)</td><td>− rail</td><td></td></tr>
+      <tr><td>Buzzer + (long leg)</td><td>+ rail</td><td></td></tr>
+      <tr><td>Buzzer −</td><td>Q1 collector (right leg)</td><td></td></tr>
+      <tr><td colspan="3"><b>Q2 — the READY lamp, on READY</b></td></tr>
+      <tr><td>CD4012 <b>pin 13</b> (READY)</td><td>10 kΩ → Q2 base</td>
+        <td>Four D inputs are reading this wire</td></tr>
+      <tr><td>Q2 emitter</td><td>− rail</td><td></td></tr>
+      <tr><td>+ rail</td><td>330 Ω → white LED long leg</td><td></td></tr>
+      <tr><td>White LED short leg</td><td>Q2 collector</td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now it's a real device. White lamp on means the board is armed and the host can ask the
+  question. Somebody buzzes: their colour lights, the buzzer sounds, the white lamp goes out.
+  RESET starts the next round.</p>
+
+  <h3>Now try to produce a tie</h3>
+
+  <p>Get somebody to help and count down: three, two, one, press. Do it twenty times.</p>
+
+  <ul class="tick">
+    <li>Exactly one lamp lights, every single time.</li>
+    <li>You will never get two. You are trying to hit a 0.4 microsecond window with your
+      hands, and your best is a couple of thousand microseconds.</li>
+  </ul>
+
+  <h3>Then cheat</h3>
+
+  <p>Take a jumper wire and bridge the P1 and P2 button nodes together, so one press arrives
+  at both flip-flops down the same piece of copper. Press.</p>
+
+  <ul class="tick">
+    <li>Both lamps light. Two winners, no answer.</li>
+    <li>Now you have seen a genuine dead heat — and you had to build a wire to get one.</li>
+  </ul>
+
+  <div class="note"><b>What just happened, and what real machines do about it.</b> Both clock
+  edges arrived inside the lockout window, so both flip-flops sampled READY while it was
+  still 1. The machine wasn't wrong; it was asked an impossible question. Computers hit this
+  constantly and cannot solve it by being faster, because the things colliding are just as
+  fast as they are. They use <em>arbiter</em> circuits — two flip-flops wired to fight each
+  other until one wins — and even those can hesitate for an unpredictable moment first. Your
+  buzzer avoids the whole problem by being five thousand times faster than a human, which is
+  a completely legitimate engineering answer.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>Three upgrades</span>
+    <span>~15 min each</span></div>
+  <h2>If you're going to use it at Christmas</h2>
+
+  <h3>Bright lamps</h3>
+  <p>Give each player's Q output a 10 kΩ to a PN2222 base, and hang the LED from + through
+  330 Ω to the collector, exactly like the READY lamp. Four times brighter and visible across
+  a room. You'll need four more transistors than the kit has two spare of, so do it for the
+  two players who complain most.</p>
+
+  <h3>A host lockout button</h3>
+  <p>Add a fifth button wired so that pressing it pulls all four CLOCK lines low and holds
+  them — or more simply, put a button in the + rail feeding the four player buttons. Now the
+  host can arm the board only when they've finished reading the question, which stops people
+  buzzing early on purpose.</p>
+
+  <h3>Keep score on the seven-segment display</h3>
+  <p>LOCKED goes up once per round and stays up until RESET, so it makes exactly one clean
+  edge per buzz. Feed it to a CD4026's clock and you have a round counter. Counting each
+  <em>player's</em> score needs one CD4026 each, which is four chips and a lot of wire —
+  worth knowing that the lazy version is a pencil and paper, and that real engineers pick
+  that answer more often than you'd think.</p>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 7</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Full table in <a href="README.md">README.md</a>.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing works, no lamps at all</td><td>Power missing from a chip. All three
+        want + on 14 and − on 7.</td></tr>
+      <tr><td>A lamp is on at switch-on</td><td>Normal. Flip-flops wake up random. Press
+        RESET.</td></tr>
+      <tr><td>Every button does nothing, ever</td><td>READY is stuck at 0. Usually a CD4012
+        input on − instead of + in Stage 3, or a Q&#773; wire missing.</td></tr>
+      <tr><td>All four lamps light together</td><td>The D inputs are still on the + rail.
+        They must be on CD4012 pin 13.</td></tr>
+      <tr><td>One player never works, the others do</td><td>Their CD4012 input is stuck at 1
+        — you left a + wire on pin 4 or 5 after Stage 4.</td></tr>
+      <tr><td>One player can always buzz, even after somebody else</td><td>That flip-flop's D
+        pin isn't connected to READY.</td></tr>
+      <tr><td>A lamp comes on by itself when you touch the board</td><td>That player's button
+        node is floating — its 10 kΩ pull-down is missing.</td></tr>
+      <tr><td>RESET doesn't clear one player</td><td>The RESET node isn't reaching that
+        flip-flop's reset pin — 4 and 10 on both chips.</td></tr>
+      <tr><td>Lamp lights but the buzzer stays silent</td><td>Buzzer polarity, or a passive
+        buzzer instead of the active one.</td></tr>
+      <tr><td>Buzzer sounds constantly</td><td>Somebody is latched. Press RESET. If it never
+        stops, a Q&#773; wire is off.</td></tr>
+      <tr><td>White READY lamp never lights</td><td>Q2 in backwards. Flat side toward you:
+        E – B – C, left to right.</td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away for five minutes, come
+        back and re-read one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ pinout drawings ============ */
+const IN='in', OUT='out', PWR='pwr', NC='nc';
+const ROLECOL = {in:'var(--w-blue)', out:'var(--teal)', pwr:'var(--w-red)',
+                 nc:'var(--line-2)'};
+
+const CHIPS = [
+  {name:'CD4013', sub:'Dual D flip-flop — one bit of memory each', pins:14, p:{
+    1:['Q1',OUT],       14:['+  VDD',PWR],
+    2:['Q1 bar',OUT],   13:['Q2',OUT],
+    3:['clock 1',IN],   12:['Q2 bar',OUT],
+    4:['reset 1',IN],   11:['clock 2',IN],
+    5:['D1',IN],        10:['reset 2',IN],
+    6:['set 1',IN],      9:['D2',IN],
+    7:['−  VSS',PWR],    8:['set 2',IN]}},
+  {name:'CD4012', sub:'Dual 4-input NAND — the lockout', pins:14, p:{
+    1:['out NAND 1',OUT], 14:['+  VDD',PWR],
+    2:['in A',IN],        13:['out NAND 2',OUT],
+    3:['in B',IN],        12:['in H',IN],
+    4:['in C',IN],        11:['in G',IN],
+    5:['in D',IN],        10:['in F',IN],
+    6:['no connection',NC], 9:['in E',IN],
+    7:['−  VSS',PWR],      8:['no connection',NC]}}
+];
+
+function dipSVG(chip){
+  const n = chip.pins, half = n/2, pitch = 21, bw = 104, bx = 108, top = 24;
+  const H = top + half*pitch + 24, W = 340;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0"
+      style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : n-i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx+bw, x2 = left ? bx-18 : bx+bw+18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-4 : x2+4}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${bx+bw/2}" y="${H-6}"
+    text-anchor="middle">${chip.name}</text>`;
+  return s + '</svg>';
+}
+
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt style="color:var(--w-red)">Red</dt><dd>Power. All three chips: + on 14, − on 7.</dd>
+       <dt style="color:var(--w-blue)">Blue</dt><dd>Inputs. Every one goes somewhere — and
+         see rule 4 about <em>which</em> rail.</dd>
+       <dt style="color:var(--teal)">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+       <dt style="color:var(--line-2)">Grey</dt><dd>No connection. Wired to nothing inside
+         the chip. Leave empty.</dd>
+     </dl>`;
+}
+
+/* ============ block diagram, shared by section 2 and the simulator ============ */
+const PLAYERS = [
+  {n:'Player 1', col:'var(--w-red)'},
+  {n:'Player 2', col:'var(--w-yellow)'},
+  {n:'Player 3', col:'var(--w-green)'},
+  {n:'Player 4', col:'var(--w-blue)'}
+];
+const RY = [58, 116, 174, 232];
+
+function blkSVG(live){
+  const id = n => live ? ` id="${n}"` : '';
+  let s = `<svg viewBox="0 0 860 320" role="img"
+    aria-label="Four flip-flops feeding a 4-input NAND, whose inverted output gives every flip-flop its permission to store a press">`;
+  s += `<defs><marker id="qah" viewBox="0 0 10 10" refX="9" refY="5"
+    markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+    <path d="M0,1 L9,5 L0,9 z" fill="var(--line-2)"/></marker></defs>`;
+
+  s += `<text class="sv-lbl" x="40" y="28">BUTTON</text>`;
+  s += `<text class="sv-lbl" x="150" y="28">CD4013 — one bit each</text>`;
+  s += `<text class="sv-lbl" x="404" y="28">LAMP</text>`;
+  s += `<text class="sv-lbl" x="524" y="28">CD4012</text>`;
+
+  for (let i = 0; i < 4; i++){
+    const y = RY[i], p = PLAYERS[i];
+    /* button */
+    s += `<rect class="mbox"${id('btn'+i)} x="34" y="${y-15}" width="66" height="30" rx="7"/>`;
+    s += `<text class="sv-lbl" x="67" y="${y+4}" text-anchor="middle">P${i+1}</text>`;
+    s += `<path class="w"${id('wb'+i)} d="M100,${y} H146" marker-end="url(#qah)"/>`;
+    /* flip-flop */
+    s += `<rect class="mbox"${id('ff'+i)} x="150" y="${y-19}" width="118" height="38" rx="7"/>`;
+    s += `<text class="sv-lbl" x="209" y="${y-3}" text-anchor="middle">flip-flop ${i+1}</text>`;
+    s += `<text class="sv-lbl"${id('q'+i)} x="209" y="${y+10}"
+      text-anchor="middle">Q = 0</text>`;
+    /* Q -> lamp */
+    s += `<path class="w"${id('wq'+i)} d="M268,${y-8} H396"/>`;
+    s += `<circle class="lamp"${id('lamp'+i)} cx="410" cy="${y-8}" r="11"/>`;
+    /* Qbar -> nand */
+    s += `<path class="w"${id('wn'+i)} d="M268,${y+8} H452 V${y+8}"/>`;
+    s += `<text class="sv-lbl" x="284" y="${y+21}">Q&#773;</text>`;
+  }
+
+  /* the 4-input NAND */
+  s += `<path class="gsym" d="M452,40 H478 C516,40 540,80 540,145
+    C540,210 516,250 478,250 H452 Z"/>`;
+  s += `<circle class="bub" cx="546" cy="145" r="6"/>`;
+  s += `<text class="sv-lbl" x="480" y="141" text-anchor="middle">NAND</text>`;
+  s += `<text class="sv-lbl" x="480" y="154" text-anchor="middle">all four</text>`;
+  /* LOCKED */
+  s += `<path class="w"${id('wlock')} d="M552,145 H604"/>`;
+  s += `<text class="sv-cap"${id('lockl')} x="578" y="136"
+    text-anchor="middle">LOCKED</text>`;
+  /* buzzer off LOCKED */
+  s += `<path class="w"${id('wbz')} d="M578,145 V222 H636"/>`;
+  s += `<circle cx="578" cy="145" r="3.2" fill="var(--ink-3)"/>`;
+  s += `<circle class="lamp"${id('buzz')} cx="652" cy="222" r="12"/>`;
+  s += `<text class="sv-lbl" x="670" y="219">buzzer</text>`;
+  s += `<text class="sv-lbl" x="670" y="232">via Q1</text>`;
+  /* free inverter */
+  s += `<path class="gsym" d="M608,124 L644,145 L608,166 Z"/>`;
+  s += `<circle class="bub" cx="649" cy="145" r="5"/>`;
+  s += `<text class="sv-lbl" x="626" y="112" text-anchor="middle">free NOT</text>`;
+  /* READY */
+  s += `<path class="w"${id('wrdy')} d="M654,145 H700"/>`;
+  s += `<circle class="lamp"${id('rdy')} cx="714" cy="145" r="12"/>`;
+  s += `<text class="sv-cap"${id('rdyl')} x="732" y="142">READY</text>`;
+  s += `<text class="sv-lbl" x="732" y="155">= 1</text>`;
+  /* READY back to every D input. The four little bumps are hops: this bus crosses the
+     four button wires without touching them. */
+  s += `<path class="w"${id('wfb')} d="M714,163 V292 H128
+    V238 A6,6 0 0 1 128,226 V180 A6,6 0 0 1 128,168
+    V122 A6,6 0 0 1 128,110 V64  A6,6 0 0 1 128,52 V${RY[0]-8} H150"/>`;
+  for (let i = 1; i < 4; i++){
+    s += `<path class="w"${id('wfb'+i)} d="M128,${RY[i]-8} H150"/>`;
+    s += `<circle cx="128" cy="${RY[i]-8}" r="3.2" fill="var(--ink-3)"/>`;
+  }
+  s += `<text class="sv-lbl" x="300" y="286">READY goes to the D input of all four — it is
+    what a press actually stores</text>`;
+  return s + '</svg>';
+}
+
+function drawStatics(){
+  const b = $('blk-svg');
+  if (b) b.innerHTML = '<div class="scroller">' + blkSVG(false) + '</div>';
+}
+
+drawPinouts(); drawStatics();
+</script>
+
+<script>
+"use strict";
+/* ============ the buzzer, playable ============
+   Lockout timings are the datasheet figures at 5 V:
+     CD4013 clock->Q  150 ns typ / 300 ns max
+     CD4012 NAND      125 ns typ / 250 ns max   (x2: the NAND and the free inverter)          */
+const T_TYP = 150 + 125 + 125;      /* nanoseconds */
+const T_MAX = 300 + 250 + 250;
+const Q = {latched:[false,false,false,false], lastPress:0, lastWinner:-1, tie:false};
+
+const ready = () => !Q.latched.some(v => v);
+
+function paint(){
+  const rdy = ready(), locked = !rdy;
+  for (let i = 0; i < 4; i++){
+    const on = Q.latched[i], col = PLAYERS[i].col;
+    const lamp = $('lamp'+i);
+    if (lamp){ lamp.style.fill = on ? col : ''; lamp.style.stroke = on ? col : ''; }
+    const ql = $('q'+i); if (ql) ql.textContent = 'Q = ' + (on ? 1 : 0);
+    const set = (n, v) => { const e = $(n); if (e) e.classList.toggle('live', v); };
+    set('ff'+i, on);
+    set('wq'+i, on);
+    set('wn'+i, !on);
+    set('btn'+i, rdy);
+  }
+  const b = $('buzz');
+  if (b){ b.style.fill = locked ? 'var(--copper)' : ''; b.style.stroke = locked ? 'var(--copper)' : '';
+          b.classList.toggle('ringing', locked); }
+  const r = $('rdy');
+  if (r){ r.style.fill = rdy ? 'var(--w-white)' : ''; r.style.stroke = rdy ? 'var(--w-white)' : ''; }
+  const rl = $('rdyl'); if (rl) rl.textContent = 'READY = ' + (rdy ? 1 : 0);
+  const ll = $('lockl'); if (ll) ll.textContent = 'LOCKED = ' + (locked ? 1 : 0);
+  ['wrdy','wfb','wfb1','wfb2','wfb3'].forEach(n => {
+    const e = $(n); if (e) e.classList.toggle('live', rdy);
+  });
+  ['wlock','wbz'].forEach(n => {
+    const e = $(n); if (e) e.classList.toggle('live', locked);
+  });
+}
+
+function say(msg, sub){
+  const m = $('sim-msg'); if (m) m.textContent = msg;
+  const h = $('sim-hz');  if (h) h.textContent = sub || '';
+}
+
+function press(i){
+  const now = performance.now();
+  if (ready()){
+    Q.latched[i] = true; Q.lastWinner = i; Q.lastPress = now; Q.tie = false;
+    say(PLAYERS[i].n + ' got there first.',
+        'The lockout shut ' + T_TYP + ' ns later — 0.0004 ms.');
+  } else if (Q.tie){
+    say('Two winners. Nobody can answer.', 'Press RESET and blame the wire.');
+  } else {
+    const late = now - Q.lastPress;
+    const times = Math.round(late*1e6/T_TYP);
+    say(PLAYERS[i].n + ' was locked out.',
+        'You were ' + late.toFixed(0) + ' ms late. The lockout had already been shut for ' +
+        times.toLocaleString('en-US') + '× as long as it took to close.');
+  }
+  paint();
+}
+
+function initSim(){
+  if (!$('sim-svg')) return;
+  $('sim-svg').innerHTML = '<div class="scroller">' + blkSVG(true) + '</div>';
+  for (let i = 0; i < 4; i++){
+    const b = $('p'+i);
+    if (b) b.addEventListener('click', () => press(i));
+  }
+  const rb = $('p-reset');
+  if (rb) rb.addEventListener('click', () => {
+    Q.latched = [false,false,false,false]; Q.tie = false; Q.lastWinner = -1;
+    say('Board armed. Ask the question.',
+        'Lockout window: ' + T_TYP + ' ns typical, never worse than ' + T_MAX + ' ns.');
+    paint();
+  });
+  const tb = $('p-tie');
+  if (tb) tb.addEventListener('click', () => {
+    Q.latched = [true,true,false,false]; Q.tie = true;
+    say('Dead heat — both inside the 400 ns window.',
+        'Only possible by wiring two buttons together. Your fingers cannot do this.');
+    paint();
+  });
+  say('Board armed. Ask the question.',
+      'Lockout window: ' + T_TYP + ' ns typical, never worse than ' + T_MAX + ' ns.');
+  paint();
+}
+initSim();
+</script>
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the timing arithmetic and the
+  reaction-time experiments. Pin numbers and propagation delays read off the Texas
+  Instruments datasheets — CD4013B and CD4012B.</p>
+</div></footer>
