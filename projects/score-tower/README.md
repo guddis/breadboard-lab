@@ -6,7 +6,7 @@ row of lights you have to count.
 Nine more presses and a second digit wakes up to keep the tens, so it counts to 99. RESET
 wipes it, HOLD freezes it, BLANK hides it while it keeps counting in the dark.
 
-**Open [`guide.html`](guide.html) in a browser** — that's the real guide, with diagrams and a
+**Open [`guide.html`](https://guddis.github.io/breadboard-lab/projects/score-tower/guide.html) in a browser** — that's the real guide, with diagrams and a
 working simulator. This file is the bench reference: parts, wire lists, troubleshooting.
 
 ---
