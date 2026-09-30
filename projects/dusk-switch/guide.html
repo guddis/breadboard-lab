@@ -1,0 +1,1354 @@
+<meta charset="utf-8">
+<title>The Dusk Switch</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.tog rect{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+.tog.one rect{fill:var(--teal-soft);stroke:var(--teal)}
+.tog text{fill:var(--ink-3)}
+.tog.one text{fill:var(--teal)}
+.tog:hover rect{stroke:var(--ink-3)}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.25}}
+.ringing{animation:ring .28s infinite}
+</style>
+<style>
+.w.live{stroke:var(--teal);stroke-width:2.8}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.seg{stroke:none}
+.simbar.tight{border-top:none;padding-top:0;margin-top:.45rem}
+.dead{opacity:.22}
+.sv-sig{font-size:11px;font-family:var(--fm);fill:var(--ink-3)}
+.sv-big{font-size:26px;font-weight:700;font-family:var(--fm);fill:var(--teal)}
+.band{fill:var(--copper);opacity:.14}
+.trace{fill:none;stroke:var(--teal);stroke-width:1.8;stroke-linejoin:round}
+.trace.out{stroke:var(--copper);stroke-width:2.2}
+.thr{stroke:var(--copper);stroke-width:1.2;stroke-dasharray:4 3}
+.lampsym{stroke:var(--line-2);stroke-width:1.6;fill:var(--surface-2)}
+code.sig{font-size:.95em;padding:.05em .3em}
+td.pk{font:500 .8rem/1.3 var(--fm)}
+input[type=range]{accent-color:var(--teal);width:11rem;vertical-align:middle}
+.slab{font:600 .78rem/1 var(--fd);letter-spacing:.04em;text-transform:uppercase;
+  color:var(--ink-3);margin-right:.5rem}
+.verdict{font:600 .8rem/1.3 var(--fd)}
+.verdict.bad{color:var(--red)} .verdict.ok{color:var(--green)}
+.verdict.meh{color:var(--amber)}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Sensors and thresholds &middot; Project 08</p>
+  <h1>The Dusk<br>Switch</h1>
+  <p class="lead">Every project in this box so far has been told what to do by a switch &mdash;
+  a thing that is 1 or 0 because your finger says so. A light sensor does not do that. It hands
+  you <b>2.3 volts</b> and walks away. Somebody has to decide where 1 stops and 0 begins, and
+  this is the project where you find out how badly that goes if you decide it carelessly.</p>
+  <div class="facts">
+    <span><b>Age</b> 11+, with an adult nearby for the first hour</span>
+    <span><b>Time</b> about 2 hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+    <span><b>Chips</b> CD4011 and CD4093 &mdash; one at a time, same socket</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">A light that comes on when it gets dark. Drag the slider and watch the trace
+  &mdash; the interesting part is what happens as it crosses the line.</p>
+
+  <p>Press <b>hover at dusk</b>. It creeps the light up and down across the level where this
+  gate has to decide &mdash; which is exactly what Stage 2 will ask you to do with your hand.
+  With the plain CD4011 fitted, the lamp cannot make up its mind: watch the counter climb. Now
+  press <b>Gate</b> to fit the CD4093 and watch it stop.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <span class="slab">Light</span>
+      <input type="range" id="s-light" min="0" max="100" value="85" step="1"
+        aria-label="how much light falls on the sensor">
+      <button id="b-drift">hover at dusk</button>
+      <button id="b-clear">clear trace</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <button id="b-gate" class="prim">Gate: CD4011</button>
+      <button id="b-rf">R<tspan>f</tspan> = 10 k&Omega;</button>
+      <span class="msg" id="sim-sub"></span>
+    </div>
+  </div>
+
+  <p class="sub" style="margin-top:.7rem">The teal trace is the sensor's voltage. The orange
+  band is the gate's region of indecision. The lower orange trace is the lamp. Count its
+  edges &mdash; that number is the whole project.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A sensor gives you a smooth, noisy,
+  continuous voltage. A logic gate needs a yes or a no. The circuit that converts one into the
+  other honestly is called a <b>Schmitt trigger</b>, and it works by refusing to change its mind
+  twice in a row.</div>
+</section>
+
+<section id="ldr">
+  <span class="snum">Section 2</span>
+  <h2>A photoresistor is a resistor that listens</h2>
+  <p class="sub">No chip, no magic, no pins to get wrong. Two legs, either way round.</p>
+
+  <p>The little round part with the squiggle on its face is a <b>photoresistor</b>, or LDR
+  &mdash; light-dependent resistor. It is made of cadmium sulphide, and light knocks electrons
+  loose inside it, which makes it easier for current to get through. Bright light means low
+  resistance. Darkness means high resistance. That is the entire datasheet.</p>
+
+  <div class="scroller"><table class="tt" style="max-width:30rem">
+    <thead><tr><th>Where it is</th><th class="n">roughly</th></tr></thead>
+    <tbody>
+      <tr><td>Pointed at a torch, or outdoors in sun</td><td class="n">1 k&Omega; or less</td></tr>
+      <tr><td>Ordinary room, lights on</td><td class="n">10&ndash;20 k&Omega;</td></tr>
+      <tr><td>Same room, lights off, curtains open</td><td class="n">100 k&Omega;</td></tr>
+      <tr><td>Your hand cupped over it</td><td class="n">300 k&Omega; &ndash; 1 M&Omega;</td></tr>
+      <tr><td>A drawer, shut</td><td class="n">several M&Omega;</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn"><b>Those numbers are somebody else's sensor.</b> Photoresistors vary
+  enormously between parts, and nobody ships a datasheet with the ones in a kit. Treat the table
+  as the right <em>shape</em> and measure your own in Stage 1 &mdash; which you can do without a
+  multimeter, with a trick worth knowing.</div>
+
+  <h3>A resistance is not a voltage, so we make one</h3>
+
+  <p>A gate cannot read ohms. It reads volts. So put the sensor in series with an ordinary fixed
+  resistor between + and &minus;, and read the voltage where they meet. That arrangement is a
+  <b>voltage divider</b>, and it is the most-used circuit in electronics.</p>
+
+  <figure>
+    <div id="div-svg"></div>
+    <figcaption>The sensor on top, a fixed resistor underneath, and the voltage you actually
+    read in the middle. Bright light pulls the middle <em>up</em>; darkness lets it fall.</figcaption>
+  </figure>
+
+  <p>The useful thing about a divider is that the answer is a ratio, which makes one number
+  worth remembering:</p>
+
+  <div class="note"><b>The middle sits at half the supply when the two resistances are
+  equal.</b> So if your fixed resistor is 10 k&Omega;, the midpoint of the divider arrives
+  exactly when the sensor also reads 10 k&Omega;. Choosing the fixed resistor <em>is</em>
+  choosing how dark it has to get. That one sentence is the whole design of this project.</div>
+
+  <div class="scroller"><table id="rf-table"></table></div>
+
+  <div class="why"><b>Dividers are everywhere, and this is why.</b> Every sensor that changes
+  its resistance &mdash; a thermistor, a strain gauge in a bathroom scale, a fuel-tank float, a
+  moisture probe &mdash; is read by putting it in a divider and looking at the middle. The rest
+  of the machine only ever sees a voltage.</div>
+</section>
+
+<section id="threshold">
+  <span class="snum">Section 3</span>
+  <h2>Where does 1 stop and 0 begin?</h2>
+  <p class="sub">Every gate has an answer to this. Its answer is the source of the trouble.</p>
+
+  <p>Feed 5 V into a CD4011 and it reads 1. Feed it 0 V and it reads 0. Feed it
+  <b>2.5 V</b> &mdash; exactly halfway &mdash; and it has to pick one, and whichever it picks it
+  is only just picking it. A hair either side flips the answer.</p>
+
+  <p>That is fine when the input comes from a switch, because a switch is never halfway. It is
+  not fine when the input comes from the sky slowly getting dark.</p>
+
+  <h3>The problem is that nothing is smooth</h3>
+
+  <p>Your sensor's voltage is not a clean line. Superimposed on it are:</p>
+
+  <ul class="tick">
+    <li><b>Mains flicker.</b> Room lighting brightens and dims 100 times a second, and the LDR
+      follows it.</li>
+    <li><b>Your hand.</b> A shadow edge is never still.</li>
+    <li><b>The supply.</b> Batteries sag, wires pick things up, and the other chips on your
+      board are switching.</li>
+  </ul>
+
+  <p>Add them up and the sensor voltage wobbles by a few tens of millivolts. Which does not
+  matter at all &mdash; until the voltage happens to be sitting on the gate's threshold. Then
+  every wobble is a decision, and the lamp flickers.</p>
+
+  <div class="note"><b>This is not a fault, and no amount of careful wiring fixes it.</b> A
+  single threshold and a noisy signal will always chatter at the crossing. The fix is not
+  cleaner wiring; it is a better question.</div>
+
+  <div class="why"><b>Chattering costs real money.</b> A thermostat that chatters switches the
+  boiler on and off a hundred times an hour and wears out the relay. A lift-door sensor that
+  chatters reopens the door. A car's reversing sensor that chatters beeps nonsense. Every one of
+  those is this exact circuit, and every one is fixed the same way.</div>
+</section>
+
+<section id="hyst">
+  <span class="snum">Section 4</span>
+  <h2>Two thresholds instead of one</h2>
+  <p class="sub">The idea is almost insultingly simple, and it has a long name.</p>
+
+  <p>Stop asking "is the voltage above the line?". Ask two questions instead:</p>
+
+  <ol class="steps">
+    <li><b>If the lamp is off</b> &mdash; turn it on only when the voltage falls below the
+      <em>lower</em> line.</li>
+    <li><b>If the lamp is on</b> &mdash; turn it off only when the voltage climbs above the
+      <em>upper</em> line.</li>
+  </ol>
+
+  <p>Now a wobble cannot flip anything, because after each decision the line it would have to
+  cross to change its mind has <em>moved away from it</em>. The gap between the two lines is
+  called <b>hysteresis</b>, from the Greek for "lagging behind".</p>
+
+  <figure>
+    <div id="loop-svg"></div>
+    <figcaption>The same circuit drawn as input against output. One threshold gives a single
+    vertical wall; two give a loop you can only go round one way. The width of the loop is the
+    hysteresis, and it is the amount of noise the circuit can shrug off.</figcaption>
+  </figure>
+
+  <h3>The CD4093 has it built in</h3>
+
+  <p>A CD4093 is a quad 2-input NAND with Schmitt-trigger inputs, and the front page of its
+  datasheet says the useful things out loud: <em>"Schmitt-trigger action on each input with no
+  external components"</em>, <em>"hysteresis voltage typically 0.9 V at V<sub>DD</sub> =
+  5 V"</em>, and <em>"no limit on input rise and fall times"</em> &mdash; which is exactly the
+  promise you need when the input is the sunset.</p>
+
+  <p>Its pinout is <b>identical</b> to the CD4011's. Same 14 pins, same gates in the same
+  places. That is what makes Stage 3 a fifteen-minute stage: you pull one chip out, put the
+  other in, and change nothing else.</p>
+
+  <div class="scroller"><table id="thr-table"></table></div>
+
+  <div class="warn"><b>Read the guaranteed column, not the typical one.</b> Typical is 0.9 V.
+  The datasheet only <em>promises</em> 0.3 V, and permits as much as 1.6 V. So the chip you have
+  in your hand has somewhere between a third of a volt and a volt and a half of hysteresis, you
+  do not get to know which, and you cannot change it. Stage 4 is about what to do when you need
+  to know.</div>
+
+  <div class="why"><b>Hysteresis is a design decision, not a defect.</b> A house thermostat
+  heats to 21 &deg;C and does not switch on again until 19.5 &deg;C. That 1.5-degree gap is
+  deliberate, it is the same idea as this, and it is why your boiler does not click on and off
+  all evening.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 5</span>
+  <h2>What you need</h2>
+  <p class="sub">Two chips, one sensor, and a fistful of resistors you will be swapping on
+  purpose.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>What it does here</th></tr></thead>
+    <tbody>
+      <tr><td class="n">1</td><td><b>Photoresistor</b> (LDR)</td><td>The sensor. Two legs,
+        either way round.</td></tr>
+      <tr><td class="n">1</td><td><b>CD4011</b> &mdash; quad 2-input NAND</td><td>Stages 2, 4
+        and 5. An ordinary gate, one threshold.</td></tr>
+      <tr><td class="n">1</td><td><b>CD4093</b> &mdash; quad 2-input NAND, <b>Schmitt</b></td>
+        <td>Stage 3. Same pinout, two thresholds.</td></tr>
+      <tr><td class="n">1</td><td>LED, red or yellow</td><td>The indicator, all the way
+        through.</td></tr>
+      <tr><td class="n">1</td><td>Resistor 1 k&Omega;</td><td>The indicator LED's
+        resistor.</td></tr>
+      <tr><td class="n">1 each</td><td>Resistor <b>1 k, 2 k, 5 k1, 10 k, 100 k, 1 M</b></td>
+        <td>Candidates for the fixed half of the divider. You will try several &mdash; that is
+        Stage 1, not indecision.</td></tr>
+      <tr><td class="n">1</td><td>Resistor 10 k&Omega;</td><td>Stage 4: the input resistor of
+        your own Schmitt trigger.</td></tr>
+      <tr><td class="n">1 each</td><td>Resistor <b>1 M, 100 k, 10 k</b></td><td>Stage 4: three
+        different amounts of hysteresis, one of which is a trap.</td></tr>
+      <tr><td class="n">2</td><td>Capacitor 0.1 &micro;F (<b>104</b>)</td><td>One across the
+        chip's power pins. The second is for the spare chip.</td></tr>
+      <tr><td class="n">1</td><td><b>PN2222</b> transistor</td><td>Stage 5. The muscle.</td></tr>
+      <tr><td class="n">1</td><td>White LED, <em>or</em> the active buzzer</td><td>Stage 5: the
+        thing worth switching on.</td></tr>
+      <tr><td class="n">1</td><td>Resistor 220 &Omega;</td><td>Stage 5, for the white LED.</td></tr>
+      <tr><td class="n">1</td><td>Resistor 10 k&Omega;</td><td>Stage 5, into the transistor's
+        base.</td></tr>
+      <tr><td class="n">1</td><td><b>Thermistor</b> (optional)</td><td>The bonus. Drops into the
+        sensor's place and changes what the machine is.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Power:</b> 3 AA cells (4.5 V) or a 5 V breadboard supply. The whole thing draws a few
+  milliamps until Stage 5 lights the white LED. Nothing here goes near mains electricity.</p>
+
+  <div class="note"><b>Every threshold in this project is a fraction of the supply.</b> The
+  CD4093 trips at about 2.9 V and 1.9 V <em>on 5 V</em>. Run the same board on 9 V and both
+  numbers scale up with it, so the light level where it switches barely moves &mdash; but if your
+  batteries sag from 4.5 V to 3.8 V over a month, the trip point drifts. Worth knowing before you
+  leave it running in a shed.</div>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 6</span>
+  <h2>Rules for not breaking things</h2>
+  <p class="sub">Shorter than usual. One chip at a time, and only one new hazard.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you swap the chip</b> You will swap between the CD4011 and
+      the CD4093 more than once. A live swap is the one that kills a chip.</li>
+    <li><b>Both chips are + on 14 and &minus; on 7</b> And they are the same pinout as each
+      other, which is the point.</li>
+    <li><b>Never leave an input dangling</b> Unused inputs go to &minus;. On a NAND that holds
+      the gate's output at 1 and keeps it quiet.</li>
+    <li><b>A NAND becomes a NOT when you tie its two inputs together</b> That is not a bodge,
+      it is the Gate Bench's trick, and this whole project uses it.</li>
+    <li><b>Never wire an output to + or &minus;</b> Outputs drive gate inputs, LEDs through a
+      resistor, or a transistor base through a resistor.</li>
+    <li><b>The transistor's legs are not interchangeable</b> PN2222, flat side toward you, legs
+      down: <b>E &ndash; B &ndash; C</b>. Backwards, it does nothing and gets warm.</li>
+    <li><b>Warm chip means stop</b> Pull the power and check rules 2 and 5.</li>
+  </ol>
+
+  <div class="note"><b>The one habit for this project.</b> Change <em>one</em> resistor at a
+  time and write down what happened before you change the next. Half of this build is
+  measurement, and a measurement you did not write down did not happen.</div>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 7</span>
+  <h2>The pinouts</h2>
+  <p class="sub">One drawing does both chips. Then the transistor, which has three legs and no
+  notch.</p>
+
+  <div id="pinouts"></div>
+
+  <figure>
+    <div id="pn-svg"></div>
+    <figcaption>PN2222, flat face toward you, legs pointing down: emitter, base, collector.
+    There is no notch and no dot &mdash; the flat face is the only clue you get.</figcaption>
+  </figure>
+
+  <div class="note"><b>Why the sensor needs no pinout.</b> It is a resistor. It has no polarity,
+  no power pins and no orientation, and you can put it in either way round. Enjoy it; the
+  thermistor in the bonus is the same.</div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>The divider, and your own sensor</span>
+    <span>~25 min</span></div>
+  <h2>Measure a resistance without a meter</h2>
+  <p class="sub">No chips yet. One sensor, one resistor, one LED, and a genuinely clever
+  trick.</p>
+
+  <p>You need to know what your photoresistor reads at the light level where you want the lamp to
+  switch. You probably have no multimeter. You do not need one, because <b>the divider tells
+  you</b>: when the two resistances are equal, the middle sits at half the supply. So if you can
+  spot "half the supply", you can spot "the sensor now equals my fixed resistor".</p>
+
+  <p>And spotting half the supply is exactly what a logic gate does for a living. But before the
+  chip goes in, do the crude version:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail</td><td>Power in</td></tr>
+      <tr><td>Supply &minus;</td><td>Top blue rail</td><td>Ground in</td></tr>
+      <tr><td>+ rail</td><td>One leg of the <b>photoresistor</b></td><td>Sensor on top</td></tr>
+      <tr><td>Other leg of the photoresistor</td><td>a spare row &mdash; call it <b>S</b></td>
+        <td>S is the voltage you are making</td></tr>
+      <tr><td>Row <b>S</b></td><td><b>10 k&Omega;</b> &rarr; &minus; rail</td><td>The fixed half.
+        This is the resistor you will swap</td></tr>
+      <tr><td>Row <b>S</b></td><td>1 k&Omega; &rarr; LED long leg, short leg to &minus;</td>
+        <td>A rough brightness meter</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up and play with the light. Cover the sensor and the LED dims; shine a torch and it
+  brightens. You are watching a voltage, not a light &mdash; the LED is reporting on <b>S</b>.</p>
+
+  <ul class="tick">
+    <li>Cover the sensor completely. The LED should go nearly out.</li>
+    <li>Swap the 10 k&Omega; for <b>1 M&Omega;</b>. Now the LED is bright even in a dim room,
+      because the sensor is the smaller resistance almost all the time.</li>
+    <li>Swap it for <b>1 k&Omega;</b>. Now the LED is dim unless you point a torch at it.</li>
+    <li>Put the <b>10 k&Omega;</b> back.</li>
+  </ul>
+
+  <div class="note"><b>You have just learned the most useful thing in this project.</b> The
+  fixed resistor is not a detail. It sets <em>which light level</em> counts as dark. Big fixed
+  resistor means the circuit thinks it is bright nearly always; small means it thinks it is dark
+  nearly always. The one you want is the one that is comparable to your sensor at the moment you
+  care about.</div>
+
+  <div class="why"><b>This is a null measurement, and it is how precision used to be done.</b>
+  You are not measuring the sensor's resistance; you are finding the resistor that
+  <em>balances</em> it and reading the answer off the resistor, which you already know the value
+  of. Chemists weighed things this way for two centuries, and a Wheatstone bridge &mdash; still
+  in every strain gauge today &mdash; is the same idea with four resistors.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>One gate, and a disappointment</span>
+    <span>~25 min</span></div>
+  <h2>It works. Then watch it not work.</h2>
+  <p class="sub">The CD4011 goes in, the lamp obeys the dark, and then you look closely.</p>
+
+  <p>One gate is all this needs. Tie a NAND's two inputs together and it becomes a NOT: high in,
+  low out. Feed it <b>S</b> and its output is the opposite of the light &mdash; which is exactly
+  what a nightlight wants.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4011 <b>pin 14</b></td><td>+ rail</td><td>Power</td></tr>
+      <tr><td>CD4011 <b>pin 7</b></td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>pin 14 &rarr; pin 7</td><td>Local smoothing</td></tr>
+      <tr><td>Row <b>S</b></td><td>pin 1 <em>and</em> pin 2</td><td>Both inputs of gate 1, so
+        it acts as a NOT</td></tr>
+      <tr><td>Move the LED: pin 3</td><td>1 k&Omega; &rarr; LED long leg, short leg to
+        &minus;</td><td>The gate drives it now, not the divider</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td><td>The three spare gates'
+        inputs</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up. Room light: the LED is off. Cup your hand over the sensor: the LED comes on. Let
+  go: it goes off. That is a working dusk switch, built out of one gate, and it took four
+  wires.</p>
+
+  <div class="note"><b>The LED is dim, and that is the chip, not your wiring.</b> A CD4011
+  output pushes about 1 mA. It is enough to see indoors and nowhere near enough to light a room,
+  which is what Stage 5 is for.</div>
+
+  <h3>Now do it slowly</h3>
+
+  <p>Move your hand towards the sensor <b>as slowly as you can bear</b>, so the light creeps down
+  instead of dropping. Watch the LED at the moment it changes.</p>
+
+  <p>It stutters. Two, five, a dozen flickers in the half-second while your hand is at the
+  critical distance, and then it settles. Do it again and you get a different number of
+  flickers.</p>
+
+  <ul class="tick">
+    <li>Try it with the room light on and then off. Mains-powered room light flickers 100 times
+      a second and makes it noticeably worse.</li>
+    <li>Hold your hand still at exactly the distance where it cannot decide. It will sit there
+      buzzing between on and off indefinitely.</li>
+    <li>Write down roughly how many flickers you get, in the
+      <a href="worksheet.md">worksheet</a>. You will compare it in fifteen minutes.</li>
+  </ul>
+
+  <div class="warn"><b>Do not try to fix this by rewiring.</b> There is nothing wrong with your
+  board. The circuit is doing precisely what you asked: comparing a wobbling voltage against one
+  fixed line, and reporting every single crossing. You asked a bad question.</div>
+
+  <div class="why"><b>This is the bug that teaches engineers to distrust "it works".</b> It
+  worked when you tested it quickly, in one light level, moving your hand at a normal speed. It
+  fails only in the slow, marginal, realistic case &mdash; dusk. Products ship with this bug
+  constantly, and the reason is that testing the easy case feels like testing.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>One chip, no rewiring</span>
+    <span>~15 min</span></div>
+  <h2>The fifteen-minute stage</h2>
+  <p class="sub">Pull out the CD4011. Put in the CD4093. Touch nothing else.</p>
+
+  <p>Power off. Lift the CD4011 out &mdash; rock it gently from both ends rather than levering
+  one end, or you will bend the legs. Put the <b>CD4093</b> in, notch the same way round. Power
+  on.</p>
+
+  <p>Do the slow-hand test again.</p>
+
+  <p>It snaps. One clean transition, every time, at any speed you like, including holding your
+  hand at the worst possible distance and waiting. The flicker is not reduced; it is
+  <b>gone</b>.</p>
+
+  <ul class="tick">
+    <li>Hold your hand at the distance that made the CD4011 buzz. Nothing. It has already
+      decided.</li>
+    <li>Notice the lamp now turns on slightly later than it used to, and turns off slightly
+      earlier. That is the two thresholds being in different places.</li>
+    <li>Find the two positions of your hand &mdash; one where it switches on, one where it
+      switches off &mdash; and notice they are not the same position. Mark them, and measure the
+      gap with a ruler for the worksheet.</li>
+  </ul>
+
+  <div class="note"><b>Nothing was added.</b> No capacitor, no extra resistor, no second chip,
+  no software. The difference lives inside the chip's input, in a few extra transistors that
+  move the threshold each time the output changes. One part number, one order code, and the
+  fault is designed out rather than patched over.</div>
+
+  <div class="why"><b>Choosing the right part is engineering, and it is the cheap kind.</b>
+  The CD4093 costs the same as the CD4011. A whole class of bug disappears for free because
+  somebody in 1975 anticipated this exact problem and sold you the answer. The skill being
+  practised here is not soldering, it is reading a catalogue.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>Build the hysteresis yourself</span>
+    <span>~35 min</span></div>
+  <h2>Two resistors, and now the gap is yours</h2>
+  <p class="sub">The best stage in the project. Put the plain chip back and beat it at its own
+  game.</p>
+
+  <p>The CD4093 solved the problem and told you nothing. Worse, it will not tell you
+  <em>how much</em> hysteresis you have &mdash; the datasheet promises only 0.3 V and permits
+  1.6 V, so the chip in your hand is somewhere in a five-to-one range and you are not allowed to
+  know where. If you are designing something that must trip at a known light level, that is not
+  good enough.</p>
+
+  <p>So build your own out of ordinary gates. Power off, and put the <b>CD4011</b> back in.</p>
+
+  <h3>How it works, before you wire it</h3>
+
+  <p>Two inverters in a row give you back the signal you started with &mdash; not useless, because
+  now you have a strong copy of it. Feed a little of that copy <em>back</em> to the input through
+  a resistor, and the input stops being purely the sensor's business: it becomes a tug-of-war
+  between the sensor pulling through <b>R1</b> and the output pulling through <b>R2</b>.</p>
+
+  <p>Every time the output flips, it yanks the input in the same direction it just went &mdash;
+  away from the threshold. That is <b>positive feedback</b>, the same effect that latches the
+  Quiz Buzzer, used here in a smaller dose.</p>
+
+  <div class="note"><b>And the dose is a number you control.</b> The gap works out as
+  <b>V<sub>DD</sub> &times; R1 / R2</b>. With a 5 V supply and R1 = 10 k&Omega;: a 1 M&Omega;
+  feedback resistor gives 0.05 V, 100 k&Omega; gives 0.5 V, 10 k&Omega; gives 5 V. You are about
+  to build all three, and one of them is a trap.</div>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Remove the wire from row <b>S</b> to pins 1 and 2</td><td>&nbsp;</td><td>A resistor
+        takes its place</td></tr>
+      <tr><td><b>R1</b> = 10 k&Omega;</td><td>row <b>S</b> &rarr; a new row, call it <b>X</b></td>
+        <td>The sensor now pulls on X through a resistor</td></tr>
+      <tr><td>Row <b>X</b></td><td>pin 1 <em>and</em> pin 2</td><td>Gate 1, still a NOT</td></tr>
+      <tr><td>pin 3</td><td>pin 5 <em>and</em> pin 6</td><td>Gate 2, the second NOT</td></tr>
+      <tr><td><b>R2</b> = 100 k&Omega;</td><td>pin 4 &rarr; row <b>X</b></td><td><b>The feedback.</b>
+        This one wire is the whole stage</td></tr>
+      <tr><td>Move the LED: pin 4 &rarr; pins 8 and 9, then <b>pin 10</b></td><td>1 k&Omega;
+        &rarr; LED &rarr; &minus;</td><td>Gate 3 drives the lamp so the LED cannot load the
+        feedback loop</td></tr>
+      <tr><td>pins 12, 13</td><td>&minus; rail</td><td>The last spare gate</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn"><b>Why the LED moved to a third gate.</b> A CD4011 output can push about
+  1 mA. If it has to light an LED <em>and</em> hold a gate input at a valid high at the same
+  time, it sags to two-and-a-bit volts and the next gate cannot tell what it means. One output,
+  one job. Gate 3 costs nothing &mdash; it was sitting there with its inputs grounded.</div>
+
+  <p>Power up and do the slow-hand test. It snaps, exactly like the CD4093 did &mdash; except
+  this time you know the number.</p>
+
+  <h3>Now change the dose, three times</h3>
+
+  <div class="scroller"><table id="gap-table"></table></div>
+
+  <p>Swap R2 through all three values and do the slow-hand test each time. Predict first, in the
+  <a href="worksheet.md">worksheet</a>, then find out.</p>
+
+  <ul class="tick">
+    <li><b>1 M&Omega;.</b> Sometimes clean, sometimes it flickers. Which is the worst result of
+      the three &mdash; a fault that comes and goes is far harder to find than one that is always
+      there.</li>
+    <li><b>100 k&Omega;.</b> Clean every time, and the on and off points are visibly in different
+      places.</li>
+    <li><b>10 k&Omega;.</b> Once the lamp has gone on it <em>never goes off</em>, no matter how
+      much light you give it. Take the sensor into full sunlight and it still will not budge.</li>
+  </ul>
+
+  <div class="note"><b>The trap is worth understanding, not just avoiding.</b> With R1 = R2 the
+  gap works out as the whole supply, so the voltage needed to change its mind is a voltage the
+  divider physically cannot reach. The circuit has stopped being a switch and become a
+  <b>memory</b> &mdash; one bit, remembering that it once got dark. Which is a useful circuit,
+  and the Quiz Buzzer is built out of two of them. Here, it is a bug.</div>
+
+  <div class="why"><b>Every real design picks a number for this.</b> Too little hysteresis and
+  the thing chatters; too much and it sticks. The right answer is "comfortably more than my
+  noise, comfortably less than my signal", and the honest way to choose it is to measure your
+  noise. You just did that with your hand and an LED.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>Something worth switching on</span>
+    <span>~25 min</span></div>
+  <h2>The gate decides, the transistor pushes</h2>
+  <p class="sub">One transistor, and the dim indicator becomes a real lamp.</p>
+
+  <p>Everything so far has been decided correctly and displayed feebly. A CD4000 output is a
+  thinking part, not a pushing part: about 1 mA, which the Gate Bench already warned you about. A
+  white LED wants ten times that, and the buzzer wants more.</p>
+
+  <p>A transistor fixes this by not carrying the chip's current at all. The gate's output does
+  nothing but tickle the <b>base</b> through a 10 k&Omega; resistor &mdash; a few tenths of a
+  milliamp, well within budget &mdash; and the transistor lets a much larger current flow from
+  the rail, through the lamp, to ground.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Output pin (<b>10</b> after Stage 4, or <b>3</b> if you are back on one gate)</td>
+        <td>10 k&Omega; &rarr; PN2222 <b>base</b> (middle leg)</td><td>About 0.4 mA &mdash; all
+        the chip can spare</td></tr>
+      <tr><td>PN2222 <b>emitter</b> (left leg, flat face toward you)</td><td>&minus; rail</td>
+        <td>The transistor's own ground</td></tr>
+      <tr><td>+ rail</td><td>220 &Omega; &rarr; white LED long leg</td><td>Current comes off the
+        rail, not out of the chip</td></tr>
+      <tr><td>White LED short leg</td><td>PN2222 <b>collector</b> (right leg)</td><td>The
+        transistor completes the circuit when told to</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Cover the sensor. The white LED comes on properly &mdash; bright enough to be a nightlight,
+  ten times what the indicator managed, and the chip is working less hard than before.</p>
+
+  <ul class="tick">
+    <li>Leave the little indicator LED connected as well. Watching both confirms the transistor
+      is following the gate and not inventing opinions.</li>
+    <li>Swap the white LED for the <b>active buzzer</b> and you have a drawer alarm: it screams
+      when the drawer opens and the light gets in. Reverse the sensor and the fixed resistor to
+      make it scream when the light goes <em>out</em> instead.</li>
+    <li>Point the white LED at the sensor. If the light it makes is enough to turn itself off,
+      you have built an oscillator by accident &mdash; and with the CD4011 fitted and no
+      hysteresis, a fast one. This is the best accident in the box.</li>
+  </ul>
+
+  <div class="note"><b>That last one is worth doing on purpose.</b> Lamp shines on sensor,
+  sensor says "bright", circuit turns lamp off, sensor says "dark", circuit turns lamp on. The
+  loop's speed is set by how fast the LDR responds &mdash; tens of milliseconds, so you get a
+  visible blink rather than a tone. Hysteresis sets how far it has to swing each way, so your
+  R2 controls the blink rate. A relaxation oscillator, built out of a bug.</div>
+
+  <div class="why"><b>Sensor, threshold, decision, muscle.</b> That is the shape of every
+  control system there is &mdash; a thermostat, a cruise control, an autopilot, a fridge. You have
+  now built one of each part and, more usefully, you have seen the specific way the threshold
+  stage fails when nobody thinks about it.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>Four directions</span><span>as long as you
+    like</span></div>
+  <h2>If it is going to live on the shelf</h2>
+
+  <ol class="steps">
+    <li><b>Pull the light sensor out and put the thermistor in</b> Same two holes, no other
+      change. A thermistor is a resistor that listens to <em>heat</em> instead of light, so the
+      identical circuit is now a fire alarm, or a fan controller, or a freezer-door warning.
+      Squeeze it between finger and thumb to test it. The lesson is the one that matters most in
+      this project: <b>the circuit has no idea what it is sensing</b> &mdash; it only ever knew
+      about ohms.</li>
+    <li><b>Count the dusks</b> Feed your output into the Score Tower's count input. Now the
+      display shows how many times it got dark &mdash; which, pointed at a doorway, is a people
+      counter. This is the payoff for Stage 3: feed a <em>chattering</em> signal into a counter
+      and you get eleven instead of one, so the counter proves your hysteresis is real.</li>
+    <li><b>Time the darkness</b> A CD4060 is an oscillator and a fourteen-stage counter in one
+      package. Gate its oscillator with your dusk signal and the count tells you how long it was
+      dark, in whatever units you choose the oscillator's resistor to mean.</li>
+    <li><b>The Light Ladder</b> One sensor, a chain of four resistors, four Schmitt gates and four
+      LEDs: a bar that climbs as the light drops. Four thresholds instead of one is a
+      <b>flash converter</b>, which is how the fastest real analogue-to-digital chips work.
+      Warning, and it is the interesting part: the resistor values come out at 140 k, 12 k, 30 k
+      and 100 k rather than anything round, because the trip points bunch up near the
+      threshold. Work out why before you build it.</li>
+  </ol>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 8</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Sensor projects fail in their own way: usually the circuit is fine and the
+  threshold is in the wrong place.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td><b>The lamp is always on</b>, whatever the light</td><td>The fixed resistor is too
+        big, so the circuit thinks it is always dark. Go down a value. (After Stage 4, also
+        suspect R2 = 10 k&Omega; &mdash; it latches.)</td></tr>
+      <tr><td><b>The lamp is always off</b>, whatever the light</td><td>The fixed resistor is too
+        small. Go up a value. Try covering the sensor completely first &mdash; "dark" for a
+        1 k&Omega; resistor is darker than you think.</td></tr>
+      <tr><td>It switches, but at the wrong light level</td><td>That is the fixed resistor's
+        whole job. This is tuning, not a fault. The table in Section 2 is your menu.</td></tr>
+      <tr><td>It flickers at the crossing</td><td>You are on the CD4011 with no feedback resistor,
+        which is Stage 2 behaving correctly. Stage 3 or Stage 4 fixes it.</td></tr>
+      <tr><td>It flickers <em>sometimes</em></td><td>Not enough hysteresis for your noise. R2 is
+        too big &mdash; go from 1 M&Omega; to 100 k&Omega;.</td></tr>
+      <tr><td>It goes on and never comes off</td><td>Too much hysteresis: R2 is close to R1.
+        The circuit has become a latch.</td></tr>
+      <tr><td>The indicator LED is feeble</td><td>Normal. About 1 mA from a CD4000 output. Stage 5
+        is the cure.</td></tr>
+      <tr><td>The white LED stays dark but the indicator works</td><td>The transistor is in
+        backwards, or the LED is. PN2222 flat face toward you: E &ndash; B &ndash; C.</td></tr>
+      <tr><td>It blinks steadily and will not stop</td><td>Your lamp is shining on your sensor.
+        Either turn it away or keep it &mdash; see Stage 5.</td></tr>
+      <tr><td>Everything changes when you touch the board</td><td>An input is floating, or your
+        finger is the sensor. Check the spare gate inputs are at &minus;.</td></tr>
+      <tr><td>A chip gets warm</td><td>Power backwards, or an output wired to a rail.
+        <b>Unplug now.</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>The technique that finds threshold faults fastest.</b> Put the LED back
+  on the divider itself, straight off row <b>S</b> through 1 k&Omega;, like Stage 1. If that LED
+  responds to light, the sensor half is fine and the problem is in the gates. If it does not, stop
+  looking at the chip.</div>
+</section>
+
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ the model ==============================================
+   One photoresistor on top, one fixed resistor underneath, one gate.
+   Thresholds for the CD4093 are the datasheet's typical figures at
+   V_DD = 5 V (TI SCHS115D): positive trigger 2.9 V, negative 1.9 V.
+   The plain CD4011 is treated as a single threshold at half supply. */
+const VDD = 5, R1 = 10e3;
+const Rldr = x => 1e3 * Math.pow(1000, (100 - x) / 100);   /* x=100 → 1 kΩ, x=0 → 1 MΩ */
+const vS = (x, Rf) => VDD * Rf / (Rldr(x) + Rf);
+/* a gate is just its pair of thresholds: output goes HIGH below lo, LOW above hi */
+const PLAIN = {name:'CD4011', lo:2.5, hi:2.5, note:'one threshold at half supply'};
+const SCHMITT = {name:'CD4093', lo:1.9, hi:2.9, note:'two thresholds, built in'};
+const own = R2 => {
+  const k = R1 / R2, VT = 2.5;
+  return {name:'yours, R2 = ' + ohm(R2), lo:VT*(1+k) - VDD*k, hi:VT*(1+k),
+          note:'gap = 5 V × R1/R2 = ' + (VDD*k).toFixed(2) + ' V'};
+};
+/* the sensor resistance at which a gate flips, worked back from its thresholds */
+const tripOn  = (g, Rf) => Rf * (VDD / g.lo - 1);    /* getting darker: lamp comes on */
+const tripOff = (g, Rf) => Rf * (VDD / g.hi - 1);    /* getting lighter: lamp goes off */
+
+function ohm(r){                 /* 5100 prints as 5k1, the way it is written on paper */
+  if (r >= 1e6) return (r / 1e6) + ' MΩ';
+  if (r < 1e3) return r + ' Ω';
+  const k = r / 1e3;
+  return k % 1 ? String(k).replace('.', 'k') : k + ' kΩ';
+}
+function ohmShort(r){
+  return r >= 1e6 ? (r/1e6).toFixed(r % 1e6 ? 1 : 0) + ' M' : (r/1e3).toFixed(r < 1e4 ? 1 : 0) + ' k';
+}
+/* what a given sensor resistance feels like, so the tables mean something */
+function scene(R){
+  return R < 2e3    ? 'a torch pointed at it'
+       : R < 2e4    ? 'an ordinary lit room'
+       : R < 6e4    ? 'a dim room'
+       : R < 2.5e5  ? 'curtains shut, lights off'
+       : R < 1.2e6  ? 'a hand cupped over it'
+       :              'a shut drawer';
+}
+/* real noise on the divider: mains flicker, a moving shadow, supply ripple */
+const NOISE = 0.05;
+let seed = 0x9e3779b9;
+function noise(){                       /* mulberry32 — a weak LCG here hides the chatter */
+  seed = seed + 0x6D2B79F5 | 0;
+  let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+  t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  return (((t ^ t >>> 14) >>> 0) / 4294967296 - .5) * 2 * NOISE;
+}
+
+/* ============ tables ============ */
+const RFS = [1e3, 2e3, 5.1e3, 1e4, 1e5, 1e6];
+function rfTable(){
+  const t = $('rf-table'); if (!t) return;
+  let h = `<thead><tr><th>Fixed resistor</th><th class="n">lamp on when the sensor rises past</th>
+    <th>which is about</th></tr></thead><tbody>`;
+  for (const Rf of RFS){
+    const on = tripOn(SCHMITT, Rf);
+    h += `<tr><td class="pk"><b>${ohm(Rf)}</b></td><td class="n">${ohmShort(on)}Ω</td>
+      <td>${scene(on)}</td></tr>`;
+  }
+  t.innerHTML = h + `</tbody><tfoot><tr><th colspan="3" style="font-weight:400;
+    text-transform:none;letter-spacing:0;color:var(--ink-3)">Worked out from the CD4093's
+    typical 1.9 V trip point on a 5 V supply. With the plain CD4011 the rule is simpler still:
+    the lamp changes when the sensor's resistance passes the fixed resistor's, full
+    stop.</th></tr></tfoot>`;
+}
+function thrTable(){
+  const t = $('thr-table'); if (!t) return;
+  /* straight off TI SCHS115D, static electrical characteristics, V_DD = 5 V, 25 °C */
+  const rows = [
+    ['V<sub>P</sub> &mdash; trips going up', '2.2', '2.9', '3.6'],
+    ['V<sub>N</sub> &mdash; trips coming down', '0.9', '1.9', '2.8'],
+    ['V<sub>H</sub> &mdash; the gap between them', '0.3', '0.9', '1.6']
+  ];
+  let h = `<thead><tr><th>CD4093 at 5 V</th><th class="n">min</th><th class="n">typ</th>
+    <th class="n">max</th></tr></thead><tbody>`;
+  for (const [a,b,c,d] of rows)
+    h += `<tr><td>${a}</td><td class="n off">${b}</td><td class="n on">${c}</td>
+      <td class="n off">${d}</td></tr>`;
+  const ratio = ((VDD/SCHMITT.lo - 1) / (VDD/SCHMITT.hi - 1)).toFixed(2);
+  t.innerHTML = h + `</tbody><tfoot><tr><th colspan="4" style="font-weight:400;
+    text-transform:none;letter-spacing:0;color:var(--ink-3)">Volts. On the typical figures, the
+    sensor's resistance has to swing by a factor of <b>${ratio}&times;</b> before the chip will
+    change its mind &mdash; so the light has to make up its mind too.</th></tr></tfoot>`;
+}
+function gapTable(){
+  const t = $('gap-table'); if (!t) return;
+  let h = `<thead><tr><th>R2</th><th class="n">gap</th><th>against ${(NOISE*2*1000).toFixed(0)} mV
+    of noise</th><th>what you will see</th></tr></thead><tbody>`;
+  for (const R2 of [1e6, 1e5, 1e4]){
+    const gap = VDD * R1 / R2;
+    const cls = gap >= VDD ? 'bad' : gap > NOISE * 4 ? 'ok' : 'meh';
+    const verd = gap >= VDD ? 'wider than the supply' : gap > NOISE*4 ? 'comfortably clear'
+               : 'about the same size';
+    const says = gap >= VDD
+      ? 'Goes on, stays on for ever. It is a memory now, not a switch.'
+      : gap > NOISE*4 ? 'One clean switch, every time, at any speed.'
+      : 'Clean sometimes, flickers other times &mdash; the worst of the three.';
+    h += `<tr><td class="pk"><b>${ohm(R2)}</b></td><td class="n"><b>${gap.toFixed(2)} V</b></td>
+      <td class="verdict ${cls}">${verd}</td><td>${says}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody>';
+}
+
+/* ============ figures ============ */
+function res(x, y){
+  return `<path d="M${x},${y} l4,-7 l8,14 l8,-14 l8,14 l8,-14 l4,7" fill="none"
+    stroke="var(--ink-2)" stroke-width="1.8" ${SH}/>`;
+}
+function resBox(x, y, w, h, label, sub){
+  return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" class="lampsym"/>`
+    + `<text class="sv-cap" x="${x+w+14}" y="${y+h/2 - 2}">${label}</text>`
+    + (sub ? `<text class="sv-lbl" x="${x+w+14}" y="${y+h/2+13}">${sub}</text>` : '');
+}
+function drawDivider(){
+  const h = $('div-svg'); if (!h) return;
+  const CX = 150;
+  let s = `<svg viewBox="0 0 660 280" role="img"
+    aria-label="a photoresistor and a fixed resistor forming a voltage divider">`;
+  /* rails */
+  s += `<line x1="60" y1="34" x2="250" y2="34" stroke="var(--w-red)" stroke-width="2.6" ${SH}/>
+    <text class="sv-cap" x="262" y="38" fill="var(--w-red)">+5 V</text>`;
+  s += `<line x1="60" y1="250" x2="250" y2="250" stroke="var(--w-blue)" stroke-width="2.6" ${SH}/>
+    <line x1="80" y1="256" x2="230" y2="256" stroke="var(--w-blue)" stroke-width="2.2" ${SH}/>
+    <text class="sv-cap" x="262" y="254" fill="var(--w-blue)">&minus; rail</text>`;
+  /* the sensor */
+  s += `<path class="w" d="M${CX},34 V66"/>`;
+  s += resBox(CX-16, 66, 32, 54, 'photoresistor', 'bright = low ohms');
+  /* the arrows that mean "light falls on this" */
+  for (const dy of [0, 16])
+    s += `<path d="M${CX-62},${78+dy} L${CX-26},${90+dy}" stroke="var(--amber)"
+      stroke-width="1.8" ${SH}/><path d="M${CX-34},${84+dy} L${CX-26},${90+dy} L${CX-34},${92+dy}"
+      fill="none" stroke="var(--amber)" stroke-width="1.8" ${SH}/>`;
+  s += `<text class="sv-lbl" x="${CX-116}" y="74" fill="var(--amber)">light</text>`;
+  /* the node */
+  s += `<path class="w live" d="M${CX},120 V162"/>`;
+  s += `<circle cx="${CX}" cy="141" r="5.5" class="dot one" style="fill:var(--teal);
+    stroke:var(--teal)"/>`;
+  s += `<path class="w live" d="M${CX},141 H286"/>`;
+  s += `<text class="sv-cap" x="292" y="137">S</text>`;
+  s += `<text class="sv-lbl" x="292" y="152">to the gate</text>`;
+  /* the fixed half */
+  s += resBox(CX-16, 162, 32, 54, 'fixed resistor', 'you choose this one');
+  s += `<path class="w" d="M${CX},216 V250"/>`;
+  /* the sums */
+  const rows = [92, 65, 18];                 /* labelled by the model, not by hand */
+  s += `<text class="sv-cap" x="392" y="60">with a 10 k&Omega; fixed resistor</text>`;
+  rows.forEach((x, i) => {
+    const y = 90 + i*30, R = Rldr(x), v = vS(x, 1e4);
+    s += `<text class="sv-lbl" x="392" y="${y}">${scene(R)}</text>`;
+    s += `<text class="sv-sig" x="512" y="${y}">${ohmShort(R)}Ω</text>`;
+    s += `<text class="sv-sig" x="576" y="${y}" style="fill:var(--teal)">${v.toFixed(2)} V</text>`;
+  });
+  s += `<line x1="392" y1="192" x2="640" y2="192" stroke="var(--line-2)" stroke-width="1"/>`;
+  s += `<text class="sv-sig" x="392" y="214">S = 5 V × Rf ÷ (Rldr + Rf)</text>`;
+  s += `<text class="sv-lbl" x="392" y="236">equal resistances, and S is 2.50 V &mdash;</text>`;
+  s += `<text class="sv-lbl" x="392" y="250">which is how you measure the sensor</text>`;
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+function drawLoop(){
+  const h = $('loop-svg'); if (!h) return;
+  const W = 250, H = 120;
+  let s = `<svg viewBox="0 0 700 250" role="img"
+    aria-label="transfer characteristic with one threshold and with two">`;
+  const plot = (ox, title, g, arrows) => {
+    const px = v => ox + v * (W / VDD), py = o => 40 + (o ? 0 : H);
+    let p = `<text class="sv-cap" x="${ox}" y="26">${title}</text>`;
+    /* axes */
+    p += `<line x1="${ox}" y1="40" x2="${ox}" y2="${40+H+8}" stroke="var(--line-2)"
+      stroke-width="1.2"/><line x1="${ox}" y1="${40+H}" x2="${ox+W+10}" y2="${40+H}"
+      stroke="var(--line-2)" stroke-width="1.2"/>`;
+    p += `<text class="sv-lbl" x="${ox+W+4}" y="${40+H+20}" text-anchor="end">sensor volts</text>`;
+    p += `<text class="sv-lbl" x="${ox-6}" y="46" text-anchor="end">on</text>`;
+    p += `<text class="sv-lbl" x="${ox-6}" y="${40+H+4}" text-anchor="end">off</text>`;
+    /* the hysteresis band */
+    if (g.hi > g.lo)
+      p += `<rect class="band" x="${px(g.lo)}" y="34" width="${px(g.hi)-px(g.lo)}"
+        height="${H+12}"/>`;
+    /* the two branches: output high while the input is low */
+    p += `<path class="trace" d="M${px(0)},${py(1)} H${px(g.hi)} V${py(0)} H${px(VDD)}"/>`;
+    if (g.hi > g.lo)
+      p += `<path class="trace" style="stroke:var(--copper)"
+        d="M${px(VDD)},${py(0)} H${px(g.lo)} V${py(1)} H${px(0)}"/>`;
+    /* threshold labels */
+    for (const [v, lbl] of (g.hi > g.lo ? [[g.lo,'V'+'N'],[g.hi,'V'+'P']] : [[g.hi,'threshold']]))
+      p += `<line class="thr" x1="${px(v)}" y1="30" x2="${px(v)}" y2="${40+H+8}"/>
+        <text class="sv-sig" x="${px(v)}" y="${40+H+20}" text-anchor="middle"
+          >${v.toFixed(1)} V</text>`;
+    if (arrows){
+      p += `<path d="M${px(1.1)},${py(1)} l-9,-4 v8 Z" fill="var(--teal)"/>`;
+      p += `<path d="M${px(3.9)},${py(0)} l9,-4 v8 Z" fill="var(--copper)"/>`;
+      p += `<text class="sv-lbl" x="${ox}" y="${40+H+42}">getting darker &rarr; along the top,
+        lighter &rarr; along the bottom</text>`;
+    } else {
+      p += `<text class="sv-lbl" x="${ox}" y="${40+H+42}">one wall: it crosses here in both
+        directions</text>`;
+    }
+    return p;
+  };
+  s += plot(50, 'CD4011 — one threshold', PLAIN, false);
+  s += plot(400, 'CD4093 — two', SCHMITT, true);
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+/* ============ pinouts ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd';
+const ROLECOL = {in:'var(--w-blue)', out:'var(--teal)', pwr:'var(--w-red)', gnd:'var(--w-blue)'};
+const QUAD = (n, sub) => ({name:n, sub:sub, pins:14, p:{
+  1:['in 1a',IN],  14:['+  VDD',PWR],
+  2:['in 1b',IN],  13:['in 4b',IN],
+  3:['OUT 1',OUT], 12:['in 4a',IN],
+  4:['OUT 2',OUT], 11:['OUT 4',OUT],
+  5:['in 2a',IN],  10:['OUT 3',OUT],
+  6:['in 2b',IN],   9:['in 3b',IN],
+  7:['−  VSS',GND], 8:['in 3a',IN]}});
+const CHIPS = [
+  QUAD('CD4011', 'Quad 2-input NAND — one threshold'),
+  QUAD('CD4093', 'Quad 2-input NAND, Schmitt — two')
+];
+function dipSVG(chip, scale){
+  const n = chip.pins, half = n/2, pitch = 21, bw = 112, bx = 104, top = 24;
+  const H = top + half*pitch + 24, W = 350;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W*(scale||1)}" role="img"
+    aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0"
+      style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half, idx = left ? i-1 : n-i;
+    const y = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i], col = ROLECOL[role];
+    const x1 = left ? bx : bx+bw, x2 = left ? bx-18 : bx+bw+18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="2"
+      ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-4 : x2+4}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  return s + `<text class="sv-cap" x="${bx+bw/2}" y="${H-6}"
+    text-anchor="middle">${chip.name}</text></svg>`;
+}
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt>Both chips</dt><dd>Gate 1 is pins 1, 2 &rarr; 3. Gate 2 is 5, 6 &rarr; 4. Gate 3 is
+         8, 9 &rarr; 10. Gate 4 is 12, 13 &rarr; 11. + on 14, &minus; on 7.</dd>
+       <dt>The difference</dt><dd>Nothing you can see. It is inside the input stage of the
+         CD4093, and it is the entire project.</dd>
+     </dl>`;
+}
+function drawPN(){
+  const h = $('pn-svg'); if (!h) return;
+  let s = `<svg viewBox="0 0 520 220" role="img" aria-label="PN2222 lead order">`;
+  /* the package: flat face toward you */
+  s += `<path d="M150,30 A54,54 0 1 1 258,30 L258,34 A54,54 0 1 0 150,34 Z" fill="none"/>`;
+  s += `<path d="M150,96 L150,44 A54,54 0 0 1 258,44 L258,96 Z"
+    style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.6" ${SH}/>`;
+  s += `<line x1="150" y1="96" x2="258" y2="96" stroke="var(--line-2)" stroke-width="2.4"/>`;
+  s += `<text class="sv-lbl" x="204" y="72" text-anchor="middle">PN2222</text>`;
+  s += `<text class="sv-lbl" x="204" y="208" text-anchor="middle">flat face toward you</text>`;
+  /* legs */
+  [['E', 168, 'emitter', '&minus; rail'], ['B', 204, 'base', 'via 10 k&Omega; from the gate'],
+   ['C', 240, 'collector', 'the lamp']].forEach(([n, x, role, goes]) => {
+    s += `<line x1="${x}" y1="96" x2="${x}" y2="150" stroke="var(--ink-2)" stroke-width="2.4"
+      ${SH}/>`;
+    s += `<text class="sv-cap" x="${x}" y="168" text-anchor="middle">${n}</text>`;
+    s += `<text class="sv-lbl" x="${x}" y="184" text-anchor="middle">${role}</text>`;
+  });
+  s += `<text class="sv-lbl" x="300" y="150">E &rarr; &minus; rail</text>`;
+  s += `<text class="sv-lbl" x="300" y="168">B &rarr; 10 k&Omega; &rarr; gate output</text>`;
+  s += `<text class="sv-lbl" x="300" y="186">C &rarr; the lamp, and the lamp to +</text>`;
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+/* ============ the check that keeps this page honest ============ */
+function selfTest(){
+  const bad = [];
+  /* the divider must sit at half supply when the two resistances match */
+  const Rf = 1e4, x = 100 - Math.log10(Rf/1e3)/3*100;
+  if (Math.abs(vS(x, Rf) - 2.5) > 0.01) bad.push('divider midpoint');
+  /* a gate with no hysteresis must have both thresholds in the same place */
+  if (PLAIN.lo !== PLAIN.hi) bad.push('plain gate');
+  /* the built Schmitt must match the stated formula, and R2 = R1 must be unreachable */
+  if (Math.abs((own(1e5).hi - own(1e5).lo) - 0.5) > 1e-9) bad.push('gap formula');
+  if (own(1e4).lo > 0 || own(1e4).hi < VDD) bad.push('R2 = R1 should be unreachable');
+  /* and the sensor must trip the Schmitt later coming down than going up */
+  if (!(tripOn(SCHMITT, Rf) > tripOff(SCHMITT, Rf))) bad.push('trip order');
+  if (bad.length){
+    const d = document.createElement('div');
+    d.className = 'warn';
+    d.innerHTML = '<b>This page has a bug.</b> The model disagrees with itself at: '
+      + bad.join(', ') + '. Do not trust the numbers on it.';
+    document.querySelector('main').prepend(d);
+  }
+  return bad.length === 0;
+}
+
+rfTable(); thrTable(); gapTable();
+drawDivider(); drawLoop(); drawPinouts(); drawPN(); selfTest();
+</script>
+
+<script>
+"use strict";
+/* ============ the Dusk Switch, playable ============
+   A 60 ms sampler drives a little scope. The noise is real in the sense
+   that it is there whether you like it or not: with one threshold the
+   lamp trace shows every crossing, and with two it does not.          */
+const GATES = [PLAIN, SCHMITT, own(1e6), own(1e5), own(1e4)];
+const S = {light:85, gi:0, rfi:3, out:0, flips:0, hist:[], drift:0, timer:0};
+const NS = 100;                                   /* samples on screen */
+const HOVER = 6;                                  /* how far either side of dusk to creep */
+/* the light level at which this gate, with this resistor, decides. Same formula as
+   the tables use; here it only says where the interesting part of the range is. */
+function duskLight(){
+  const R = tripOn(gate(), Rf());
+  if (!isFinite(R) || R <= 0) return 55;
+  return Math.max(12, Math.min(88, 100 - 100 * Math.log10(R / 1e3) / 3));
+}
+const PX = 400, PW = 420, PY0 = 36, PY1 = 276;
+const vy = v => PY1 - (v / VDD) * (PY1 - PY0);
+const gate = () => GATES[S.gi];
+const Rf = () => RFS[S.rfi];
+
+function simSVG(){
+  const CX = 96;
+  let s = `<svg viewBox="0 0 840 340" role="img"
+    aria-label="a photoresistor divider feeding one gate, with a scope on the output">`;
+  /* ---- the divider ---- */
+  s += `<line x1="40" y1="36" x2="152" y2="36" stroke="var(--w-red)" stroke-width="2.4" ${SH}/>
+    <text class="sv-lbl" x="158" y="40" fill="var(--w-red)">+5 V</text>`;
+  s += `<line x1="40" y1="256" x2="152" y2="256" stroke="var(--w-blue)" stroke-width="2.4"
+    ${SH}/><text class="sv-lbl" x="158" y="260" fill="var(--w-blue)">&minus;</text>`;
+  s += `<path class="w" d="M${CX},36 V70"/>`;
+  s += `<rect x="${CX-15}" y="70" width="30" height="48" rx="3" class="lampsym"/>`;
+  s += `<text class="sv-lbl" x="${CX-24}" y="98" text-anchor="end">sensor</text>`;
+  for (const dy of [0, 14])
+    s += `<path d="M${CX+34},${76+dy} L${CX+19},${86+dy}" stroke="var(--amber)"
+      stroke-width="1.6" ${SH}/>`;
+  s += `<path class="w" id="w-s" d="M${CX},118 V158"/>`;
+  s += `<rect x="${CX-15}" y="158" width="30" height="48" rx="3" class="lampsym"/>`;
+  s += `<text class="sv-sig" id="sv-rf" x="${CX-24}" y="186" text-anchor="end">10 k</text>`;
+  s += `<path class="w" d="M${CX},206 V256"/>`;
+  /* the node and its voltage */
+  s += `<circle cx="${CX}" cy="138" r="5" style="fill:var(--teal);stroke:var(--teal)"/>`;
+  s += `<path class="w" id="w-in" d="M${CX},138 H214"/>`;
+  s += `<text class="sv-cap" x="${CX+8}" y="132">S</text>`;
+  s += `<text class="sv-big" id="sv-v" x="40" y="318">2.5 V</text>`;
+  s += `<text class="sv-lbl" id="sv-r" x="40" y="336">sensor 10 k&Omega;</text>`;
+  /* ---- the gate ---- */
+  s += `<g id="g-sym"><path class="gsym" d="M214,116 L262,138 L214,160 Z"/>
+    <circle class="bub" cx="267" cy="138" r="5"/>
+    <text class="sv-sig" id="sv-gname" x="214" y="106">CD4011</text>
+    <path id="g-loop" class="dead" d="M226,146 h9 v-16 h9" fill="none" stroke="var(--ink)"
+      stroke-width="1.6" ${SH}/></g>`;
+  /* ---- the lamp ---- */
+  s += `<path class="w" id="w-out" d="M272,138 H300"/>`;
+  s += res(300, 138);
+  s += `<path class="w" id="w-out2" d="M340,138 H356"/>`;
+  s += `<circle id="lamp" class="lampsym" cx="368" cy="138" r="12"/>`;
+  s += `<text class="sv-lbl" x="368" y="168" text-anchor="middle">lamp</text>`;
+  s += `<path class="w" d="M380,138 H392 V256 H${CX}"/>`;
+  /* ---- the scope ---- */
+  s += `<rect x="${PX}" y="${PY0}" width="${PW}" height="${PY1-PY0}" rx="6"
+    style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.3"/>`;
+  s += `<rect class="band" id="sv-band" x="${PX}" y="0" width="${PW}" height="0"/>`;
+  s += `<line class="thr" id="sv-t1" x1="${PX}" y1="0" x2="${PX+PW}" y2="0"/>`;
+  s += `<line class="thr" id="sv-t2" x1="${PX}" y1="0" x2="${PX+PW}" y2="0"/>`;
+  s += `<polyline class="trace" id="sv-in" points=""/>`;
+  s += `<polyline class="trace out" id="sv-lamp" points=""/>`;
+  s += `<text class="sv-lbl" x="${PX+6}" y="${vy(VDD)+12}">5 V</text>`;
+  s += `<text class="sv-lbl" x="${PX+6}" y="${vy(0)-6}">0 V</text>`;
+  s += `<text class="sv-lbl" x="${PX+PW-6}" y="${vy(1.25)-6}" text-anchor="end"
+    style="fill:var(--copper)">lamp</text>`;
+  s += `<text class="sv-cap" x="${PX+PW}" y="${PY0-8}" text-anchor="end">sensor voltage,
+    and the lamp</text>`;
+  s += `<text class="sv-cap" id="sv-flips" x="${PX}" y="${PY0-8}">0 changes of mind</text>`;
+  s += `<text class="sv-lbl" x="${PX}" y="${PY1+20}">The orange band is the gate's region of
+    indecision. Wider band, steadier lamp.</text>`;
+  return s + '</svg>';
+}
+
+function step(){
+  const g = gate(), ideal = vS(S.light, Rf()), v = Math.max(0, Math.min(VDD, ideal + noise()));
+  const was = S.out;
+  if (S.out && v > g.hi) S.out = 0;
+  else if (!S.out && v < g.lo) S.out = 1;
+  if (S.out !== was) S.flips++;
+  S.hist.push({v:v, o:S.out});
+  while (S.hist.length > NS) S.hist.shift();
+  paint(v, ideal);
+}
+
+function paint(v, ideal){
+  const g = gate(), R = Rldr(S.light);
+  const pts = arr => arr.map((p, i) =>
+    `${(PX + i * (PW / (NS - 1))).toFixed(1)},${p.toFixed(1)}`).join(' ');
+  $('sv-in').setAttribute('points', pts(S.hist.map(h => vy(h.v))));
+  $('sv-lamp').setAttribute('points', pts(S.hist.map(h => vy(h.o ? 1.25 : 0.35))));
+  /* the band and its edges, clamped to the screen */
+  const yl = vy(Math.min(g.hi, VDD)), yh = vy(Math.max(g.lo, 0));
+  $('sv-band').setAttribute('y', yl);
+  $('sv-band').setAttribute('height', Math.max(0, yh - yl));
+  $('sv-t1').setAttribute('y1', yh); $('sv-t1').setAttribute('y2', yh);
+  $('sv-t2').setAttribute('y1', yl); $('sv-t2').setAttribute('y2', yl);
+  $('sv-v').textContent = v.toFixed(2) + ' V';
+  $('sv-r').textContent = 'sensor ' + ohmShort(R) + 'Ω';
+  $('sv-rf').textContent = ohmShort(Rf());
+  $('sv-gname').textContent = g.name;
+  $('g-loop').classList.toggle('dead', g.hi === g.lo);
+  $('sv-flips').textContent = S.flips + (S.flips === 1 ? ' change of mind' : ' changes of mind');
+  const lamp = $('lamp');
+  lamp.style.fill = S.out ? 'var(--amber)' : 'var(--surface-2)';
+  lamp.style.stroke = S.out ? 'var(--amber)' : 'var(--line-2)';
+  for (const w of ['w-out', 'w-out2']) $(w).classList.toggle('live', !!S.out);
+  $('w-in').classList.toggle('live', v > g.lo);
+  $('sim-msg').textContent = `S = ${v.toFixed(2)} V, sensor about ${ohmShort(R)}Ω `
+    + `— lamp ${S.out ? 'ON' : 'off'}`;
+  $('sim-sub').textContent = `${g.name}: ${g.note}. Lamp comes on when the sensor passes `
+    + `${ohmShort(tripOn(g, Rf()))}Ω`
+    + (g.lo <= 0 ? ' — and then never goes off again, whatever you do.'
+     : g.hi === g.lo ? ' — and off again at exactly the same number, which is the problem.'
+     : `, off again below ${ohmShort(tripOff(g, Rf()))}Ω.`);
+}
+
+function initSim(){
+  if (!$('sim-svg')) return;
+  $('sim-svg').innerHTML = '<div class="scroller">' + simSVG() + '</div>';
+  const sl = $('s-light');
+  sl.addEventListener('input', () => { S.light = +sl.value; });
+  $('b-gate').addEventListener('click', () => {
+    S.gi = (S.gi + 1) % GATES.length; S.flips = 0;
+    $('b-gate').textContent = 'Gate: ' + gate().name;
+  });
+  $('b-rf').addEventListener('click', () => {
+    S.rfi = (S.rfi + 1) % RFS.length; S.flips = 0;
+    $('b-rf').innerHTML = 'R<sub>f</sub> = ' + ohm(Rf());
+  for (let i = 0; i < NS; i++) step();        /* fill the scope before anyone looks at it */
+  S.flips = 0;
+  });
+  $('b-clear').addEventListener('click', () => { S.hist = []; S.flips = 0; });
+  $('b-drift').addEventListener('click', () => {
+    S.drift = S.drift ? 0 : -1; S.flips = 0;
+    if (S.drift) S.light = duskLight() + HOVER;
+    $('b-drift').textContent = S.drift ? 'stop' : 'hover at dusk';
+  });
+  $('b-rf').innerHTML = 'R<sub>f</sub> = ' + ohm(Rf());
+  for (let i = 0; i < NS; i++) step();        /* fill the scope before anyone looks at it */
+  S.flips = 0;
+  S.timer = setInterval(() => {
+    if (document.hidden) return;                  /* no point animating an unseen page */
+    if (S.drift){         /* creep up and down across the level this gate decides at, the
+                             way a hand held at the critical distance does */
+      const d = duskLight();
+      S.light += S.drift * 0.08;
+      if (S.light <= d - HOVER) S.drift = 1;
+      if (S.light >= d + HOVER) S.drift = -1;
+      sl.value = Math.round(S.light);
+    }
+    step();
+  }, 60);
+  step();
+}
+initSim();
+</script>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the parts, the wire lists and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the measurements &mdash; including
+  how to measure your own photoresistor with no multimeter. Pin numbers and every threshold
+  quoted here were read off the Texas Instruments datasheets: CD4093B (SCHS115D) for the
+  Schmitt-trigger figures, CD4011B (SCHS021D) for the plain gate.</p>
+</div></footer>
