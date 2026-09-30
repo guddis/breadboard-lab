@@ -1,0 +1,1349 @@
+<meta charset="utf-8">
+<title>The Digit Factory</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.tog rect{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+.tog.one rect{fill:var(--teal-soft);stroke:var(--teal)}
+.tog text{fill:var(--ink-3)}
+.tog.one text{fill:var(--teal)}
+.tog:hover rect{stroke:var(--ink-3)}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.25}}
+.ringing{animation:ring .28s infinite}
+</style>
+<style>
+.w.live{stroke:var(--teal);stroke-width:2.8}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.dot{stroke:var(--line-2);stroke-width:1.4;fill:var(--surface)}
+.dot.one{fill:var(--copper);stroke:var(--copper)}
+.seg{stroke:none}
+.dead{opacity:.22}
+.simbar.tight{border-top:none;padding-top:0;margin-top:.45rem}
+.dgrid{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(5.2rem,1fr));
+  margin:1.2rem 0}
+.dgrid figure{margin:0;text-align:center}
+.dgrid figcaption{font:600 .8rem/1 var(--fm);color:var(--ink-3);margin-top:.35rem;padding:0}
+.dgrid svg{margin:0 auto}
+.eq{font:600 .92rem/1.5 var(--fm);color:var(--teal)}
+.segcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:.95rem 1.05rem;box-shadow:var(--shadow)}
+.segcard h4{margin:0 0 .35rem;font-size:1.02rem}
+.segcard .eq{display:block;margin:.1rem 0 .45rem}
+.segcard p{font-size:.88rem;margin:.4rem 0 0;color:var(--ink-2)}
+.segcard .dk{font:500 .72rem/1 var(--fm);color:var(--copper)}
+.sgrid{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fit,minmax(15.5rem,1fr))}
+td.pk{font:500 .8rem/1.3 var(--fm)}
+.sv-sig{font-size:11px;font-family:var(--fm);fill:var(--ink-2)}
+code.sig{font-size:.95em;padding:.05em .3em}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Decoding, from scratch &middot; Project 07</p>
+  <h1>The Digit<br>Factory</h1>
+  <p class="lead">Three switches set a number in binary. Nineteen logic gates argue about it for
+  a hundred-millionth of a second, and a digit you can read appears on the display. The Score
+  Tower had a chip that did this for you and never showed its working. This is the working.</p>
+  <div class="facts">
+    <span><b>Age</b> 12+, and it helps to have built one project before this</span>
+    <span><b>Time</b> about 2&frac12; hours, in 4 stages</span>
+    <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+    <span><b>Chips</b> CD4081 &times; 2, CD4071 &times; 2, CD4070, CD4069</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Flip the three switches. The digit is worked out by gates you are about to
+  wire, one at a time.</p>
+
+  <p>No counter, no decoder chip, no clever 16-pin part. Three inputs, six ordinary gate chips
+  from the Gate Bench, and a seven-segment display that ends up spelling a number.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="b-a" class="prim">A &middot; 1</button>
+      <button id="b-b" class="prim">B &middot; 2</button>
+      <button id="b-c" class="prim">C &middot; 4</button>
+      <button id="b-run">count 0&rarr;7</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <button id="b-pol">Design: hold the dark bars HIGH</button>
+      <span class="msg" id="sim-sub"></span>
+    </div>
+  </div>
+
+  <p class="sub" style="margin-top:.7rem">An <b>orange dot</b> means that gate is holding its
+  segment at 5 V, which on this display means <em>dark</em>. The bars that light are the ones
+  the gates pull down to &minus;. That sounds backwards, and Section 3 is about why it is the
+  cheaper way round.</p>
+
+  <div class="note"><b>The whole project in one line.</b> A digit is not one answer. It is
+  <b>seven separate yes-or-no answers</b> about the same three switches &mdash; and every one of
+  them is a logic equation you can write down, minimise, and build.</div>
+</section>
+
+<section id="three">
+  <span class="snum">Section 2</span>
+  <h2>Three switches make eight numbers</h2>
+  <p class="sub">Binary, with your hands on it.</p>
+
+  <p>Each switch is worth a number: <b>A is 1</b>, <b>B is 2</b>, <b>C is 4</b>. A switch in
+  the <b>+</b> rail counts; a switch in <b>&minus;</b> does not. Add up the ones that count and
+  that is the number on the display.</p>
+
+  <div class="scroller"><table class="tt" style="max-width:26rem" id="bin-table"></table></div>
+
+  <p>Eight rows, because three switches can be arranged eight ways &mdash; 2 &times; 2 &times; 2.
+  Add a fourth switch and you get sixteen; that is the whole idea of binary and it is the last
+  time this guide will explain it.</p>
+
+  <div class="note"><b>Your display cannot show an 8.</b> Three bits stop at seven. Counting in
+  eights like this has a name &mdash; <b>octal</b> &mdash; and it was how programmers wrote
+  numbers down for about twenty years, because three switches, three lamps and three holes in a
+  punched card all line up neatly.</div>
+
+  <h3>The font is not yours to choose</h3>
+
+  <p>Eight digits, each one a set of bars. This is the same font the CD4026 drew in the Score
+  Tower, and for the same reason: it is what a seven-segment display can do.</p>
+
+  <div class="dgrid" id="font-row"></div>
+
+  <div class="scroller"><table class="tt" style="max-width:30rem" id="font-table"></table></div>
+
+  <p>Read that table by <em>column</em> instead of by row. The <b>a</b> column is the complete
+  specification of one wire: a is lit for 0, 2, 3, 5, 6, 7 and dark for 1 and 4. Nothing else
+  about the project matters to segment a.</p>
+
+  <div class="why"><b>Seven small problems beat one big one.</b> "Turn a number into a digit"
+  is hard to think about. "When is the top bar dark?" is almost easy. Splitting one wide
+  problem into columns you can solve separately is the move, and it is the same move whether
+  you are wiring gates or writing a program.</div>
+</section>
+
+<section id="dark">
+  <span class="snum">Section 3</span>
+  <h2>Work out the darkness, not the light</h2>
+  <p class="sub">The trick that makes this project fit in six chips instead of eight.</p>
+
+  <p>Your display is <b>common anode</b>: all seven bars have their <b>+</b> legs joined to the
+  + rail, so a bar lights when something pulls its other end down to <b>&minus;</b>. A
+  <b>0</b> lights a bar. A <b>1</b> leaves it dark.</p>
+
+  <p>In the Score Tower that was bad news &mdash; the CD4026 says 1 for a bar it wants lit, so
+  fourteen inverters had to go in to flip every answer. Here, nobody has decided anything yet.
+  You are designing the logic, so you can design it the way the display already wants.</p>
+
+  <p>So do not ask "which bars light?". Ask <b>"which bars stay dark?"</b> &mdash; and get a
+  gate to answer <em>that</em>. The answer is a 1, the display reads it as dark, and no
+  inverter is needed anywhere.</p>
+
+  <p>It is also less work, and here is the proof. Count the entries in the font table:</p>
+
+  <div class="scroller"><table class="tt" style="max-width:24rem" id="dark-table"></table></div>
+
+  <p>Thirty-six lightings against twenty darknesses. Asking the sparser question means fewer
+  cases to build, and fewer cases means fewer gates. Segment <b>c</b> is the extreme: it is
+  dark for exactly one of the eight digits, so its whole equation is "the number is 2".</p>
+
+  <div class="note"><b>The same circuit, priced both ways.</b> Compute the light and you need
+  the gates <em>plus</em> seven inverters &mdash; two more CD4069s, fourteen more wires, one
+  more afternoon. Press the <b>Design</b> button in the simulator to switch between them: the
+  digit is identical and the chip count is not. This is what engineers mean by an <b>active-low
+  signal</b>, and it is why so many real chips have a line over their pin names.</div>
+
+  <div class="why"><b>Nobody adds an inverter if they can move the question.</b> Reset pins that
+  reset when low, chip-select pins that select when low, error flags that mean trouble when low
+  &mdash; all of them are somebody noticing which polarity was free. It costs nothing at design
+  time and a whole chip afterwards.</div>
+</section>
+
+<section id="equations">
+  <span class="snum">Section 4</span>
+  <h2>Seven equations, and where they come from</h2>
+  <p class="sub">This is the paperwork. Do it at the table, with a pencil, before the
+  breadboard comes out.</p>
+
+  <p>Take segment <b>a</b>, the top bar. From the font table it is dark for <b>1</b> and
+  <b>4</b>, and lit for the other six. Write those two digits out in binary:</p>
+
+  <div class="scroller"><table class="tt" style="max-width:20rem">
+    <thead><tr><th class="n">dark for</th><th class="n">C</th><th class="n">B</th>
+      <th class="n">A</th></tr></thead>
+    <tbody>
+      <tr><td class="n"><b>1</b></td><td class="n off">0</td><td class="n off">0</td>
+        <td class="n on">1</td></tr>
+      <tr><td class="n"><b>4</b></td><td class="n on">1</td><td class="n off">0</td>
+        <td class="n off">0</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Two things are true of both rows, and of no other row in the table. <b>B is 0.</b> And
+  <b>A and C disagree</b> &mdash; one of them is 1 and the other is 0. That second one is an
+  XOR, which you met in the Gate Bench as the gate that means "these two are different".</p>
+
+  <p>So: the top bar is dark when B is 0 <em>and</em> A differs from C. Three gates.</p>
+
+  <figure>
+    <div id="a-svg"></div>
+    <figcaption>Segment <b>a</b>, the whole thing. An inverter, an XOR and an AND &mdash; and
+    the AND's output pin is wired through a resistor straight into the display.</figcaption>
+  </figure>
+
+  <p>Do that six more times and the project is designed. Here is every answer, and you should
+  check two or three of them against the font table yourself rather than trusting the page:</p>
+
+  <div class="sgrid" id="eq-cards"></div>
+
+  <div class="note"><b>Notice what gets shared.</b> That single <code class="sig">B&#772;</code>
+  inverter feeds four
+  different gates, and its answer ends up inside <b>five</b> of the seven segments.
+  A&middot;B&middot;C &mdash; "the number is 7" &mdash; is used by two. A gate output can feed as
+  many inputs as you like, so a signal you have already built is free: nineteen gates cover all
+  seven segments, where building each one on its own would take <b>twenty-nine</b> gates and
+  eight chips.</div>
+
+  <h3>Where the gates go</h3>
+
+  <p>Nineteen gates, six chips, and the packages come in fours. Two chips end up completely
+  full, which is satisfying and also a warning: there is no spare AND gate to make a mistake
+  with.</p>
+
+  <div class="scroller"><table id="pkg-table"></table></div>
+
+  <div class="why"><b>This is logic synthesis, done by hand.</b> Truth table in, gates out. A
+  chip designer today writes the truth table in a language called Verilog and a program does
+  the rest &mdash; the program searches for the shared terms and the cheap polarity the same way
+  you just did, for a few million gates instead of nineteen. The step is called
+  <b>synthesis</b>, and it is the same step.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 5</span>
+  <h2>What you need</h2>
+  <p class="sub">Everything here is in the box. The six chips are the Gate Bench's chips.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>What it does here</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2</td><td><b>CD4081</b> &mdash; quad 2-input AND</td><td>Seven AND
+        gates. One package is full.</td></tr>
+      <tr><td class="n">2</td><td><b>CD4071</b> &mdash; quad 2-input OR</td><td>Seven OR gates.
+        One package is full.</td></tr>
+      <tr><td class="n">1</td><td><b>CD4070</b> &mdash; quad 2-input XOR</td><td>Two XORs, for
+        segments a and b. Two gates spare.</td></tr>
+      <tr><td class="n">1</td><td><b>CD4069</b> &mdash; hex NOT</td><td>Three inverters:
+        <code class="sig">B&#772;</code>, <code class="sig">C&#772;</code>, and the one that
+        finishes segment c.</td></tr>
+      <tr><td class="n">1</td><td>7-segment display, <b>common anode</b>, red</td><td>The same
+        part the Score Tower used. Red, not white.</td></tr>
+      <tr><td class="n">7</td><td>Resistor 220 &Omega;</td><td>One per segment. 150 &Omega; is
+        fine and slightly brighter.</td></tr>
+      <tr><td class="n">3</td><td>Resistor 100 k&Omega;</td><td>Pull-downs, so an unplugged
+        input switch reads 0 instead of nonsense.</td></tr>
+      <tr><td class="n">3</td><td>Resistor 1 k&Omega;</td><td>The three input lamps.</td></tr>
+      <tr><td class="n">3</td><td>LED, any colour</td><td>Shows the binary number you have set.
+        Worth fitting &mdash; it is how you check your own arithmetic.</td></tr>
+      <tr><td class="n">6</td><td>Capacitor 0.1 &micro;F (<b>104</b>)</td><td>One across each
+        chip's power pins.</td></tr>
+      <tr><td class="n">3</td><td>Jumper wire, loose at one end</td><td>The A, B and C switches.
+        Plug the free end into + or &minus;.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Power:</b> 3 AA cells (4.5 V) or a 5 V breadboard supply. The whole board draws about
+  15 mA. Nothing here goes near mains electricity.</p>
+
+  <div class="warn"><b>The segments will be dimmer than the Score Tower's, and the resistor is
+  not why.</b> A CD4081 output can pull down about <b>1 mA</b> at 5 V &mdash; the datasheet
+  guarantees 0.64 mA and typically gives 1 mA. That, not your 220 &Omega;, is what sets the
+  brightness: the chip runs out of push long before the resistor starts limiting anything. It is
+  readable indoors and disappointing in sunlight.</div>
+
+  <div class="note"><b>The knob to turn if it is too dim.</b> Run the whole board at
+  <b>9 V</b> instead of 5 V &mdash; two 4.5 V battery packs in series, or a 9 V block. These
+  chips are specified to 18 V, and a CD4081 at 10 V pulls down about 2.6 mA instead of 1 mA. The
+  digit gets noticeably brighter and nothing else in the circuit changes. Keep the 220 &Omega;
+  resistors in: they do nothing at 5 V and they are your insurance at 9 V.</div>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 6</span>
+  <h2>Rules for not breaking things</h2>
+  <p class="sub">Six chips is more than you have had on one board before. The rules matter
+  more, not less.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you rewire</b> Every time. You will be at this board for
+      hours.</li>
+    <li><b>Every chip here is + on 14 and &minus; on 7</b> All six of them, no exceptions. This
+      is the first project in the box where that is true of everything, so enjoy it.</li>
+    <li><b>Never leave an input dangling</b> A floating CMOS input is not 0 &mdash; it drifts,
+      and the gate warms up. Every unused input on every chip goes to <b>&minus;</b>, and
+      there is a table of exactly which ones in the README.</li>
+    <li><b>Never wire an output to + or &minus;</b> That is a short through the chip. A gate
+      output goes to gate inputs, or through a resistor to the display, and nowhere else.</li>
+    <li><b>One output can feed many inputs</b> <code class="sig">B&#772;</code> &mdash; the
+      output of one inverter &mdash; goes to four different gates. That is normal and costs
+      nothing. Two <em>outputs</em> into one node is the thing that is never allowed.</li>
+    <li><b>Label as you go</b> Write the signal name on a scrap of tape beside each row you
+      use. By Stage 3 you will have nineteen named signals and no memory of which is which.</li>
+    <li><b>Warm chip means stop</b> Pull the power. Check rule 2, then rule 4.</li>
+  </ol>
+
+  <div class="note"><b>The one habit that saves this build.</b> Wire one gate, then power up and
+  check that one gate with the input switches before wiring the next. Nineteen gates checked one
+  at a time takes twenty minutes. Nineteen gates checked at the end takes an evening.</div>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 7</span>
+  <h2>The pinouts</h2>
+  <p class="sub">Four chip types, and three of them are the same drawing.</p>
+
+  <p>The CD4081, CD4071 and CD4070 are all <b>four 2-input gates in a 14-pin package</b>, and
+  the 4000 series puts them in identical places. Learn the pattern once:</p>
+
+  <figure>
+    <div id="quad-anatomy"></div>
+    <figcaption>One drawing, three chips. Gate 1 is pins 1 and 2 into pin 3; gate 2 is 5 and 6
+    into 4; gate 3 is 8 and 9 into 10; gate 4 is 12 and 13 into 11. The two middle gates are
+    numbered the other way up, which is the mistake everyone makes once.</figcaption>
+  </figure>
+
+  <div id="pinouts"></div>
+
+  <p>The display's pins are the ones nobody publishes. If you built the Score Tower you already
+  tested yours and wrote the map down; use that. If not, the test is four minutes and it is in
+  the <a href="worksheet.md">worksheet</a>.</p>
+
+  <figure>
+    <div id="disp-svg"></div>
+    <figcaption>The usual 10-pin arrangement, seen from the front. Treat it as a guess until
+    your own test agrees with it.</figcaption>
+  </figure>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>Switches, lamps, display</span>
+    <span>~25 min</span></div>
+  <h2>Build the two ends first</h2>
+  <p class="sub">No gates yet. Set a number with your fingers, and spell a digit with your
+  fingers.</p>
+
+  <p>The middle of this project is nineteen gates you cannot see working. Both <em>ends</em> of
+  it you can test on their own, so test them now, while there is nothing else to blame.</p>
+
+  <h3>Power and the three inputs</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail</td><td>Power in</td></tr>
+      <tr><td>Supply &minus;</td><td>Top blue rail</td><td>Ground in</td></tr>
+      <tr><td>Top red rail</td><td>Bottom red rail</td><td>Both sides live</td></tr>
+      <tr><td>Top blue rail</td><td>Bottom blue rail</td><td>Both sides grounded</td></tr>
+      <tr><td>Three spare rows</td><td>call them <b>A</b>, <b>B</b>, <b>C</b></td><td>Every
+        gate input comes from one of these three rows</td></tr>
+      <tr><td>100 k&Omega;</td><td>row A &rarr; &minus; rail</td><td>Pull-down: unplugged means
+        0, not nonsense</td></tr>
+      <tr><td>100 k&Omega;</td><td>row B &rarr; &minus; rail</td><td>Same</td></tr>
+      <tr><td>100 k&Omega;</td><td>row C &rarr; &minus; rail</td><td>Same</td></tr>
+      <tr><td>Jumper, one end in row A</td><td>free end &rarr; + or &minus;</td><td>The A
+        switch</td></tr>
+      <tr><td>Jumper, one end in row B</td><td>free end &rarr; + or &minus;</td><td>The B
+        switch</td></tr>
+      <tr><td>Jumper, one end in row C</td><td>free end &rarr; + or &minus;</td><td>The C
+        switch</td></tr>
+      <tr><td>Row A</td><td>1 k&Omega; &rarr; LED long leg, short leg to &minus;</td><td>The A
+        lamp</td></tr>
+      <tr><td>Row B</td><td>1 k&Omega; &rarr; LED long leg, short leg to &minus;</td><td>The B
+        lamp</td></tr>
+      <tr><td>Row C</td><td>1 k&Omega; &rarr; LED long leg, short leg to &minus;</td><td>The C
+        lamp</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power up. Move the three jumpers between + and &minus; and read the lamps as a number:
+  C is 4, B is 2, A is 1. Count from 0 to 7 with your hands until it stops needing thought.</p>
+
+  <div class="note"><b>Why the pull-down resistors are not optional.</b> Pull a jumper out
+  entirely. The lamp goes out and the row reads 0, because the 100 k&Omega; is holding it down.
+  Without it that row would read whatever the air nearby feels like, your finger would change the
+  digit, and Stage 2 would be unbuildable. This is the same lesson as the Gate Bench's Stage 5,
+  and it is the one that keeps coming back.</div>
+
+  <h3>The display, tested by hand</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Display <b>common</b> (pin 3)</td><td>+ rail</td><td>All seven anodes to +5 V</td></tr>
+      <tr><td>Display <b>common</b> (pin 8)</td><td>+ rail</td><td>Same node inside; wire
+        both</td></tr>
+      <tr><td>Each of the seven segment pins</td><td>its own 220 &Omega; into an empty row</td>
+        <td>Seven resistors, seven spare rows &mdash; the gates arrive there later</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Take a wire from the <b>&minus;</b> rail and touch the free end of each resistor. One bar
+  lights per resistor. Touch <b>a</b>, <b>b</b> and <b>c</b> together and you have a 7.</p>
+
+  <ul class="tick">
+    <li>All seven bars light, one at a time. A bar that never lights is a resistor in the wrong
+      row, or an LED-shaped assumption about which pin is which.</li>
+    <li>Write your segment-to-pin map in the <a href="worksheet.md">worksheet</a> now. Every
+      table from here on refers to it.</li>
+    <li>Leave the seven resistors in place. Their free ends are where Stage 2 plugs in.</li>
+  </ul>
+
+  <div class="why"><b>Test the ends, then trust them.</b> When a long chain fails, the fault is
+  somewhere in the middle nine times out of ten &mdash; but only if you proved the ends. Ten
+  minutes with a bare wire now buys you the right to say "the display is fine" for the rest of
+  the build, and that is worth more than it sounds.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>Nine gates, three segments</span>
+    <span>~50 min</span></div>
+  <h2>The first digits appear</h2>
+  <p class="sub">The long stage. Six chips go in, and at the end of it the display can
+  spell 1 and 7.</p>
+
+  <p>Put all six chips on the board now, even though two of them do nothing until Stage 3.
+  Moving chips later means moving wires later. Left to right: <b>CD4069</b>, <b>CD4070</b>,
+  <b>CD4081 #1</b>, <b>CD4081 #2</b>, <b>CD4071 #1</b>, <b>CD4071 #2</b>, and the display at
+  the far right.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Every chip's <b>pin 14</b></td><td>+ rail</td><td>Six wires. All six chips, same
+        pin</td></tr>
+      <tr><td>Every chip's <b>pin 7</b></td><td>&minus; rail</td><td>Six wires</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>across each chip's pin 14 and pin 7</td><td>Six
+        capacitors. Cheap insurance against six chips switching at once</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The shared signals, and segments a, b and c</h3>
+
+  <p>Nine gates. Wire them in this order, top to bottom &mdash; every gate's inputs come from
+  something already built above it.</p>
+
+  <div class="scroller"><table id="wire2"></table></div>
+
+  <p>Then the three outputs reach the display. These are the only three wires in the whole
+  project that carry current rather than an opinion:</p>
+
+  <div class="scroller"><table id="seg2"></table></div>
+
+  <div class="warn"><b>Before power: the unused inputs.</b> The CD4069 has three spare
+  inverters and the CD4070 two spare XORs, and their inputs are dangling right now. Tie
+  <b>CD4069 pins 9, 11 and 13</b> and <b>CD4070 pins 8, 9, 12 and 13</b> to the &minus; rail.
+  Seven wires that do nothing except stop the chips from misbehaving.</div>
+
+  <p>Power up and work through all eight numbers. Three bars are under gate control and four
+  are still dark, so what you should see is:</p>
+
+  <div class="dgrid" id="stage2-row"></div>
+
+  <ul class="tick">
+    <li><b>1</b> and <b>7</b> are correct and finished. They only ever needed a, b and c.</li>
+    <li><b>0</b>, <b>3</b> and <b>7</b> look identical. They differ only in bars you have not
+      wired yet.</li>
+    <li>Set 2 and check segment c goes <em>dark</em>. That single inverter is the whole c
+      equation and the only segment that is right for all eight numbers already.</li>
+  </ul>
+
+  <div class="note"><b>If one segment is wrong for exactly one number</b>, you have a wire on
+  the wrong pin of the right gate. If it is wrong for four numbers, one of its inputs is on the
+  wrong row &mdash; A instead of B, usually. The number of wrong digits tells you how deep the
+  mistake is.</div>
+
+  <div class="why"><b>Fan-out is free, and that is why chips look like this.</b>
+  <code class="sig">B&#772;</code> leaves one inverter and arrives at four different gates. Copying a signal costs you nothing but a
+  wire, while computing it again costs a gate &mdash; so real designs are full of one signal
+  going to dozens of places. It is the reason a chip photograph looks more like a road map than
+  a row of boxes.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>Seven gates, three more segments</span>
+    <span>~35 min</span></div>
+  <h2>Now it can count to three</h2>
+  <p class="sub">Segments d, e and g &mdash; and the first gate that reuses another gate's
+  answer.</p>
+
+  <p>Two of these equations need to know whether the number is <b>7</b>, so that gets built
+  once, as A&middot;B&middot;C, and shared. Segment d needs the answer segment a already worked
+  out, so its wire comes from a gate output rather than from a switch.</p>
+
+  <div class="scroller"><table id="wire3"></table></div>
+
+  <div class="scroller"><table id="seg3"></table></div>
+
+  <p>Power up. Six of the seven bars now work:</p>
+
+  <div class="dgrid" id="stage3-row"></div>
+
+  <ul class="tick">
+    <li><b>1</b>, <b>2</b>, <b>3</b> and <b>7</b> are correct and finished.</li>
+    <li><b>0</b>, <b>4</b>, <b>5</b> and <b>6</b> are all missing the same bar &mdash; the top
+      left one. That is f, and it is the only thing left.</li>
+    <li>Set 7 and look at the <b>d</b> segment. It must be dark. If it lights, the wire from
+      segment a's AND gate went to the wrong OR input.</li>
+  </ul>
+
+  <div class="note"><b>Segment d is worth staring at.</b> Its equation is "a is dark, or the
+  number is 7". The bottom bar of a digit borrows the answer from the top bar of the same digit,
+  which is not a fact about arithmetic &mdash; it is a coincidence in the shape of the font, and
+  minimising the equation found it for you. This is what people mean when they say a machine
+  found a solution nobody would have written.</div>
+
+  <div class="why"><b>Sharing is the whole economy of a chip.</b> Nineteen gates instead of
+  twenty-nine, because four signals get used more than once and segment d borrows segment a's
+  answer outright. Every real design starts by hunting for the terms that appear in more than one
+  output, and a synthesis program spends most of its time on exactly that search.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>The last three gates</span>
+    <span>~20 min</span></div>
+  <h2>Four digits arrive at once</h2>
+  <p class="sub">Segment f, the fiddliest equation in the project, and then it is a
+  machine.</p>
+
+  <p>The top-left bar is dark for 1, 2, 3 and 7, and that set has no single neat description.
+  It needs two ORs feeding an AND: <em>A or B is set</em>, <b>and</b> <em>C is clear or the
+  number is 7</em>.</p>
+
+  <div class="scroller"><table id="wire4"></table></div>
+
+  <div class="scroller"><table id="seg4"></table></div>
+
+  <div class="warn"><b>The last unused inputs.</b> CD4081 #2 has one spare AND and CD4071 #2
+  one spare OR. Tie <b>CD4081 #2 pins 12 and 13</b> and <b>CD4071 #2 pins 12 and 13</b> to
+  &minus;. Now every input on all six chips goes somewhere.</div>
+
+  <p>Power up and count 0 to 7 on the switches.</p>
+
+  <div class="dgrid" id="font-row2"></div>
+
+  <p>Eight digits, nineteen gates, no counter, no decoder, no code. Every bar on that display
+  is lit because an AND or an OR you wired by hand decided it should be.</p>
+
+  <ul class="tick">
+    <li>Work through all eight numbers twice and compare against the font row above.</li>
+    <li>Fill in the last table in the <a href="worksheet.md">worksheet</a> &mdash; your own
+      display, your own reading, not the picture on this page.</li>
+    <li>Wiggle the board. Nothing should change. If a digit flickers, an unused input is still
+      floating somewhere.</li>
+  </ul>
+
+  <div class="why"><b>You have just built the inside of a chip.</b> The CD4511, the CD4026 and
+  every seven-segment decoder ever sold contain this, drawn smaller: a truth table turned into
+  gates, with the polarity chosen to suit the display and the shared terms factored out. A
+  CD4511 costs about the same as one of your CD4081s and does the whole job, which is exactly
+  the trade the industry made. The difference is that you can point at yours and say what each
+  gate is for.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>Four directions</span><span>as long as you
+    like</span></div>
+  <h2>If it is going to live on the shelf</h2>
+
+  <ol class="steps">
+    <li><b>Make it count by itself</b> Three switches are three bits, and three flip-flops are
+      also three bits. Borrow the two CD4013s from the Quiz Buzzer, wire each one as a toggle
+      (D to its own Q&#772;), clock the first from a button and each later one from the
+      previous stage's Q&#772;, and feed Q into your A, B and C rows. That is a binary counter,
+      and a counter plus your decoder <em>is</em> a CD4026.</li>
+    <li><b>Add the fourth bit and find out why nobody does this by hand</b> A fourth switch
+      takes you to fifteen, so every one of the seven equations has to be re-derived over
+      sixteen rows instead of eight. Work out segment <b>a</b> only, and count the gates it
+      needs now. Then look up the CD4511 and notice that it is one chip.</li>
+    <li><b>Put a hex digit on it</b> Four bits reach 15, and the usual answer is to show
+      A, b, C, d, E, F for 10 to 15 &mdash; which is what a memory dump looks like. Same seven
+      bars, six more rows in the font table, all of them your choice this time.</li>
+    <li><b>Race the Score Tower</b> Feed the same three bits into both boards &mdash; yours and
+      a CD4026 &mdash; and look for the moment they disagree. There is one, about half a
+      microsecond wide. A CD4071 takes about <b>125 ns</b> to answer at 5 V (the datasheet's
+      typical figure, and it drops to 60 ns at 10 V), and segment c is <b>four gates deep</b>
+      &mdash; inverter, OR, OR, inverter. Depth, not gate count, is what makes logic slow, which
+      is why the equations worth minimising are the deep ones.</li>
+  </ol>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 8</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Nineteen gates fail in about six ways. These are them.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td><b>One bar is wrong for exactly one number</b></td><td>A wire on the wrong pin of
+        the right gate. Check that segment's output pin against the table &mdash; 3, 4, 10 and
+        11 are easy to confuse.</td></tr>
+      <tr><td><b>One bar is wrong for four numbers</b></td><td>One of its inputs is on the wrong
+        input row. A instead of B, or C instead of C&#772;.</td></tr>
+      <tr><td><b>One bar is on for everything</b></td><td>It is wired to + through something, or
+        its gate's input is floating. Follow it back one gate at a time.</td></tr>
+      <tr><td><b>One bar never lights at all</b></td><td>Prove the segment with the Stage 1
+        bare-wire test first. That splits the problem in half in ten seconds.</td></tr>
+      <tr><td><b>Every bar is the photo-negative of the right answer</b></td><td>The display's
+        common pin is on &minus; instead of +. One wire, seven wrong bars.</td></tr>
+      <tr><td><b>The digit changes when you move your hand near the board</b></td><td>A floating
+        input. Check the two warning boxes in Stages 2 and 4 &mdash; there are eleven pins that
+        must go to &minus;.</td></tr>
+      <tr><td><b>Everything is dim</b></td><td>Normal. See the parts section: about 1 mA a
+        segment at 5 V. Run the board at 9 V if it bothers you.</td></tr>
+      <tr><td><b>Two segments change together when only one should</b></td><td>Two outputs are
+        in the same breadboard row. Find them and move one &mdash; that is a short between two
+        chips.</td></tr>
+      <tr><td><b>A chip gets warm</b></td><td>Power in backwards, or an output wired to a rail.
+        <b>Unplug now.</b></td></tr>
+      <tr><td><b>Everything is wrong at once</b></td><td>Unplug, walk away five minutes, re-read
+        one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>The technique that finds gate faults fastest.</b> Do not follow the
+  wires. Set the switches to a number that is wrong, then check each gate on that segment's
+  chain in turn: is <em>this</em> gate's output what its own two inputs say it should be? The
+  first gate that disagrees with its own inputs is the fault. Three checks, not nineteen.</div>
+</section>
+
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+const SEGS = ['a','b','c','d','e','f','g'];
+const OVER = '̅';            /* combining overline: B + OVER renders as B-bar */
+
+/* ============ the font ==============================================
+   Eight digits, the same shapes the CD4026 drew in the Score Tower
+   (TI SCHS031B fig. 3). Three switches cannot reach 8 or 9, so the
+   font stops at 7. Everything on this page is generated from here.  */
+const FONT = {0:'abcdef', 1:'bc', 2:'abdeg', 3:'abcdg', 4:'bcfg',
+              5:'acdfg', 6:'acdefg', 7:'abc'};
+
+/* which display pin each segment sits on — the usual 10-pin arrangement */
+const DISP = {a:7, b:6, c:4, d:2, e:1, f:9, g:10};
+
+/* ============ the circuit ===========================================
+   Nineteen gates, in build order: every gate's inputs are either an
+   input row (A, B, C) or a gate already listed above it. Each one
+   carries its package, its gate number, its input pins and its output
+   pin, so the wire lists below are the circuit rather than a copy of
+   it. A gate with .seg is one of the seven that drives the display:
+   its output HIGH means that bar stays dark.                        */
+const NET = [
+ {id:'nB', sym:'B'+OVER,     k:'not', in:['B'],         pkg:'CD4069',    g:1, ip:[1],    o:2,  st:2, why:'"B is 0" — four segments need it'},
+ {id:'nC', sym:'C'+OVER,     k:'not', in:['C'],         pkg:'CD4069',    g:2, ip:[3],    o:4,  st:2, why:'"C is 0"'},
+ {id:'xAC',sym:'A⊕C',   k:'xor', in:['A','C'],     pkg:'CD4070',    g:1, ip:[1,2],  o:3,  st:2, why:'"A and C disagree"'},
+ {id:'xAB',sym:'A⊕B',   k:'xor', in:['A','B'],     pkg:'CD4070',    g:2, ip:[5,6],  o:4,  st:2, why:'"A and B disagree"'},
+ {id:'Ad', sym:'a dark',     k:'and', in:['nB','xAC'],  pkg:'CD4081 #1', g:1, ip:[1,2],  o:3,  st:2, seg:'a'},
+ {id:'Bd', sym:'b dark',     k:'and', in:['C','xAB'],   pkg:'CD4081 #1', g:2, ip:[5,6],  o:4,  st:2, seg:'b'},
+ {id:'o1', sym:'C+B'+OVER,   k:'or',  in:['C','nB'],    pkg:'CD4071 #1', g:1, ip:[1,2],  o:3,  st:2, why:'first half of "c is lit"'},
+ {id:'o2', sym:'c lit',      k:'or',  in:['o1','A'],    pkg:'CD4071 #1', g:2, ip:[5,6],  o:4,  st:2, why:'true for every digit except 2'},
+ {id:'Cd', sym:'c dark',     k:'not', in:['o2'],        pkg:'CD4069',    g:3, ip:[5],    o:6,  st:2, seg:'c'},
+ {id:'ab', sym:'A·B',   k:'and', in:['A','B'],     pkg:'CD4081 #1', g:3, ip:[8,9],  o:10, st:3, why:'shared by f and by "is it 7"'},
+ {id:'P7', sym:'is 7',       k:'and', in:['ab','C'],    pkg:'CD4081 #1', g:4, ip:[12,13],o:11, st:3, why:'A·B·C — used by d and g'},
+ {id:'Dd', sym:'d dark',     k:'or',  in:['Ad','P7'],   pkg:'CD4071 #1', g:3, ip:[8,9],  o:10, st:3, seg:'d'},
+ {id:'t2', sym:'B'+OVER+'·C', k:'and', in:['nB','C'], pkg:'CD4081 #2', g:1, ip:[1,2], o:3, st:3, why:'"the number is 4 or 5"'},
+ {id:'Ed', sym:'e dark',     k:'or',  in:['A','t2'],    pkg:'CD4071 #1', g:4, ip:[12,13],o:11, st:3, seg:'e'},
+ {id:'t3', sym:'B'+OVER+'·C'+OVER, k:'and', in:['nB','nC'], pkg:'CD4081 #2', g:2, ip:[5,6], o:4, st:3, why:'"the number is 0 or 1"'},
+ {id:'Gd', sym:'g dark',     k:'or',  in:['t3','P7'],   pkg:'CD4071 #2', g:1, ip:[1,2],  o:3,  st:3, seg:'g'},
+ {id:'u',  sym:'A+B',        k:'or',  in:['A','B'],     pkg:'CD4071 #2', g:2, ip:[5,6],  o:4,  st:4, why:'first half of f'},
+ {id:'w',  sym:'C'+OVER+'+A·B', k:'or', in:['nC','ab'], pkg:'CD4071 #2', g:3, ip:[8,9], o:10, st:4, why:'second half of f'},
+ {id:'Fd', sym:'f dark',     k:'and', in:['u','w'],     pkg:'CD4081 #2', g:3, ip:[8,9],  o:10, st:4, seg:'f'}
+];
+const BY = {}; NET.forEach(g => BY[g.id] = g);
+const DRV = {}; NET.filter(g => g.seg).forEach(g => DRV[g.seg] = g);
+
+/* ============ the simulator's whole engine, all four lines of it ============ */
+const OP = {not:v => v[0] ? 0 : 1, and:v => v[0] && v[1] ? 1 : 0,
+            or:v => v[0] || v[1] ? 1 : 0, xor:v => v[0] !== v[1] ? 1 : 0};
+function solve(n){
+  const v = {A:n & 1, B:(n >> 1) & 1, C:(n >> 2) & 1};
+  for (const g of NET) v[g.id] = OP[g.k](g.in.map(i => v[i]));
+  return v;
+}
+/* which bars glow for number n, given only the segments built so far */
+const shown = (n, upto) => SEGS.filter(k => DRV[k].st <= (upto || 9)
+  && !solve(n)[DRV[k].id]).join('');
+
+/* ============ equations, printed from the netlist ============
+   Careful: a signal is an input row only if it is A, B or C. Two of the
+   gates are called u and w, so testing the length of the name instead
+   would print them as input rows and hand you a wrong wire list.    */
+const INPUTS = ['A', 'B', 'C'];
+const isIn = id => INPUTS.indexOf(id) >= 0;
+const PREC = {or:1, xor:2, and:3, not:4};
+const prec = id => isIn(id) || (BY[id].k === 'not' && isIn(BY[id].in[0]))
+  ? 9 : PREC[BY[id].k];
+function expr(id){
+  if (isIn(id)) return id;
+  const g = BY[id];
+  if (g.k === 'not')
+    return isIn(g.in[0]) ? g.in[0] + OVER : 'NOT(' + expr(g.in[0]) + ')';
+  const join = {and:'·', or:' + ', xor:'⊕'}[g.k];
+  return g.in.map(i => {
+    const s = expr(i), xorInAnd = !isIn(i) && BY[i].k === 'xor' && g.k !== 'or';
+    return prec(i) < PREC[g.k] || xorInAnd ? '(' + s + ')' : s;
+  }).join(join);
+}
+
+/* ============ one seven-segment digit (same geometry as the Score Tower) ============ */
+const DW = 52, DH = 92, DT = 9, DM = 7, DL = (DH - DT) / 2;
+const BAR = {
+  a:[DM, 0, DW-2*DM, DT],            g:[DM, DL, DW-2*DM, DT],
+  d:[DM, DH-DT, DW-2*DM, DT],        f:[0, DT+2, DT, DL-DT-4],
+  b:[DW-DT, DT+2, DT, DL-DT-4],      e:[0, DL+DT+2, DT, DL-DT-4],
+  c:[DW-DT, DL+DT+2, DT, DL-DT-4]
+};
+function digitG(lit, idp){
+  const on = k => lit && lit.indexOf(k) >= 0;
+  return SEGS.map(k => {
+    const [x, y, bw, bh] = BAR[k];
+    return `<rect class="seg"${idp ? ` id="${idp+k}"` : ''} x="${x}" y="${y}"
+      width="${bw}" height="${bh}" rx="3"
+      style="fill:${on(k) ? 'var(--w-red)' : 'var(--sunk)'}"/>`;
+  }).join('');
+}
+function digitSVG(lit, w){
+  return `<svg viewBox="-5 -5 ${DW+10} ${DH+10}" width="${w||70}" role="img"
+    aria-label="seven segment digit">` + digitG(lit) + '</svg>';
+}
+function digitRow(host, upto, cap){
+  const h = $(host); if (!h) return;
+  h.innerHTML = Object.keys(FONT).map(d =>
+    `<figure>${digitSVG(shown(+d, upto), 58)}<figcaption>${cap ? cap(+d) : d}</figcaption>
+     </figure>`).join('');
+}
+
+/* ============ the tables ============ */
+function binTable(){
+  const t = $('bin-table'); if (!t) return;
+  let h = `<thead><tr><th class="n">number</th><th class="n">C &middot; 4</th>
+    <th class="n">B &middot; 2</th><th class="n">A &middot; 1</th>
+    <th>switches in +</th></tr></thead><tbody>`;
+  for (let n = 0; n < 8; n++){
+    const b = [(n>>2)&1, (n>>1)&1, n&1];
+    const on = ['C','B','A'].filter((_, i) => b[i]).join(' ') || 'none';
+    h += `<tr><td class="n"><b>${n}</b></td>`
+      + b.map(v => `<td class="n ${v ? 'on' : 'off'}">${v}</td>`).join('')
+      + `<td>${on}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody>';
+}
+function fontTable(){
+  const t = $('font-table'); if (!t) return;
+  let h = '<thead><tr><th class="n">digit</th>'
+    + SEGS.map(s => `<th class="n">${s}</th>`).join('') + '<th class="n">bars</th></tr></thead><tbody>';
+  for (const d of Object.keys(FONT)){
+    const f = FONT[d];
+    h += `<tr><td class="n"><b>${d}</b></td>`
+      + SEGS.map(s => f.indexOf(s) >= 0 ? '<td class="n on">1</td>' : '<td class="n off">0</td>').join('')
+      + `<td class="n off">${f.length}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody>';
+}
+function darkTable(){
+  const t = $('dark-table'); if (!t) return;
+  let h = `<thead><tr><th class="n">segment</th><th class="n">lit for</th>
+    <th class="n">dark for</th><th>dark at</th></tr></thead><tbody>`;
+  let lit = 0, dark = 0;
+  for (const k of SEGS){
+    const d = Object.keys(FONT).filter(n => !FONT[n].includes(k));
+    lit += 8 - d.length; dark += d.length;
+    h += `<tr><td class="n"><b>${k}</b></td><td class="n off">${8-d.length}</td>
+      <td class="n on">${d.length}</td><td class="n">${d.join(' ')}</td></tr>`;
+  }
+  t.innerHTML = h + `</tbody><tfoot><tr><th>total</th><th class="n">${lit}</th>
+    <th class="n">${dark}</th><th></th></tr></tfoot>`;
+}
+function eqCards(){
+  const h = $('eq-cards'); if (!h) return;
+  h.innerHTML = SEGS.map(k => {
+    const g = DRV[k], d = Object.keys(FONT).filter(n => !FONT[n].includes(k));
+    const gates = NET.filter(x => x.st <= g.st).length;
+    return `<div class="segcard"><h4>segment ${k}</h4>
+      <span class="dk">dark for ${d.join(', ')} &mdash; ${d.length} of 8</span>
+      <span class="eq">${k} dark = ${expr(g.id)}</span>
+      <p>${g.pkg} gate ${g.g}, out on <b>pin ${g.o}</b> &rarr; 220 &Omega; &rarr; display
+      pin ${DISP[k]}. Built in stage ${g.st}.</p></div>`;
+  }).join('');
+}
+function pkgTable(){
+  const t = $('pkg-table'); if (!t) return;
+  const SPARE = {'CD4069':'9, 11, 13', 'CD4070':'8, 9, 12, 13', 'CD4081 #1':'none — full',
+    'CD4081 #2':'12, 13', 'CD4071 #1':'none — full', 'CD4071 #2':'12, 13'};
+  let h = `<thead><tr><th>Chip</th><th class="n">gates used</th><th>doing what</th>
+    <th>spare inputs &rarr; &minus;</th></tr></thead><tbody>`;
+  for (const p of ['CD4069','CD4070','CD4081 #1','CD4081 #2','CD4071 #1','CD4071 #2']){
+    const gs = NET.filter(g => g.pkg === p);
+    h += `<tr><td class="pk"><b>${p}</b></td>
+      <td class="n">${gs.length} of ${p.startsWith('CD4069') ? 6 : 4}</td>
+      <td class="pk">${gs.map(g => g.sym).join(', ')}</td>
+      <td class="pk">${SPARE[p]}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody>';
+}
+/* the wire list for one stage, straight out of the netlist */
+function src(id){
+  if (isIn(id)) return `row <b>${id}</b>`;
+  const g = BY[id];
+  return `${g.pkg} pin ${g.o} <span style="color:var(--ink-3)">(${g.sym})</span>`;
+}
+function wireTable(id, st){
+  const t = $(id); if (!t) return;
+  let h = `<thead><tr><th class="n">&#9744;</th><th>Gate</th><th>Chip</th>
+    <th>Inputs &mdash; pin &larr; from</th><th class="n">out</th><th>What it means</th>
+    </tr></thead><tbody>`;
+  for (const g of NET.filter(x => x.st === st)){
+    const ins = g.in.map((s, i) => `pin ${g.ip[i]} &larr; ${src(s)}`).join('<br>');
+    h += `<tr><td class="n">&#9744;</td><td><b>${g.sym}</b></td>
+      <td class="pk">${g.pkg}<br><span style="color:var(--ink-3)">gate ${g.g},
+      ${g.k.toUpperCase()}</span></td><td>${ins}</td>
+      <td class="n"><b>${g.o}</b></td>
+      <td style="font-size:.86rem">${g.seg ? 'drives segment <b>'+g.seg+'</b>' : g.why}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody>';
+}
+function segTable(id, st){
+  const t = $(id); if (!t) return;
+  let h = `<thead><tr><th class="n">&#9744;</th><th>Segment</th><th>From</th>
+    <th>Through</th><th>To</th></tr></thead><tbody>`;
+  for (const g of NET.filter(x => x.st === st && x.seg))
+    h += `<tr><td class="n">&#9744;</td><td><b>${g.seg}</b></td>
+      <td class="pk">${g.pkg} pin ${g.o}</td><td>220 &Omega;</td>
+      <td class="pk">display pin ${DISP[g.seg]}</td></tr>`;
+  t.innerHTML = h + '</tbody>';
+}
+
+/* ============ gate symbols, for the worked example ============ */
+const SHAPE = {
+  and:{d:'M0,0 H22 A17,17 0 0 1 22,34 H0 Z', out:39},
+  or :{d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42},
+  not:{d:'M0,0 L30,17 L0,34 Z', out:30, bub:1},
+  xor:{d:'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out:42, arc:1}
+};
+/* a gate body centred on (x,y). Its output sits at x + gout(kind). */
+const gout = k => SHAPE[k].out + (SHAPE[k].bub ? 9 : 0);
+function gsym(k, x, y, cap){
+  const s = SHAPE[k];
+  let g = `<g transform="translate(${x},${y-17})">`;
+  if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+  g += `<path class="gsym" d="${s.d}"/>`;
+  if (s.bub) g += `<circle class="bub" cx="${s.out+5}" cy="17" r="4.4"/>`;
+  g += '</g>';
+  return g + (cap ? `<text class="sv-lbl" x="${x+14}" y="${y-24}">${cap}</text>` : '');
+}
+function res(x, y){
+  return `<path d="M${x},${y} l4,-7 l8,14 l8,-14 l8,14 l8,-14 l4,7"
+    fill="none" stroke="var(--ink-2)" stroke-width="1.8" ${SH}/>`;
+}
+const wire = (d, live) => `<path class="w${live ? ' live' : ''}" d="${d}"/>`;
+
+/* ============ the worked example: segment a, end to end ============ */
+function drawA(){
+  const h = $('a-svg'); if (!h) return;
+  let s = `<svg viewBox="0 0 700 210" role="img"
+    aria-label="segment a built from an inverter, an XOR and an AND gate">`;
+  const lbl = (t, x, y, a) => `<text class="sv-cap" x="${x}" y="${y}"
+    text-anchor="${a || 'start'}">${t}</text>`;
+  /* the three input rows */
+  [['B', 58], ['A', 128], ['C', 158]].forEach(([n, y]) =>
+    s += lbl(n, 20, y + 4) + wire(`M32,${y} H${n === 'B' ? 72 : 76}`));
+  /* B through an inverter */
+  s += gsym('not', 72, 58, 'CD4069');
+  s += wire(`M${72+gout('not')},58 H210`);
+  s += `<text class="sv-sig" x="122" y="48">B${OVER}</text>`;
+  /* A and C into an XOR */
+  s += gsym('xor', 76, 143, 'CD4070');
+  s += wire(`M${76+gout('xor')},143 H210`);
+  s += `<text class="sv-sig" x="130" y="133">A⊕C</text>`;
+  /* both into the AND */
+  s += wire('M210,58 V92 H246') + wire('M210,143 V110 H246');
+  s += gsym('and', 246, 101, 'CD4081 #1');
+  s += `<text class="sv-lbl" x="246" y="140">pin 1 and pin 2 in,</text>`;
+  s += `<text class="sv-lbl" x="246" y="154">pin 3 out</text>`;
+  /* out through a resistor to the display */
+  s += wire(`M${246+gout('and')},101 H330`);
+  s += res(330, 101) + wire('M370,101 H408');
+  s += `<text class="sv-lbl" x="332" y="88">220 Ω</text>`;
+  s += `<text class="sv-lbl" x="380" y="135">display</text>`;
+  s += `<text class="sv-lbl" x="380" y="149">pin 7</text>`;
+  /* the display, segment a lit */
+  s += `<rect x="440" y="36" width="140" height="150" rx="8"
+    style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  s += `<g transform="translate(468,60) scale(.95)">${digitG('a')}</g>`;
+  s += `<text class="sv-lbl" x="596" y="96">a 1 here holds</text>`;
+  s += `<text class="sv-lbl" x="596" y="110">the bar dark;</text>`;
+  s += `<text class="sv-lbl" x="596" y="124">a 0 lights it</text>`;
+  s += `<text class="eq" x="20" y="200" style="fill:var(--teal);font-size:13px">a dark =
+    ${expr('Ad')}</text>`;
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+/* ============ pinouts ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd';
+const ROLECOL = {in:'var(--w-blue)', out:'var(--teal)', pwr:'var(--w-red)',
+                 gnd:'var(--w-blue)'};
+const QUAD = (n, sub) => ({name:n, sub:sub, pins:14, p:{
+  1:['in 1a',IN], 14:['+  VDD',PWR],
+  2:['in 1b',IN], 13:['in 4b',IN],
+  3:['OUT 1',OUT],12:['in 4a',IN],
+  4:['OUT 2',OUT],11:['OUT 4',OUT],
+  5:['in 2a',IN], 10:['OUT 3',OUT],
+  6:['in 2b',IN],  9:['in 3b',IN],
+  7:['−  VSS',GND], 8:['in 3a',IN]}});
+const CHIPS = [
+  QUAD('CD4081', 'Quad AND — two of these'),
+  QUAD('CD4071', 'Quad OR — two of these'),
+  QUAD('CD4070', 'Quad XOR — two gates used'),
+  {name:'CD4069', sub:'Hex NOT — three gates used', pins:14, p:{
+    1:['in 1',IN],   14:['+  VDD',PWR],
+    2:['OUT 1',OUT], 13:['in 6',IN],
+    3:['in 2',IN],   12:['OUT 6',OUT],
+    4:['OUT 2',OUT], 11:['in 5',IN],
+    5:['in 3',IN],   10:['OUT 5',OUT],
+    6:['OUT 3',OUT],  9:['in 4',IN],
+    7:['−  VSS',GND], 8:['OUT 4',OUT]}}
+];
+function dipSVG(chip, scale){
+  const n = chip.pins, half = n/2, pitch = 21, bw = 112, bx = 104, top = 24;
+  const H = top + half*pitch + 24, W = 350;
+  let s = `<svg viewBox="0 0 ${W} ${H}" width="${W*(scale||1)}" role="img"
+    aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0"
+      style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half, idx = left ? i-1 : n-i;
+    const y = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i], col = ROLECOL[role];
+    const x1 = left ? bx : bx+bw, x2 = left ? bx-18 : bx+bw+18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-4 : x2+4}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  return s + `<text class="sv-cap" x="${bx+bw/2}" y="${H-6}"
+    text-anchor="middle">${chip.name}</text></svg>`;
+}
+function drawPinouts(){
+  const q = $('quad-anatomy');
+  if (q) q.innerHTML = `<div class="card" style="display:flex;gap:1.4rem;flex-wrap:wrap;
+    align-items:center;justify-content:center">
+    <div class="scroller">${dipSVG(QUAD('4081 · 4071 · 4070'), .95)}</div>
+    <dl class="kv" style="max-width:16rem">
+      <dt>Gate 1</dt><dd>pins 1, 2 &rarr; <b>3</b></dd>
+      <dt>Gate 2</dt><dd>pins 5, 6 &rarr; <b>4</b></dd>
+      <dt>Gate 3</dt><dd>pins 8, 9 &rarr; <b>10</b></dd>
+      <dt>Gate 4</dt><dd>pins 12, 13 &rarr; <b>11</b></dd>
+      <dt>Power</dt><dd>+ on 14, &minus; on 7</dd>
+    </dl></div>`;
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt style="color:var(--w-red)">Red</dt><dd>Power. + on 14 and &minus; on 7, on all six
+         chips.</dd>
+       <dt style="color:var(--w-blue)">Blue</dt><dd>Inputs. Every single one goes somewhere,
+         even the ones you are not using.</dd>
+       <dt style="color:var(--teal)">Teal</dt><dd>Outputs. Never to a rail. On the CD4069 the
+         outputs and inputs alternate, which is the trap on that chip.</dd>
+     </dl>`;
+}
+function drawDisplay(){
+  const h = $('disp-svg'); if (!h) return;
+  const BOTTOM = [[1,'e'],[2,'d'],[3,'com'],[4,'c'],[5,'DP']];
+  const TOP    = [[10,'g'],[9,'f'],[8,'com'],[7,'a'],[6,'b']];
+  const bx = 70, by = 60, bw = 190, bh = 134, px = i => bx + 20 + i*37.5;
+  let s = `<svg viewBox="0 0 400 262" width="400" role="img"
+    aria-label="ten pin seven segment display pinout">
+    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="5"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <g transform="translate(${bx+69},${by+21}) scale(.98)">${digitG('')}</g>
+    <circle cx="${bx+bw-22}" cy="${by+bh-18}" r="4.5" style="fill:var(--sunk)"/>`;
+  const pin = (n, lbl, x, y1, y2, ty, cy) => {
+    const col = lbl === 'com' ? 'var(--w-red)' : 'var(--w-blue)';
+    return `<line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${col}"
+      stroke-width="2.4" ${SH}/>
+      <text class="sv-num" x="${x}" y="${ty}" text-anchor="middle">${n}</text>
+      <text class="sv-cap" x="${x}" y="${cy}" text-anchor="middle" fill="${col}">${lbl}</text>`;
+  };
+  BOTTOM.forEach(([n, l], i) =>
+    s += pin(n, l, px(i), by+bh, by+bh+22, by+bh+36, by+bh+52));
+  TOP.forEach(([n, l], i) => s += pin(n, l, px(i), by, by-22, by-28, by-42));
+  s += `<text class="sv-lbl" x="${bx+bw+14}" y="${by+bh-14}">decimal point</text>`;
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+/* ============ the check that keeps this page honest ============
+   Every drive gate, every digit, against the font. If the netlist and
+   the font ever disagree, say so loudly at the top of the page rather
+   than quietly drawing the wrong digit.                            */
+function selfTest(){
+  const bad = [];
+  for (let n = 0; n < 8; n++)
+    for (const k of SEGS)
+      if (FONT[n].includes(k) === !!solve(n)[DRV[k].id])
+        bad.push(`${n}/${k}`);
+  if (NET.filter(g => g.k === 'and').length > 8) bad.push('too many ANDs for two CD4081s');
+  if (NET.filter(g => g.k === 'or').length > 8) bad.push('too many ORs for two CD4071s');
+  if (bad.length){
+    const d = document.createElement('div');
+    d.className = 'warn';
+    d.innerHTML = '<b>This page has a bug.</b> The gate list disagrees with the font at: '
+      + bad.join(', ') + '. Do not wire anything from it until it is fixed.';
+    document.querySelector('main').prepend(d);
+  }
+  return bad.length === 0;
+}
+
+binTable(); fontTable(); darkTable(); eqCards(); pkgTable();
+digitRow('font-row'); digitRow('font-row2');
+digitRow('stage2-row', 2); digitRow('stage3-row', 3);
+wireTable('wire2', 2); wireTable('wire3', 3); wireTable('wire4', 4);
+segTable('seg2', 2); segTable('seg3', 3); segTable('seg4', 4);
+drawA(); drawPinouts(); drawDisplay(); selfTest();
+</script>
+
+<script>
+"use strict";
+/* ============ the Digit Factory, playable ============
+   S.n is the number on the three switches. S.hi is the "what if we had
+   computed the light instead" design: the same nineteen gates with seven
+   inverters bolted on the end. The digit comes out identical; the chip
+   count does not.                                                     */
+const S = {n:0, hi:false, run:0};
+const BITS = [['A', 1], ['B', 2], ['C', 4]];
+const SY = i => 56 + i*32;
+
+function simSVG(){
+  const BX = 176, BW = 176;
+  let s = `<svg viewBox="0 0 856 340" role="img"
+    aria-label="three switches feeding nineteen gates which drive a seven segment display">`;
+  /* ---- the three switches ---- */
+  BITS.forEach(([n, w], i) => {
+    const y = 70 + i*46;
+    s += `<text class="sv-cap" x="18" y="${y+4}">${n} &middot; ${w}</text>`;
+    s += `<g class="tog" id="tg${n}" role="button" tabindex="0"
+      aria-label="switch ${n}"><rect x="58" y="${y-15}" width="52" height="30" rx="6"/>
+      <text id="tv${n}" x="84" y="${y+5}" text-anchor="middle"
+        style="font-size:14px;font-weight:700;font-family:var(--fm)">0</text></g>`;
+    s += `<path class="w" id="tw${n}" d="M110,${y} H${BX}"/>`;
+  });
+  s += `<text class="sv-lbl" x="84" y="214" text-anchor="middle">the number</text>`;
+  s += `<text id="sv-num" x="84" y="250" text-anchor="middle"
+    style="font-size:38px;font-weight:700;fill:var(--teal);font-family:var(--fm)">0</text>`;
+  /* ---- the box of gates ---- */
+  s += `<rect class="mbox" x="${BX}" y="40" width="${BW}" height="250" rx="8"/>`;
+  s += `<text class="sv-cap" x="${BX+BW/2}" y="64" text-anchor="middle">your logic</text>`;
+  ['CD4069 · 3 NOT', 'CD4070 · 2 XOR', 'CD4081 #1 · 4 AND',
+   'CD4081 #2 · 3 AND', 'CD4071 #1 · 4 OR', 'CD4071 #2 · 3 OR']
+    .forEach((t, i) => s += `<text class="sv-lbl" x="${BX+16}" y="${92+i*20}">${t}</text>`);
+  s += `<line x1="${BX+12}" y1="222" x2="${BX+BW-12}" y2="222" stroke="var(--line-2)"
+    stroke-width="1"/>`;
+  s += `<text class="sv-cap" id="sv-gates" x="${BX+BW/2}" y="244"
+    text-anchor="middle">19 gates, 6 chips</text>`;
+  s += `<text class="sv-lbl" id="sv-inv" x="${BX+BW/2}" y="266"
+    text-anchor="middle">no inverters needed</text>`;
+  /* ---- the seven segment chains ---- */
+  SEGS.forEach((k, i) => {
+    const y = SY(i);
+    s += `<path class="w" id="wa${k}" d="M${BX+BW},${y} H372"/>`;
+    s += `<circle class="dot" id="ds${k}" cx="380" cy="${y}" r="5.5"/>`;
+    s += `<text class="sv-cap" x="392" y="${y+4}">${k}</text>`;
+    s += `<text class="sv-sig" x="406" y="${y-6}">= ${expr(DRV[k].id)}</text>`;
+    s += `<path class="w" id="wd${k}" d="M386,${y} H566"/>`;
+    s += `<g id="iv${k}">${gsym('not', 566, y)}</g>`;
+    s += `<path class="w" id="wb${k}" d="M605,${y} H612"/>`;
+    s += res(612, y);
+    s += `<path class="w" id="wc${k}" d="M652,${y} H666"/>`;
+  });
+  /* ---- the display ---- */
+  s += `<rect x="664" y="50" width="176" height="240" rx="9"
+    style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  s += `<text class="sv-cap" x="752" y="68" text-anchor="middle"
+    fill="var(--w-red)">+5 V commons</text>`;
+  s += `<line x1="678" y1="78" x2="826" y2="78" stroke="var(--w-red)" stroke-width="2.4"
+    ${SH}/>`;
+  s += `<g transform="translate(718,100) scale(1.3)">${digitG('', 'sg')}</g>`;
+  s += `<text class="sv-lbl" x="752" y="268" text-anchor="middle">common anode:
+    0 lights a bar</text>`;
+  s += `<text class="sv-lbl" x="18" y="320">An orange dot is a pin sitting at 5 V. A teal wire
+    is one with current in it — that bar is glowing.</text>`;
+  return s + '</svg>';
+}
+
+function paint(){
+  const v = solve(S.n);
+  BITS.forEach(([n, w]) => {
+    const bit = (S.n & w) ? 1 : 0;
+    const t = $('tg'+n), tv = $('tv'+n), tw = $('tw'+n);
+    if (t) t.classList.toggle('one', !!bit);
+    if (tv) tv.textContent = bit;
+    if (tw) tw.classList.toggle('live', !!bit);
+    const b = $('b-' + n.toLowerCase());
+    if (b) b.textContent = `${n} · ${w} = ${bit}`;
+  });
+  $('sv-num').textContent = S.n;
+  $('sv-gates').textContent = S.hi ? '19 gates + 7 inverters, 8 chips' : '19 gates, 6 chips';
+  $('sv-inv').textContent = S.hi ? 'two more CD4069s' : 'no inverters needed';
+  for (const k of SEGS){
+    const dark = !!v[DRV[k].id];          /* 1 = the pin is held high = dark */
+    const pinHigh = S.hi ? !dark : dark;  /* what the gate itself puts out */
+    $('ds'+k).classList.toggle('one', pinHigh);
+    for (const p of ['wa', 'wd', 'wb', 'wc']) $(p+k).classList.toggle('live', !dark);
+    $('iv'+k).classList.toggle('dead', !S.hi);
+    $('sg'+k).style.fill = dark ? 'var(--sunk)' : 'var(--w-red)';
+  }
+}
+
+function say(){
+  const v = solve(S.n);
+  const dark = SEGS.filter(k => v[DRV[k].id]);
+  $('sim-msg').textContent = `Showing ${S.n}. Dark bars: ${dark.join(' ') || 'none'}.`;
+  $('sim-sub').textContent = S.hi
+    ? 'Same digit, two extra chips: the gates now answer "which bars light" and seven'
+      + ' inverters turn each answer round again for the display.'
+    : `${7 - dark.length} bars lit. The gates hold the other ${dark.length} at 5 V, and on a`
+      + ' common-anode display that is what dark means.';
+}
+
+function setN(n){ S.n = ((n % 8) + 8) % 8; paint(); say(); }
+
+function initSim(){
+  if (!$('sim-svg')) return;
+  $('sim-svg').innerHTML = '<div class="scroller">' + simSVG() + '</div>';
+  BITS.forEach(([n, w]) => {
+    const flip = () => setN(S.n ^ w);
+    $('b-' + n.toLowerCase()).addEventListener('click', flip);
+    const t = $('tg'+n);
+    t.addEventListener('click', flip);
+    t.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' '){ e.preventDefault(); flip(); }
+    });
+  });
+  $('b-run').addEventListener('click', () => {
+    if (S.run){ clearInterval(S.run); S.run = 0; $('b-run').textContent = 'count 0→7'; }
+    else { S.run = setInterval(() => setN(S.n + 1), 900);
+           $('b-run').textContent = 'stop'; }
+  });
+  $('b-pol').addEventListener('click', () => {
+    S.hi = !S.hi;
+    $('b-pol').textContent = S.hi ? 'Design: compute the LIT bars, then invert'
+                                  : 'Design: hold the dark bars HIGH';
+    paint(); say();
+  });
+  setN(0);
+}
+initSim();
+</script>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the truth tables, the equations
+  to derive yourself and the challenges. Pin numbers were read off the Texas Instruments
+  datasheets &mdash; CD4070B (SCHS055E), CD4071B (SCHS056D), CD4081B (SCHS057C) and CD4069UB
+  (SCHS054E). The segment font is the CD4026B's, from SCHS031B, so the digits match the Score
+  Tower's exactly.</p>
+</div></footer>

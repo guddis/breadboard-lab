@@ -17,6 +17,7 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 | [Siren Box](projects/siren-box/) | Frequency, sound, one circuit driving another | 10–12 | 1½–2 h | CD40106, CD4066 |
 | [Quiz Buzzer](projects/quiz-buzzer/) | Arbitration, race conditions, propagation delay | 10–12 | 2 h | CD4013 × 2, CD4012 |
 | [Score Tower](projects/score-tower/) | Decoding, seven-segment displays, carry | 10–12 | 2½ h | CD4026 × 2, CD4069 × 3 |
+| [Digit Factory](projects/digit-factory/) | Truth tables, minimising, active-low logic | 12+ | 2½ h | CD4081 × 2, CD4071 × 2, CD4070, CD4069 |
 
 The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
 time, and the **Logic Vault** puts them to work. Both are combinational — they answer
@@ -25,7 +26,9 @@ own beat, counts, and remembers. The **Siren Box** takes that same beat and runs
 thousand times faster, until you can hear it. The **Quiz Buzzer** is the one you'll keep on
 the shelf: four players, one winner, decided in less than a millionth of a second. The
 **Score Tower** keeps that game's score — and is the first one here that counts in digits you
-can read instead of lamps you have to add up.
+can read instead of lamps you have to add up. The **Digit Factory** closes the loop: it throws
+away the chip that drew those digits and rebuilds it out of nineteen ordinary gates, so every bar
+on the display is lit because of an AND or an OR you wired by hand.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is
