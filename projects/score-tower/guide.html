@@ -1,0 +1,1409 @@
+<meta charset="utf-8">
+<title>The Score Tower</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:22rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+.chips{display:flex;flex-wrap:wrap;gap:.35rem;margin:.2rem 0 0}
+.chips span{font:500 .72rem/1 var(--fm);background:var(--surface-2);
+  border:1px solid var(--line);border-radius:4px;padding:.3rem .45rem;color:var(--ink-2)}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+.gate p{font-size:.9rem;margin:.55rem 0 .7rem;color:var(--ink-2)}
+.gate table{margin:.2rem 0 0;font-size:.82rem}
+.gate th,.gate td{padding:.24rem .4rem}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+[role=button]{cursor:pointer}
+[role=button]:focus-visible,button:focus-visible{outline:2px solid var(--teal);
+  outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round}
+.w.hi{stroke:var(--teal);stroke-width:2.8}
+.tog rect{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.4}
+.tog.one rect{fill:var(--teal-soft);stroke:var(--teal)}
+.tog text{fill:var(--ink-3)}
+.tog.one text{fill:var(--teal)}
+.tog:hover rect{stroke:var(--ink-3)}
+.lamp{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;
+  stroke-linejoin:round}
+.bub{fill:var(--surface);stroke:var(--ink);stroke-width:1.9}
+@keyframes ring{0%,100%{opacity:1}50%{opacity:.25}}
+.ringing{animation:ring .28s infinite}
+</style>
+<style>
+.w.live{stroke:var(--teal);stroke-width:2.8}
+.w.dash{stroke-dasharray:4 4}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.mbox.live{stroke:var(--teal);stroke-width:2.2}
+.dead{opacity:.28}
+.dot{stroke:var(--line-2);stroke-width:1.4;fill:var(--surface)}
+.dot.one{fill:var(--teal);stroke:var(--teal)}
+.seg{stroke:none}
+.simbar.tight{border-top:none;padding-top:0;margin-top:.45rem}
+.dgrid{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(5.2rem,1fr));
+  margin:1.2rem 0}
+.dgrid figure{margin:0;text-align:center}
+.dgrid figcaption{font:600 .8rem/1 var(--fm);color:var(--ink-3);margin-top:.35rem;
+  padding:0}
+.dgrid svg{margin:0 auto}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Decoding &middot; Project 06</p>
+  <h1>The Score<br>Tower</h1>
+  <p class="lead">Press the button and a real number appears &mdash; not a row of lights you
+  have to count, an actual <b>7</b>. Press it nine more times and a second digit wakes up to
+  keep the tens. Everything else in this box counts in lights; this is the one that counts in
+  numbers you can read from across the room.</p>
+  <div class="facts">
+    <span><b>Age</b> 10&ndash;12, with an adult nearby for the first hour</span>
+    <span><b>Time</b> about 2&frac12; hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+    <span><b>Chips</b> CD4026 &times; 2, CD4069 &times; 3</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Play it here first &mdash; including the switch that shows you why this
+  project needs fourteen inverters it should not need at all.</p>
+
+  <p>A scoreboard. One button adds one, one button wipes it back to zero, and it holds the
+  number until you change it. Keep it next to the Quiz Buzzer and you have a quiz.</p>
+
+  <div class="sim">
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="b-count" class="prim">COUNT +1</button>
+      <button id="b-reset">RESET</button>
+      <button id="b-hold">HOLD: off</button>
+      <button id="b-blank">BLANK: off</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <button id="b-inv">Inverters: fitted</button>
+      <span class="msg" id="sim-sub"></span>
+    </div>
+  </div>
+
+  <p class="sub" style="margin-top:.7rem">The dots on the left of each inverter are what the
+  CD4026 sends. The dots on the right are what the display actually gets. Press
+  <b>Inverters</b> to pull all fourteen of them out and see what a mismatched display looks
+  like.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A chip counts 0 to 9 and, instead of
+  handing you the number in binary, hands you seven separate answers &mdash; one per bar of
+  the digit. That translation has a name: <b>decoding</b>.</div>
+</section>
+
+<section id="seven">
+  <span class="snum">Section 2</span>
+  <h2>Seven bars, ten numbers</h2>
+  <p class="sub">Why a calculator digit looks the way it does.</p>
+
+  <p>A seven-segment display is seven LEDs in one lump of plastic, arranged in the shape of
+  an 8. They have names, and the names are always the same on every display ever made
+  &mdash; clockwise from the top bar: <b>a</b>, <b>b</b>, <b>c</b>, <b>d</b>, <b>e</b>,
+  <b>f</b>, and then <b>g</b> across the middle.</p>
+
+  <figure>
+    <div id="seg-map"></div>
+    <figcaption>The seven names. Learn these; every table in this guide and every datasheet
+    in the world uses them.</figcaption>
+  </figure>
+
+  <p>Ten digits, each one a different set of those seven. This is the entire font:</p>
+
+  <div class="dgrid" id="font-row"></div>
+
+  <p>Look at the <b>9</b>. It has no bar along the bottom. Look at the <b>6</b>: it
+  <em>does</em> have one along the top. That is not a mistake in the drawing and it will not
+  be a mistake in your wiring &mdash; it is how the CD4026 was designed in 1970, and it is
+  what your display will show.</p>
+
+  <div class="note"><b>Before you decide that's ugly.</b> Sketch a 6 without its top bar,
+  then a 9 without its bottom bar. Now sketch b and q. The chip's choice makes 6 and 9 look
+  like each other's mirror image, which is exactly what a 6 and a 9 are.</div>
+
+  <p>So a chip that wants to show you a number needs to work out those seven answers for
+  itself. Here's the table it has to know &mdash; and every entry in it came from the
+  timing diagram on page 3 of the datasheet:</p>
+
+  <div class="scroller"><table class="tt" style="max-width:30rem" id="font-table"></table></div>
+
+  <div class="why"><b>What this is really for.</b> Every clock radio, petrol pump, microwave
+  and bathroom scale does this. The number lives inside the machine as a count; seven-segment
+  decoding is the last step before a human can read it. A modern chip does it in software, in
+  a lookup table with exactly the ten rows above.</div>
+</section>
+
+<section id="chip">
+  <span class="snum">Section 3</span>
+  <h2>One chip that counts <em>and</em> decodes</h2>
+  <p class="sub">The CD4026 is two of the things you have already built, welded together.</p>
+
+  <p>In the Reaction Machine you used a CD4017: a counter with ten outputs, one for each
+  count. That works for ten lamps in a row and is useless for a digit, because "count 7" is
+  one wire and a 7 needs three bars lit at once.</p>
+
+  <p>The CD4026 has the same counter inside it &mdash; five flip-flops in a ring, which is
+  the same trick &mdash; and then a wall of gates that turns the count into the seven
+  answers. Its outputs are not "which count is it", they are <b>a</b> through <b>g</b>.
+  Count and decode in one 16-pin package.</p>
+
+  <div class="two">
+    <div class="card">
+      <h4 style="margin-top:0">The three pins that count</h4>
+      <dl class="kv">
+        <dt>Pin 1</dt><dd><b>CLOCK.</b> Every time this goes from low to high, add one. At 9
+          it wraps to 0.</dd>
+        <dt>Pin 15</dt><dd><b>RESET.</b> Hold it high and the count is 0. Let go and it
+          counts from there.</dd>
+        <dt>Pin 2</dt><dd><b>CLOCK INHIBIT.</b> High means ignore the clock. A freeze
+          button.</dd>
+      </dl>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">The three pins that display</h4>
+      <dl class="kv">
+        <dt>Pin 3</dt><dd><b>DISPLAY ENABLE IN.</b> Low forces all seven outputs off. The
+          count keeps running; you just can't see it.</dd>
+        <dt>Pin 5</dt><dd><b>CARRY OUT.</b> One pulse per ten counts. This is the tens
+          digit's clock.</dd>
+        <dt>Pin 14</dt><dd><b>UNGATED C.</b> Segment c, ignoring pin 3. For divide-by-12
+          tricks. You will leave it empty.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="warn"><b>Pin 3 is the one that wastes an afternoon.</b> If DISPLAY ENABLE IN is
+  left low &mdash; or left dangling, which on CMOS means "anything it feels like" &mdash;
+  every segment output stays at 0 and your display is stone dead while the chip counts away
+  happily inside. Pin 3 goes to <b>+</b> and stays there.</div>
+
+  <h3>The clock input is a Schmitt trigger, and that is a present</h3>
+
+  <p>The datasheet says something unusual about pin 1: clock rise and fall time,
+  <em>unlimited</em>. Every other chip in this box has a limit. The CD4026 has none, because
+  its clock input is a Schmitt trigger &mdash; the snap-decision input you met in the Siren
+  Box, which refuses to dither near the threshold.</p>
+
+  <p>That means you can feed pin 1 a lazy, sagging, capacitor-shaped edge and it will still
+  register exactly one count. Which is the whole reason Stage 3 works with one resistor and
+  one capacitor instead of another chip.</p>
+
+  <div class="why"><b>Counter plus decoder in one part.</b> In 1970 the reason to buy this
+  chip was package count: one CD4026 replaced a counter chip, a decoder chip and the
+  twenty-odd wires between them. That argument never went away. It is why a
+  microcontroller today has counters, PWM and serial ports built onto the same silicon as the
+  processor &mdash; not because it must, but because the wires between chips are the expensive
+  part.</div>
+</section>
+
+<section id="polarity">
+  <span class="snum">Section 4</span>
+  <h2>The problem: your display is the wrong way round</h2>
+  <p class="sub">This is the interesting part of the project, and it starts as bad news.</p>
+
+  <p>Seven-segment displays come in two kinds, and they are not interchangeable.</p>
+
+  <div class="two">
+    <div class="card">
+      <h4 style="margin-top:0">Common cathode</h4>
+      <p style="font-size:.93rem;color:var(--ink-2)">All seven LEDs have their
+      <b>&minus;</b> legs joined into one pin, which goes to the &minus; rail. To light a
+      bar you put <b>+</b> on it.</p>
+      <p style="font-size:.93rem;color:var(--ink-2)"><b>1 lights a segment.</b></p>
+    </div>
+    <div class="card">
+      <h4 style="margin-top:0">Common anode</h4>
+      <p style="font-size:.93rem;color:var(--ink-2)">All seven LEDs have their <b>+</b> legs
+      joined into one pin, which goes to the + rail. To light a bar you have to pull it
+      down to <b>&minus;</b>.</p>
+      <p style="font-size:.93rem;color:var(--ink-2)"><b>0 lights a segment.</b></p>
+    </div>
+  </div>
+
+  <p>The CD4026 puts out a <b>1</b> for every bar it wants lit. It was designed for
+  common-cathode displays &mdash; the datasheet says so on the front page and then prints two
+  suggested circuits, both with a common-cathode part in them.</p>
+
+  <p>The displays in this parts box are <b>common anode</b>.</p>
+
+  <div class="warn"><b>So wired straight together, nothing works &mdash; and it fails in a
+  confusing way.</b> Every segment the chip wants <em>off</em> gets pulled to &minus; and
+  lights up. Every segment it wants <em>on</em> sits at 5 V with 5 V on the other side too,
+  so no current flows and it stays dark. You get the photo-negative of the right answer:
+  a 1 looks like a wonky 0 with a hole in it. Press <b>Inverters</b> in the simulator above
+  to see it.</div>
+
+  <h3>The fix is a chip full of NOT gates</h3>
+
+  <p>Between every segment output and its bar, put an inverter. The chip says "light a",
+  the inverter turns that 1 into a 0, and 0 is exactly what a common-anode display wants.
+  Seven segments, seven inverters.</p>
+
+  <figure>
+    <div id="pol-svg"></div>
+    <figcaption>Left: what the datasheet expects. Right: what you have, and the row of NOT
+    gates that makes the difference. The common pin moves from &minus; to +, and every
+    signal flips.</figcaption>
+  </figure>
+
+  <p>A CD4069 holds six inverters, so one digit needs <b>one and a bit</b> chips. That
+  leftover "a bit" is annoying &mdash; until you notice the second digit needs one too. Both
+  <b>g</b> segments come out of the same shared chip, so two digits cost three CD4069s
+  rather than four.</p>
+
+  <div class="note"><b>Is there a lazier fix?</b> Yes: buy common-cathode displays and skip
+  all three chips. That is what an engineer with a budget does, and it's worth knowing that
+  the right answer to a polarity mismatch is sometimes "order the other part". You are doing
+  it the hard way because the hard way is the lesson, and because fourteen NOT gates cost you
+  nothing today.</div>
+
+  <div class="why"><b>Polarity mismatch is a real job.</b> "This chip drives the wrong way
+  round" is one of the most common things a hardware engineer deals with, and inverting
+  buffers exist as products precisely because of it. Notice also that the inverters do the
+  work the CD4026 can't: a CD4026 output shoves out about 1 mA, which is a feeble segment.
+  The CD4069 doing the sinking is what makes the digit bright enough to read.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 5</span>
+  <h2>What you need</h2>
+  <p class="sub">Stages 1&ndash;4 use half of this. Stage 5 uses the rest.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>What it does here</th></tr></thead>
+    <tbody>
+      <tr><td class="n">2</td><td><b>CD4026</b> &mdash; decade counter with 7-segment
+        decoder</td><td>One per digit. Counts, and works out the seven bars.</td></tr>
+      <tr><td class="n">3</td><td><b>CD4069</b> &mdash; hex NOT</td><td>Fourteen of the
+        eighteen inverters flip the segment signals for the common-anode displays.</td></tr>
+      <tr><td class="n">2</td><td>7-segment display, <b>common anode</b>, red</td>
+        <td>Use the red ones. White needs 3 V per segment and comes out dimmer.</td></tr>
+      <tr><td class="n">14</td><td>Resistor 220 &Omega; (or 330 &Omega;)</td><td>One per
+        segment. Mix the two values freely; you cannot see the difference.</td></tr>
+      <tr><td class="n">2&ndash;4</td><td>Resistor 100 k&Omega;</td><td>Clock pull-up and
+        RESET pull-down, plus one each for HOLD and BLANK if you fit them.</td></tr>
+      <tr><td class="n">1</td><td>Capacitor 0.1 &micro;F (marked <b>104</b>)</td><td>The
+        debounce. Makes one press mean one count.</td></tr>
+      <tr><td class="n">2&ndash;4</td><td>Push buttons</td><td>COUNT and RESET, plus HOLD and
+        BLANK if you want them.</td></tr>
+      <tr><td class="n">5</td><td>Capacitor 0.1 &micro;F (<b>104</b>)</td><td>One across the
+        power pins of each chip. Cheap insurance.</td></tr>
+    </tbody>
+  </table></div>
+
+  <p><b>Power:</b> 3 AA cells (4.5 V) or a 5 V breadboard supply. Nothing in this project goes
+  anywhere near mains electricity. Full board, both digits showing 88, draws about 40 mA.</p>
+
+  <div class="note"><b>You will use a lot of holes.</b> Twenty-eight segment wires, fourteen
+  resistors, five chips. Put the two displays at one end of the board and the chips in a row
+  beside them, and leave the whole build assembled &mdash; this is one worth keeping.</div>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 6</span>
+  <h2>Rules for not breaking things</h2>
+  <p class="sub">Same seven as always, plus one new one for the 16-pin chip.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you rewire</b> Every time. Not "mostly".</li>
+    <li><b>The notch tells you which end is which</b> Notch up, pin 1 is to its left, and the
+      numbers run <b>anticlockwise</b> down the left side and back up the right.</li>
+    <li><b>The CD4026 is a 16-pin chip: + on 16, &minus; on 8</b> Not 14 and 7. Every other
+      chip in this box is 14-pin, your hands will go to 14 and 7 out of habit, and 5 V into
+      pin 14 of a CD4026 lands on the UNGATED C output. Check it twice.</li>
+    <li><b>Never leave an input dangling</b> Unused CD4069 inputs go to &minus;. On the
+      CD4026, pin 2 goes to &minus; and pin 3 goes to <b>+</b>.</li>
+    <li><b>Never wire an output straight to a rail</b> That is a short circuit through the
+      chip. The segment outputs go to inverter inputs, nowhere else.</li>
+    <li><b>Every segment gets its own resistor</b> Not one resistor in the common pin. See
+      the box below for why.</li>
+    <li><b>Warm chip means stop</b> Pull the power and check rule 2 and rule 3.</li>
+  </ol>
+
+  <div class="note"><b>Why not one resistor in the common pin?</b> It would work, and it
+  would save you thirteen resistors, and every digit would be a different brightness. A
+  <b>1</b> lights two bars and gets the whole current between them; an <b>8</b> splits the
+  same current eight ways and comes out faint. Counting from 7 to 8 would look like the
+  battery dying. Per-segment resistors are how every real display is wired.</div>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 7</span>
+  <h2>The two pinouts, and one you have to find yourself</h2>
+  <p class="sub">Chip pins come from the datasheet. Display pins come from a test.</p>
+
+  <div id="pinouts"></div>
+
+  <h3>The display's pins are not in a datasheet you own</h3>
+
+  <p>Seven-segment displays are sold by the hundred by companies that never published a sheet
+  for them. The ten-pin ones in kits are almost always wired the same way, and
+  <em>almost always</em> is not good enough to build on. So test yours. It takes two minutes
+  and it is a proper piece of engineering.</p>
+
+  <figure>
+    <div id="disp-svg"></div>
+    <figcaption>The usual arrangement of a 10-pin single-digit display, seen from the front
+    with the decimal point at the bottom right. Pin 1 is bottom left and the numbers run
+    anticlockwise, exactly like a chip. Treat this as a guess until your test agrees with
+    it.</figcaption>
+  </figure>
+
+  <ol class="steps">
+    <li><b>Make a probe</b> One wire from the + rail through a <b>1 k&Omega;</b> resistor.
+      The resistor is what stops you destroying a segment while you hunt. Another wire
+      straight from the &minus; rail.</li>
+    <li><b>Find the common pin</b> Hold the &minus; wire on any pin and brush the probe
+      across all the others. The pin that lights something no matter which other pin you
+      touch is a common pin &mdash; and because these are common <em>anode</em>, you will
+      find it the other way round: put the <b>probe</b> on the candidate and the
+      <b>&minus;</b> wire on the others. Ten-pin displays have two commons, wired together
+      inside; pins 3 and 8.</li>
+    <li><b>Name the segments</b> Leave the probe on the common. Touch &minus; to each
+      remaining pin in turn and write down which bar lights. That is your segment map, and
+      it is the one the rest of this build uses.</li>
+    <li><b>Fill in the table</b> There's one in the <a href="worksheet.md">worksheet</a>.
+      Write it in pencil before you wire a single segment.</li>
+  </ol>
+
+  <div class="warn"><b>Never touch the probe straight to a segment pin with no resistor.</b>
+  A bare LED across 5 V draws whatever it can and dies in about a second, usually without a
+  flash to tell you.</div>
+
+  <div class="why"><b>This is the normal state of affairs.</b> Professionals meet undocumented
+  parts constantly &mdash; a display from a scrapped machine, a sensor from a supplier who
+  went under, a connector on a board nobody has the drawing for. The method is always the
+  same: a current-limited probe, one pin at a time, and a written table at the end. The
+  written table is the part beginners skip and regret.</div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>The display alone</span>
+    <span>~25 min</span></div>
+  <h2>Spell a digit with your hands</h2>
+  <p class="sub">No chips yet. One display, seven resistors, and a wire you move around.</p>
+
+  <p>Before anything drives the display, you should be able to drive it. By the end of this
+  stage you will have made a <b>7</b> with three wires, which tells you your segment map is
+  right &mdash; and finding that out now is much cheaper than finding it out through five
+  chips.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail</td><td>Power in</td></tr>
+      <tr><td>Supply &minus;</td><td>Top blue rail</td><td>Ground in</td></tr>
+      <tr><td>Top red rail</td><td>Bottom red rail</td><td>Both sides live</td></tr>
+      <tr><td>Top blue rail</td><td>Bottom blue rail</td><td>Both sides grounded</td></tr>
+      <tr><td>Display <b>common</b> (pin 3)</td><td>+ rail</td><td>All seven anodes to
+        +5 V</td></tr>
+      <tr><td>Display <b>common</b> (pin 8)</td><td>+ rail</td><td>Same pin inside; wire
+        both</td></tr>
+      <tr><td>Each segment pin</td><td>its own 220 &Omega; into an empty row</td>
+        <td>Seven resistors, seven spare rows</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Now take one wire from the &minus; rail and touch the free end of each resistor in turn.
+  One bar lights per resistor. Then:</p>
+
+  <ul class="tick">
+    <li>Touch <b>a</b>, <b>b</b> and <b>c</b> at once &mdash; three wires, or one wire
+      bridging three rows. That's a <b>7</b>.</li>
+    <li>Add <b>d</b>, <b>e</b> and <b>f</b> for a <b>0</b>. Add <b>g</b> as well for an
+      <b>8</b>.</li>
+    <li>Look at how bright one bar is. That brightness is what the finished machine will
+      have, because from here on the inverters pull the segment down to &minus; exactly like
+      your wire does.</li>
+  </ul>
+
+  <div class="note"><b>Expect about 4 mA a segment.</b> Clearly lit indoors, not
+  sunlight-bright. If a bar is much dimmer than its neighbours, you have a 1 k&Omega; in
+  there by mistake &mdash; the colour bands for 220 &Omega; are red-red-brown and for
+  1 k&Omega; brown-black-red.</div>
+
+  <div class="why"><b>Build the output first.</b> Given a chain of five unfamiliar things,
+  start at the end you can test alone. Every segment you prove here is a segment you will not
+  suspect in Stage 2, and in Stage 2 you will have fourteen new wires to suspect
+  instead.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>Counter, inverters, digit</span>
+    <span>~35 min</span></div>
+  <h2>A number appears</h2>
+  <p class="sub">The big stage. At the end of it, a chip is writing digits for you.</p>
+
+  <p>Three chips go in: the CD4026, and two CD4069s to flip its seven answers. Put the
+  CD4026 nearest the display and the inverters between them, because the seven wires from
+  chip to inverters and the seven from inverters to display are the ones you will be
+  tracing.</p>
+
+  <h3>Power first, all three chips</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4026 <b>pin 16</b></td><td>+ rail</td><td>Power. <b>16, not 14.</b></td></tr>
+      <tr><td>CD4026 <b>pin 8</b></td><td>&minus; rail</td><td>Ground. <b>8, not 7.</b></td></tr>
+      <tr><td>CD4069 #1 pin 14</td><td>+ rail</td><td>Power</td></tr>
+      <tr><td>CD4069 #1 pin 7</td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>CD4069 #2 pin 14</td><td>+ rail</td><td>Power</td></tr>
+      <tr><td>CD4069 #2 pin 7</td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>across each chip's + and &minus; pins</td>
+        <td>Three capacitors, one per chip</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The CD4026's control pins</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD4026 <b>pin 3</b></td><td><b>+ rail</b></td><td>DISPLAY ENABLE IN. Low here
+        means a dead display.</td></tr>
+      <tr><td>CD4026 <b>pin 2</b></td><td>&minus; rail</td><td>CLOCK INHIBIT off, so the
+        clock works</td></tr>
+      <tr><td>CD4026 <b>pin 15</b></td><td>&minus; rail</td><td>RESET off. A button goes here
+        in Stage 4.</td></tr>
+      <tr><td>CD4026 pin 4</td><td>leave empty</td><td>DISPLAY ENABLE OUT &mdash; an output,
+        unused</td></tr>
+      <tr><td>CD4026 pin 5</td><td>leave empty</td><td>CARRY OUT &mdash; Stage 5 needs
+        it</td></tr>
+      <tr><td>CD4026 pin 14</td><td>leave empty</td><td>UNGATED C &mdash; an output,
+        unused</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Seven segments, seven inverters, two chips</h3>
+
+  <p>This is the long table. Work down it one row at a time and tick each one. Every row is
+  the same shape: <em>counter output &rarr; inverter in</em>, then <em>inverter out &rarr;
+  resistor &rarr; display</em>.</p>
+
+  <div class="scroller"><table id="segwire"></table></div>
+
+  <ul class="tick">
+    <li>Six of CD4069 #1's inputs used, none spare &mdash; that chip is full.</li>
+    <li>One of CD4069 #2's inputs used. <b>Tie its other five inputs (pins 3, 5, 9, 11, 13)
+      to &minus;.</b> Floating CMOS inputs make a chip warm and make the board
+      superstitious.</li>
+  </ul>
+
+  <h3>Now the crudest possible clock</h3>
+
+  <p>Put a 100 k&Omega; resistor from CD4026 <b>pin 1</b> to the <b>&minus;</b> rail, so the
+  clock input is held low. Then take a loose wire from the <b>+</b> rail and tap pin 1 with
+  it.</p>
+
+  <p>The digit changes. Power up and the display shows something &mdash; probably not 0,
+  because a CD4026 wakes up on whatever count it feels like. Tap pin 1 a few times and it
+  climbs: 3, 4, 5&hellip; 9, 0, 1.</p>
+
+  <div class="note"><b>Now count carefully, and watch it cheat.</b> Tap once. Did it go up by
+  one? Tap again. Sooner or later one tap jumps you three or four digits. You did not slip.
+  Metal contacts <em>bounce</em> &mdash; the wire touches, springs off, touches again, several
+  times in the first few thousandths of a second, and each bounce is a perfectly good clock
+  edge as far as the chip is concerned. Stage 3 is entirely about this.</div>
+
+  <div class="why"><b>Decoding, seen from the outside.</b> Cover the display and look at the
+  seven wires going into the inverters. There is no "7" anywhere on that bundle &mdash; just
+  seven yes-or-no answers that happen to look like a 7 when arranged in the right shape. Every
+  screen you have ever looked at is doing a version of this.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>One press, one count</span>
+    <span>~20 min</span></div>
+  <h2>Beat the bounce with a resistor and a capacitor</h2>
+  <p class="sub">Two components, and the most useful five minutes of theory in the box.</p>
+
+  <p>A push button is two bits of springy metal. When they meet they bounce apart and back
+  several times over a few thousandths of a second. Your finger feels one press; the chip sees
+  a burst of them. Fixing this is called <b>debouncing</b>, and there are two ways: a chip that
+  waits, or a capacitor that refuses to be hurried. The CD4026's Schmitt-trigger clock input
+  means we can use the cheap one.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Remove the 100 k&Omega; from pin 1 to &minus;</td><td>&nbsp;</td><td>It is
+        about to go the other way up</td></tr>
+      <tr><td>100 k&Omega;</td><td>CD4026 pin 1 &rarr; <b>+ rail</b></td><td>Holds the clock
+        high, and charges the capacitor slowly</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>CD4026 pin 1 &rarr; &minus; rail</td><td>The
+        component that will not be hurried</td></tr>
+      <tr><td>Button</td><td>CD4026 pin 1 &rarr; &minus; rail</td><td>Press to pull the clock
+        down</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Press the button. Nothing happens. <b>Let go.</b> The count goes up by one, exactly
+  one, every time.</p>
+
+  <h3>Why it works, in four steps</h3>
+
+  <ol class="steps">
+    <li><b>Resting, the capacitor is full</b> The 100 k&Omega; has charged it to 5 V. Pin 1
+      sees a clean high.</li>
+    <li><b>Press: the capacitor dumps</b> The button is a near-zero-resistance path to
+      &minus;, so the capacitor empties instantly and pin 1 goes low. Low is not a counting
+      edge &mdash; the CD4026 counts on the way <em>up</em> &mdash; so nothing happens
+      yet.</li>
+    <li><b>Bounce: the capacitor ignores it</b> Each time the contacts spring apart, the only
+      thing refilling the capacitor is that 100 k&Omega;, which takes about
+      <b>10 milliseconds</b> to do it. A bounce lasts a fraction of a millisecond, so the
+      voltage creeps up a few hundredths of a volt and gets slammed back down. It never gets
+      near the threshold. No edge.</li>
+    <li><b>Release: one slow, clean climb</b> Contacts open for good, the capacitor charges
+      over about 10 ms, and pin 1 rises smoothly past the threshold <em>once</em>. One count.
+      The Schmitt trigger is what makes that sluggish ramp legal.</li>
+  </ol>
+
+  <div class="note"><b>Your button now counts when you let go.</b> That feels wrong for about
+  a minute and then feels completely normal &mdash; and it is what the buttons on a microwave
+  do. Hold one down and watch: nothing happens until you release.</div>
+
+  <p>Worth trying, so the numbers stop being abstract:</p>
+
+  <ul class="tick">
+    <li>Pull the capacitor out. The bouncing comes straight back. Put it in. It goes. That one
+      part is the whole fix.</li>
+    <li>Swap the 100 k&Omega; for a 10 k&Omega;. Now the capacitor refills in 1 ms, which is
+      about as long as a bounce lasts &mdash; so some presses count twice again. The
+      <em>size</em> is the design, not just the presence.</li>
+    <li>Swap it for 1 M&Omega;. Now it takes a tenth of a second to recover, and pressing fast
+      loses counts. Too slow is also broken.</li>
+  </ul>
+
+  <div class="why"><b>Every button you have ever pressed is debounced.</b> Keyboards do it in
+  firmware &mdash; read the key, then ignore that key for 10 ms. Your circuit does it with one
+  capacitor. The number in both cases is the same 10 ms, because it comes from the springiness
+  of metal, not from electronics.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>Reset, hold, blank</span>
+    <span>~15 min</span></div>
+  <h2>Three control pins, three buttons</h2>
+  <p class="sub">Short stage. Each of these is one wire and one button, and each one turns the
+  thing into a slightly different machine.</p>
+
+  <h3>RESET &mdash; back to zero</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>100 k&Omega;</td><td>CD4026 pin 15 &rarr; &minus; rail</td><td>Holds RESET low,
+        replacing the plain wire from Stage 2</td></tr>
+      <tr><td>Button</td><td>CD4026 pin 15 &rarr; <b>+ rail</b></td><td>Press for high, and
+        high means zero</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>No capacitor on this one, and that is a decision, not laziness.</b>
+  RESET bounces just as badly as the count button. It does not matter: bouncing a reset means
+  resetting to zero five times instead of once, and zero five times is still zero. An
+  operation you can repeat harmlessly is called <b>idempotent</b>, and spotting one is how you
+  know a part needs no protection.</div>
+
+  <h3>HOLD &mdash; freeze the number</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Remove the wire from pin 2 to &minus;</td><td>&nbsp;</td><td>A resistor takes
+        its place</td></tr>
+      <tr><td>100 k&Omega;</td><td>CD4026 pin 2 &rarr; &minus; rail</td><td>CLOCK INHIBIT
+        normally off</td></tr>
+      <tr><td>Button (or a wire you leave in)</td><td>CD4026 pin 2 &rarr; + rail</td>
+        <td>High = ignore the clock entirely</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Hold it and hammer the count button: the number does not move. Let go and counting
+  resumes from where it was. Nothing was lost and nothing was queued up.</p>
+
+  <h3>BLANK &mdash; hide the score</h3>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Remove the wire from pin 3 to +</td><td>&nbsp;</td><td>A resistor takes its
+        place</td></tr>
+      <tr><td>100 k&Omega;</td><td>CD4026 pin 3 &rarr; <b>+ rail</b></td><td>DISPLAY ENABLE
+        normally on</td></tr>
+      <tr><td>Button</td><td>CD4026 pin 3 &rarr; &minus; rail</td><td>Press to force all
+        seven segments off</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Here is the good demo. Hold BLANK down. Press COUNT four times. The display is dark and
+  gives nothing away. Let go of BLANK &mdash; and the number has moved on by four. The
+  counting never stopped; you were only refused the view.</p>
+
+  <div class="why"><b>Two different kinds of "off".</b> HOLD stops the counting. BLANK stops
+  the showing. Mixing those two up is a real bug in real products &mdash; the pause button
+  that keeps the timer running, the muted alarm still marching towards its deadline. Your
+  board lets you feel the difference with two fingers.</div>
+</section>
+
+<section id="s5" class="stage">
+  <div class="tag"><span class="no">Stage 5</span><span>The tens digit</span>
+    <span>~45 min</span></div>
+  <h2>Past nine</h2>
+  <p class="sub">The same thing twice, plus one wire that is the whole idea of carrying.</p>
+
+  <p>Stop here and you have a working scoreboard that counts to nine, which is enough for a
+  quiz. Carry on and you get 99, and the part of arithmetic everyone learns at seven years old
+  turns out to be one pin.</p>
+
+  <p>The second digit is a copy: another CD4026, a third CD4069 for its segments a&ndash;f, and
+  the <em>spare</em> inverter on CD4069 #2 for its g. Wire it exactly as Stage 2, then:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Units CD4026 <b>pin 5</b></td><td>Tens CD4026 <b>pin 1</b></td><td><b>The carry
+        wire.</b> One pulse per ten counts.</td></tr>
+      <tr><td>Tens CD4026 pin 2</td><td>&minus; rail</td><td>CLOCK INHIBIT off</td></tr>
+      <tr><td>Tens CD4026 pin 3</td><td>+ rail</td><td>DISPLAY ENABLE on</td></tr>
+      <tr><td>Tens CD4026 pin 15</td><td>the <b>same</b> RESET button node</td><td>One button
+        must zero both digits</td></tr>
+      <tr><td>Tens CD4026 pin 16 / pin 8</td><td>+ / &minus;</td><td>16 and 8 again</td></tr>
+      <tr><td>CD4069 #3 pin 14 / pin 7</td><td>+ / &minus;</td><td>The third inverter
+        chip</td></tr>
+      <tr><td>CD4069 #2 spare inverter</td><td>tens <b>g</b></td><td>in on pin 3, out on pin
+        4 &mdash; then tie pins 5, 9, 11, 13 to &minus;</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Count up to 9 and press once more. The units digit rolls to 0 and the tens digit becomes
+  1. Ten.</p>
+
+  <h3>Why the carry lands at the right moment</h3>
+
+  <p>CARRY OUT is not a short pulse. It is <b>high while the count is 0 to 4 and low while it
+  is 5 to 9</b> &mdash; a square wave at one tenth of the clock. Which means its rising edge
+  happens at exactly one place in the cycle: the instant the count goes from 9 back to 0.</p>
+
+  <p>And the tens digit counts on rising edges. So it ticks once, at nine-to-zero, which is
+  what carrying means.</p>
+
+  <div class="note"><b>Nearly a famous bug.</b> If the CD4026's carry had been built the other
+  way up, its rising edge would land at 4&rarr;5 and your scoreboard would count 03, 04,
+  <b>15</b>, 16 &mdash; the tens digit ticking over halfway through the units. Whoever designed
+  this chip in 1970 chose the polarity so that the obvious wiring is also the correct wiring.
+  You can check their work on page 3 of the datasheet.</div>
+
+  <h3>Where it stops</h3>
+
+  <p>At 99, one more press gives 00. There is no hundreds digit and nothing warns you; the
+  number simply wraps, exactly the way the 9 wrapped in Stage 2. Two digits hold a hundred
+  different numbers and not one more.</p>
+
+  <div class="why"><b>This is overflow, and it is not a toy problem.</b> Add a third CD4026
+  and you get to 999 &mdash; the chain works to any length, one chip per digit, which is
+  precisely why CARRY OUT exists. But however many you add there is a last one, and the number
+  after its 9 is 0. Sixteen-bit games wrapping a score at 65,535, a spreadsheet losing pennies
+  past a certain size, the Y2K panic: all the same pin, further along.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>Four upgrades</span><span>as long as you
+    like</span></div>
+  <h2>If it is going to live on the shelf</h2>
+
+  <ol class="steps">
+    <li><b>A clock instead of a finger</b> The Siren Box's CD40106 oscillator, slowed down to
+      one pulse a second with a 1 M&Omega; and a 10 &micro;F, wired to pin 1 instead of the
+      button. You now have a seconds counter &mdash; and a stopwatch, if you put HOLD on a
+      button and RESET on another.</li>
+    <li><b>Wire it to the Quiz Buzzer</b> Player 1's lamp output can drive the count input, so
+      the scoreboard adds a point every time they buzz in. Two projects become one
+      machine.</li>
+    <li><b>Count down instead of up</b> You cannot: the CD4026 only goes one way. Look up what
+      chip you <em>would</em> need (the word to search for is "up/down counter") and notice
+      that this is how engineering usually goes &mdash; not "how do I make this part do it",
+      but "which part already does it".</li>
+    <li><b>Blank the leading zero</b> "07" looks like a machine; "7" looks like a number. The
+      chip that does this automatically is the CD4033, the CD4026's twin &mdash; same pinout,
+      but pins 3 and 4 do ripple blanking instead of display enable. It is in the same
+      datasheet, one column to the right.</li>
+  </ol>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 8</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Display projects fail in their own particular ways. These are them.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td><b>Display completely dead, but the chip is cool</b></td><td>Pin 3 is not at +.
+        This is the most common fault in this project by a distance.</td></tr>
+      <tr><td><b>The digits look like photo-negatives</b></td><td>A segment is wired from the
+        CD4026 straight to the display, skipping its inverter. Count the segments that are
+        wrong &mdash; that is how many wires to re-check.</td></tr>
+      <tr><td>One bar never lights</td><td>Three suspects in a row: the resistor, the
+        inverter's output pin, the segment pin. Test the segment with your Stage 1 probe
+        first &mdash; it rules out two of the three.</td></tr>
+      <tr><td>One bar never goes <em>off</em></td><td>Its inverter input is floating. Check
+        the wire from the CD4026's segment pin.</td></tr>
+      <tr><td>Jumps two or three per press</td><td>Bounce. Capacitor missing, in the wrong
+        row, or you used a 22 pF instead of a 104.</td></tr>
+      <tr><td>Counts down, or randomly</td><td>The 100 k&Omega; is still going to &minus;
+        instead of +. Stage 3 turns it round.</td></tr>
+      <tr><td>Never leaves 0</td><td>Pin 15 is high. Your RESET button is stuck, or the
+        100 k&Omega; pull-down is missing.</td></tr>
+      <tr><td>Stuck on one number, button does nothing</td><td>Pin 2 is high. HOLD is
+        on.</td></tr>
+      <tr><td>Tens digit ticks at the wrong time</td><td>Carry is wired to the tens chip's
+        pin 2 instead of pin 1.</td></tr>
+      <tr><td>A chip gets warm</td><td>Power in backwards &mdash; and on the CD4026 that means
+        + on 14 instead of 16. <b>Unplug now.</b></td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away five minutes, re-read one
+        table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>The technique that finds segment faults fastest.</b> Hold RESET down so
+  the display shows 0, which lights six of the seven bars and leaves g dark. One glance tells
+  you about six segments. Then count to 8: all seven on. Two numbers test the whole
+  display.</div>
+</section>
+
+</main>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+const SEGS = ['a','b','c','d','e','f','g'];
+
+/* ============ the font =============================================
+   Which bars each digit lights. Read off the CD4026B timing diagram
+   (Fig. 3, SCHS031B page 3) — note 6 keeps its top bar and 9 has no
+   bottom bar. Everything else on this page is generated from here.   */
+const FONT = {0:'abcdef', 1:'bc', 2:'abdeg', 3:'abcdg', 4:'bcfg',
+              5:'acdfg', 6:'acdefg', 7:'abc', 8:'abcdefg', 9:'abcfg'};
+
+/* which display pin each segment sits on, and how it gets there */
+const WIRE = {
+  a:{cd:10, inv:'#1', pin:1,  out:2,  disp:7},
+  b:{cd:12, inv:'#1', pin:3,  out:4,  disp:6},
+  c:{cd:13, inv:'#1', pin:5,  out:6,  disp:4},
+  d:{cd:9,  inv:'#1', pin:9,  out:8,  disp:2},
+  e:{cd:11, inv:'#1', pin:11, out:10, disp:1},
+  f:{cd:6,  inv:'#1', pin:13, out:12, disp:9},
+  g:{cd:7,  inv:'#2', pin:1,  out:2,  disp:10}
+};
+
+/* ============ one seven-segment digit ============ */
+const DW = 52, DH = 92, DT = 9, DM = 7, DL = (DH - DT)/2;
+const BAR = {
+  a:[DM, 0, DW-2*DM, DT],            g:[DM, DL, DW-2*DM, DT],
+  d:[DM, DH-DT, DW-2*DM, DT],        f:[0, DT+2, DT, DL-DT-4],
+  b:[DW-DT, DT+2, DT, DL-DT-4],      e:[0, DL+DT+2, DT, DL-DT-4],
+  c:[DW-DT, DL+DT+2, DT, DL-DT-4]
+};
+/* lit: which segments glow. idp: id prefix, so the simulator can repaint them. */
+function digitG(lit, idp){
+  const on = k => lit && lit.indexOf(k) >= 0;
+  let s = '';
+  for (const k of SEGS){
+    const [x,y,bw,bh] = BAR[k];
+    s += `<rect class="seg"${idp ? ` id="${idp+k}"` : ''} x="${x}" y="${y}"
+      width="${bw}" height="${bh}" rx="3"
+      style="fill:${on(k) ? 'var(--w-red)' : 'var(--sunk)'}"/>`;
+  }
+  return s;
+}
+function digitSVG(lit, w){
+  return `<svg viewBox="-5 -5 ${DW+10} ${DH+10}" width="${w||70}"
+    role="img" aria-label="seven segment digit">` + digitG(lit) + '</svg>';
+}
+
+/* ============ static figures ============ */
+function drawSegMap(){
+  const h = $('seg-map'); if (!h) return;
+  let s = `<svg viewBox="0 0 330 130" width="430" role="img"
+    aria-label="the seven segment names">
+    <g transform="translate(120,16) scale(1.05)">`
+    + digitG('abcdefg') + '</g>';
+  const lbl = (t, x, y, anchor) => `<text class="sv-cap" x="${x}" y="${y}"
+    text-anchor="${anchor}">${t}</text>`;
+  const line = (x1,y1,x2,y2) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+    stroke="var(--line-2)" stroke-width="1.2" stroke-dasharray="3 3"/>`;
+  s += lbl('a', 148, 12, 'middle') + line(148, 16, 148, 20);
+  s += lbl('f', 105, 42, 'end')    + line(110, 40, 121, 40);
+  s += lbl('b', 192, 42, 'start')  + line(178, 40, 188, 40);
+  s += lbl('g', 235, 68, 'start')  + line(184, 64, 231, 64);
+  s += lbl('e', 105, 92, 'end')    + line(110, 90, 121, 90);
+  s += lbl('c', 192, 92, 'start')  + line(178, 90, 188, 90);
+  s += lbl('d', 148, 126, 'middle')+ line(148, 112, 148, 118);
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+function drawFontRow(){
+  const h = $('font-row'); if (!h) return;
+  h.innerHTML = Object.keys(FONT).map(d =>
+    `<figure>${digitSVG(FONT[d], 58)}<figcaption>${d}</figcaption></figure>`).join('');
+}
+
+function drawFontTable(){
+  const t = $('font-table'); if (!t) return;
+  let h = '<thead><tr><th class="n">Digit</th>'
+        + SEGS.map(s => `<th class="n">${s}</th>`).join('')
+        + '<th class="n">bars</th></tr></thead><tbody>';
+  for (const d of Object.keys(FONT)){
+    const f = FONT[d];
+    h += `<tr><td class="n"><b>${d}</b></td>`
+      + SEGS.map(s => f.indexOf(s) >= 0
+          ? '<td class="n on">1</td>' : '<td class="n off">0</td>').join('')
+      + `<td class="n off">${f.length}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody></table>';
+}
+
+function drawSegWire(){
+  const t = $('segwire'); if (!t) return;
+  let h = `<thead><tr><th>Seg</th><th>CD4026 out</th><th>→ inverter in</th>
+    <th>inverter out →</th><th>→ 220 Ω → display</th></tr></thead><tbody>`;
+  for (const k of SEGS){
+    const w = WIRE[k];
+    h += `<tr><td><b>${k}</b></td><td>pin ${w.cd}</td>
+      <td>CD4069 ${w.inv} pin ${w.pin}</td><td>CD4069 ${w.inv} pin ${w.out}</td>
+      <td>display pin ${w.disp}</td></tr>`;
+  }
+  t.innerHTML = h + '</tbody>';
+}
+
+/* ============ pinouts ============ */
+const IN='in', OUT='out', PWR='pwr', NC='nc';
+const ROLECOL = {in:'var(--w-blue)', out:'var(--teal)', pwr:'var(--w-red)',
+                 nc:'var(--line-2)'};
+const CHIPS = [
+  {name:'CD4026', sub:'Decade counter + 7-segment decoder — 16 PINS', pins:16, p:{
+    1:['CLOCK',IN],          16:['+  VDD',PWR],
+    2:['clock inhibit',IN],  15:['RESET',IN],
+    3:['display enable',IN], 14:['ungated c',OUT],
+    4:['disp. en. out',OUT], 13:['seg c',OUT],
+    5:['CARRY OUT',OUT],     12:['seg b',OUT],
+    6:['seg f',OUT],         11:['seg e',OUT],
+    7:['seg g',OUT],         10:['seg a',OUT],
+    8:['−  VSS',PWR],         9:['seg d',OUT]}},
+  {name:'CD4069', sub:'Hex NOT — the polarity fix', pins:14, p:{
+    1:['in 1',IN],    14:['+  VDD',PWR],
+    2:['OUT 1',OUT],  13:['in 6',IN],
+    3:['in 2',IN],    12:['OUT 6',OUT],
+    4:['OUT 2',OUT],  11:['in 5',IN],
+    5:['in 3',IN],    10:['OUT 5',OUT],
+    6:['OUT 3',OUT],   9:['in 4',IN],
+    7:['−  VSS',PWR],  8:['OUT 4',OUT]}}
+];
+function dipSVG(chip){
+  const n = chip.pins, half = n/2, pitch = 21, bw = 112, bx = 104, top = 24;
+  const H = top + half*pitch + 24, W = 350;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0"
+      style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : n-i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i];
+    const col  = ROLECOL[role];
+    const x1 = left ? bx : bx+bw, x2 = left ? bx-18 : bx+bw+18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-4 : x2+4}" y="${y+3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${bx+bw/2}" y="${H-6}"
+    text-anchor="middle">${chip.name}</text>`;
+  return s + '</svg>';
+}
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt style="color:var(--w-red)">Red</dt><dd>Power. The CD4069 is + on 14, − on 7.
+         The CD4026 is <b>+ on 16, − on 8</b>.</dd>
+       <dt style="color:var(--w-blue)">Blue</dt><dd>Inputs. Every one goes somewhere: pin 3
+         to +, pins 2 and 15 to −.</dd>
+       <dt style="color:var(--teal)">Teal</dt><dd>Outputs. Never wire one to a rail. The seven
+         segment outputs go to inverter inputs and nowhere else.</dd>
+     </dl>`;
+}
+
+/* ============ the display's own pinout ============ */
+function drawDisplay(){
+  const h = $('disp-svg'); if (!h) return;
+  const BOTTOM = [[1,'e'],[2,'d'],[3,'com'],[4,'c'],[5,'DP']];
+  const TOP    = [[10,'g'],[9,'f'],[8,'com'],[7,'a'],[6,'b']];
+  const bx = 70, by = 60, bw = 190, bh = 134;
+  const px = i => bx + 20 + i*37.5;
+  let s = `<svg viewBox="0 0 400 262" width="400" role="img"
+    aria-label="ten pin seven segment display pinout">
+    <rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="5"
+      style="fill:var(--surface-2);stroke:var(--line-2)" stroke-width="1.4"/>
+    <g transform="translate(${bx+69},${by+21}) scale(.98)">`
+    + digitG('') + `</g><circle cx="${bx+bw-22}" cy="${by+bh-18}" r="4.5"
+    style="fill:var(--sunk)"/>`;
+  BOTTOM.forEach(([n,lbl], i) => {
+    const x = px(i), col = lbl === 'com' ? 'var(--w-red)' : 'var(--w-blue)';
+    s += `<line x1="${x}" y1="${by+bh}" x2="${x}" y2="${by+bh+22}" stroke="${col}"
+      stroke-width="2.4" ${SH}/>`;
+    s += `<text class="sv-num" x="${x}" y="${by+bh+36}" text-anchor="middle">${n}</text>`;
+    s += `<text class="sv-cap" x="${x}" y="${by+bh+52}" text-anchor="middle"
+      fill="${col}">${lbl}</text>`;
+  });
+  TOP.forEach(([n,lbl], i) => {
+    const x = px(i), col = lbl === 'com' ? 'var(--w-red)' : 'var(--w-blue)';
+    s += `<line x1="${x}" y1="${by}" x2="${x}" y2="${by-22}" stroke="${col}"
+      stroke-width="2.4" ${SH}/>`;
+    s += `<text class="sv-num" x="${x}" y="${by-28}" text-anchor="middle">${n}</text>`;
+    s += `<text class="sv-cap" x="${x}" y="${by-42}" text-anchor="middle"
+      fill="${col}">${lbl}</text>`;
+  });
+  s += `<text class="sv-lbl" x="${bx+bw+14}" y="${by+bh-14}">decimal point</text>`;
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+/* ============ the polarity comparison ============ */
+function ledSym(x, y, flip){
+  /* a diode triangle pointing right (flip=false) or left (flip=true) */
+  const d = flip
+    ? `M${x+18},${y-10} L${x+18},${y+10} L${x},${y} Z`
+    : `M${x},${y-10} L${x},${y+10} L${x+18},${y} Z`;
+  const barX = flip ? x : x + 18;
+  return `<path d="${d}" style="fill:var(--w-red);stroke:var(--w-red)"
+      stroke-width="1.4" ${SH}/>
+    <line x1="${barX}" y1="${y-11}" x2="${barX}" y2="${y+11}"
+      stroke="var(--w-red)" stroke-width="2.4" ${SH}/>
+    <line x1="${x+4}" y1="${y-14}" x2="${x+11}" y2="${y-21}" stroke="var(--w-red)"
+      stroke-width="1.4" ${SH}/>
+    <line x1="${x+11}" y1="${y-13}" x2="${x+18}" y2="${y-20}" stroke="var(--w-red)"
+      stroke-width="1.4" ${SH}/>`;
+}
+function res(x, y){
+  return `<path d="M${x},${y} l4,-7 l8,14 l8,-14 l8,14 l8,-14 l4,7"
+    fill="none" stroke="var(--ink-2)" stroke-width="1.8" ${SH}/>`;
+}
+function railSym(x, y, plus){
+  return plus
+    ? `<line x1="${x-16}" y1="${y}" x2="${x+16}" y2="${y}" stroke="var(--w-red)"
+        stroke-width="2.6" ${SH}/>
+       <text class="sv-cap" x="${x}" y="${y-8}" text-anchor="middle"
+        fill="var(--w-red)">+5 V</text>`
+    : `<line x1="${x-16}" y1="${y}" x2="${x+16}" y2="${y}" stroke="var(--w-blue)"
+        stroke-width="2.6" ${SH}/>
+       <line x1="${x-10}" y1="${y+5}" x2="${x+10}" y2="${y+5}" stroke="var(--w-blue)"
+        stroke-width="2.2" ${SH}/>
+       <line x1="${x-4}" y1="${y+10}" x2="${x+4}" y2="${y+10}" stroke="var(--w-blue)"
+        stroke-width="2" ${SH}/>
+       <text class="sv-cap" x="${x}" y="${y-8}" text-anchor="middle"
+        fill="var(--w-blue)">− rail</text>`;
+}
+function drawPolarity(){
+  const h = $('pol-svg'); if (!h) return;
+  const Y = 96;
+  let s = `<svg viewBox="0 0 880 210" role="img"
+    aria-label="common cathode wiring compared with common anode plus an inverter">`;
+  /* ---- left: common cathode, what the datasheet expects ---- */
+  s += `<text class="sv-cap" x="10" y="22">COMMON CATHODE — what the chip expects</text>`;
+  s += `<rect class="mbox" x="10" y="${Y-26}" width="86" height="52" rx="6"/>
+    <text class="sv-lbl" x="53" y="${Y+4}" text-anchor="middle">CD4026</text>`;
+  s += `<path class="w live" d="M96,${Y} H150"/>`;
+  s += `<text class="sv-bit" x="118" y="${Y-8}" fill="var(--teal)">1</text>`;
+  s += res(150, Y);
+  s += `<path class="w live" d="M190,${Y} H214"/>`;
+  s += ledSym(214, Y, false);
+  s += `<path class="w live" d="M232,${Y} H286 V${Y+40}"/>`;
+  s += railSym(286, Y+58, false);
+  s += `<text class="sv-lbl" x="10" y="${Y+76}">a 1 pushes current down through the bar</text>`;
+  s += `<text class="sv-lbl" x="10" y="${Y+92}">into the − rail — the bar lights</text>`;
+  /* ---- divider ---- */
+  s += `<line x1="430" y1="8" x2="430" y2="200" stroke="var(--line)" stroke-width="1.2"
+    stroke-dasharray="5 5"/>`;
+  /* ---- right: common anode + inverter ---- */
+  s += `<text class="sv-cap" x="456" y="22">COMMON ANODE — what you have</text>`;
+  s += `<rect class="mbox" x="456" y="${Y-26}" width="86" height="52" rx="6"/>
+    <text class="sv-lbl" x="499" y="${Y+4}" text-anchor="middle">CD4026</text>`;
+  s += `<path class="w live" d="M542,${Y} H576"/>`;
+  s += `<text class="sv-bit" x="559" y="${Y-8}" fill="var(--teal)">1</text>`;
+  s += `<path class="gsym" d="M576,${Y-16} L608,${Y} L576,${Y+16} Z"/>
+    <circle class="bub" cx="613" cy="${Y}" r="5"/>`;
+  s += `<text class="sv-lbl" x="592" y="${Y-24}" text-anchor="middle">CD4069</text>`;
+  s += `<path class="w" d="M618,${Y} H648"/>`;
+  s += `<text class="sv-bit" x="633" y="${Y-8}" fill="var(--ink-3)">0</text>`;
+  s += res(648, Y);
+  s += `<path class="w" d="M688,${Y} H712"/>`;
+  s += ledSym(712, Y, true);
+  s += `<path class="w" d="M730,${Y} H784 V${Y+34}"/>`;
+  s += railSym(784, Y+52, true);
+  s += `<text class="sv-lbl" x="456" y="${Y+76}">the 0 gives the current somewhere to go, so it</text>`;
+  s += `<text class="sv-lbl" x="456" y="${Y+92}">flows down from + instead — the bar lights</text>`;
+  h.innerHTML = '<div class="scroller">' + s + '</svg></div>';
+}
+
+drawSegMap(); drawFontRow(); drawFontTable(); drawSegWire();
+drawPinouts(); drawDisplay(); drawPolarity();
+</script>
+
+<script>
+"use strict";
+/* ============ the Score Tower, playable ============
+   Chip sends 1 for a bar it wants lit. With the inverters fitted the display
+   receives the opposite, and on a common-anode display 0 is what lights a bar —
+   so the digit comes out right. Pull the inverters and it comes out inverted.  */
+const S = {count:0, tens:0, hold:false, blank:false, inv:true};
+
+const SY = i => 56 + i*32;                       /* the seven segment rows */
+const chipSends = k => (!S.blank && FONT[S.count].indexOf(k) >= 0) ? 1 : 0;
+const displayGets = k => S.inv ? (chipSends(k) ? 0 : 1) : chipSends(k);
+const lit = k => displayGets(k) === 0;
+
+function simSVG(){
+  const BX = 140, BW = 170, BY = 34, BH = 228;
+  let s = `<svg viewBox="0 0 780 330" role="img"
+    aria-label="a CD4026 driving a two digit display through a row of inverters">`;
+  /* ---- control inputs ---- */
+  const INS = [['CLOCK','clk',1],['RESET','rst',15],['HOLD','hld',2],['BLANK','blk',3]];
+  INS.forEach(([n,id,pin], i) => {
+    const y = 64 + i*44;
+    s += `<text class="sv-cap" x="92" y="${y+1}" text-anchor="end">${n}</text>`;
+    s += `<text class="sv-lbl" x="92" y="${y+15}" text-anchor="end">pin ${pin}</text>`;
+    s += `<circle class="dot" id="d-${id}" cx="104" cy="${y}" r="5.5"/>`;
+    s += `<path class="w" id="w-${id}" d="M112,${y} H${BX}"/>`;
+  });
+  /* ---- the chip ---- */
+  s += `<rect class="mbox" x="${BX}" y="${BY}" width="${BW}" height="${BH}" rx="8"/>`;
+  s += `<text class="sv-cap" x="${BX+BW/2}" y="${BY+24}"
+    text-anchor="middle">CD4026</text>`;
+  s += `<text class="sv-lbl" x="${BX+BW/2}" y="${BY+42}" text-anchor="middle">counter
+    + decoder</text>`;
+  s += `<text id="sv-count" x="${BX+BW/2}" y="${BY+130}" text-anchor="middle"
+    style="font-size:56px;font-weight:700;fill:var(--teal);font-family:var(--fm)">0</text>`;
+  s += `<text class="sv-lbl" x="${BX+BW/2}" y="${BY+156}" text-anchor="middle">the count,
+    in there</text>`;
+  /* ---- headers ---- */
+  s += `<text class="sv-lbl" x="344" y="24" text-anchor="middle">sends</text>`;
+  s += `<text class="sv-lbl" x="424" y="24" text-anchor="middle">gets</text>`;
+  s += `<text class="sv-lbl" x="465" y="42" text-anchor="middle">7 × 220 Ω</text>`;
+  /* ---- seven segment chains ---- */
+  SEGS.forEach((k, i) => {
+    const y = SY(i);
+    s += `<path class="w" id="w1${k}" d="M${BX+BW},${y} H336"/>`;
+    s += `<circle class="dot" id="cs${k}" cx="344" cy="${y}" r="5.5"/>`;
+    s += `<text class="sv-cap" x="358" y="${y+4}">${k}</text>`;
+    s += `<g id="iv${k}"><path class="gsym" d="M372,${y-11} L404,${y} L372,${y+11} Z"/>
+      <circle class="bub" cx="409" cy="${y}" r="4.4"/></g>`;
+    s += `<path class="w" id="w2${k}" d="M414,${y} H462"/>`;
+    s += res(462, y);
+    s += `<path class="w" id="w3${k}" d="M502,${y} H516"/>`;
+    s += `<circle class="dot" id="dg${k}" cx="424" cy="${y}" r="5.5"/>`;
+  });
+  /* ---- the display panel ---- */
+  s += `<rect x="514" y="40" width="196" height="224" rx="9"
+    style="fill:var(--sunk);stroke:var(--line-2)" stroke-width="1.4"/>`;
+  s += `<line x1="528" y1="64" x2="694" y2="64" stroke="var(--w-red)"
+    stroke-width="2.4" ${SH}/>`;
+  s += `<text class="sv-cap" x="702" y="61" fill="var(--w-red)">+5 V</text>`;
+  s += `<text class="sv-lbl" x="702" y="75">commons</text>`;
+  s += `<g transform="translate(534,110)">${digitG(FONT[0], 't')}</g>`;
+  s += `<g transform="translate(616,110)">${digitG(FONT[0], 'u')}</g>`;
+  s += `<text class="sv-lbl" x="560" y="238" text-anchor="middle">tens</text>`;
+  s += `<text class="sv-lbl" x="642" y="238" text-anchor="middle">units</text>`;
+  /* ---- the carry ---- */
+  s += `<path class="w" id="w-car" d="M${BX+BW/2},${BY+BH} V296 H560 V264"/>`;
+  s += `<circle class="lamp" id="carry" cx="430" cy="296" r="10"/>`;
+  s += `<text class="sv-cap" x="446" y="300">CARRY</text>`;
+  s += `<text class="sv-lbl" x="446" y="314">pin 5 → the tens chip's clock</text>`;
+  s += `<text class="sv-lbl" x="${BX+BW/2+8}" y="284">one pulse per ten</text>`;
+  return s + '</svg>';
+}
+
+function paint(){
+  const set = (id, on) => { const e = $(id); if (e) e.classList.toggle('one', !!on); };
+  const wire = (id, on) => { const e = $(id); if (e) e.classList.toggle('live', !!on); };
+  const cn = $('sv-count'); if (cn) cn.textContent = S.count;
+  set('d-clk', 1); set('d-rst', 0); set('d-hld', S.hold); set('d-blk', !S.blank);
+  wire('w-hld', S.hold); wire('w-blk', !S.blank);
+  for (const k of SEGS){
+    const sends = chipSends(k), gets = displayGets(k);
+    set('cs'+k, sends); set('dg'+k, gets);
+    wire('w1'+k, sends); wire('w2'+k, gets); wire('w3'+k, gets);
+    const iv = $('iv'+k); if (iv) iv.classList.toggle('dead', !S.inv);
+    const seg = $('u'+k);
+    if (seg) seg.style.fill = lit(k) ? 'var(--w-red)' : 'var(--sunk)';
+  }
+  /* the tens digit has its own chip and its own inverters, off-diagram */
+  const tf = FONT[S.tens];
+  for (const k of SEGS){
+    const e = $('t'+k);
+    const tlit = S.blank ? !S.inv : (S.inv ? tf.indexOf(k) >= 0 : tf.indexOf(k) < 0);
+    if (e) e.style.fill = tlit ? 'var(--w-red)' : 'var(--sunk)';
+  }
+}
+
+function say(msg, sub){
+  const m = $('sim-msg'); if (m) m.textContent = msg;
+  const b = $('sim-sub'); if (b) b.textContent = sub || '';
+}
+
+function report(){
+  const on = SEGS.filter(k => FONT[S.count].indexOf(k) >= 0).join(' ');
+  if (!S.inv)
+    return say('No inverters: the display shows the photo-negative.',
+      'The chip still sends the right seven answers — but on a common-anode display a 1 is'
+      + ' what turns a bar OFF.');
+  if (S.blank)
+    return say('BLANK is on. The display is dark.',
+      'All seven outputs forced to 0. The count is still ' + S.count + ' inside the chip,'
+      + ' and it keeps counting.');
+  say('Showing ' + S.tens + S.count + '.',
+    'Chip sends 1 on ' + on + '. The inverters turn those into 0s, and 0 is what lights a'
+    + ' bar on a common-anode display.');
+}
+
+function count(){
+  if (S.hold)
+    return say('HOLD is on — the clock is ignored.',
+      'Nothing happens now and nothing is queued up. Let go and it carries on from '
+      + S.count + '.');
+  S.count = (S.count + 1) % 10;
+  if (S.count === 0){
+    S.tens = (S.tens + 1) % 10;
+    const c = $('carry');
+    if (c){
+      c.style.fill = 'var(--copper)'; c.style.stroke = 'var(--copper)';
+      setTimeout(() => { c.style.fill = ''; c.style.stroke = ''; }, 420);
+    }
+    const w = $('w-car');
+    if (w){ w.classList.add('live'); setTimeout(() => w.classList.remove('live'), 420); }
+    paint();
+    return say(S.tens === 0
+        ? 'Round the clock: 99 and one more is 00.'
+        : 'Nine plus one. CARRY ticked the tens digit to ' + S.tens + '.',
+      S.tens === 0
+        ? 'Two digits hold a hundred numbers and not one more. That is overflow.'
+        : 'Carry out goes high the instant the units roll from 9 to 0 — which is exactly'
+          + ' when the tens digit should move.');
+  }
+  paint(); report();
+}
+
+function initSim(){
+  if (!$('sim-svg')) return;
+  $('sim-svg').innerHTML = '<div class="scroller">' + simSVG() + '</div>';
+  $('b-count').addEventListener('click', count);
+  $('b-reset').addEventListener('click', () => {
+    S.count = 0; S.tens = 0; paint();
+    say('RESET held high: both digits are 0.',
+      'Bouncing this button just resets it again, so it needs no capacitor.');
+  });
+  $('b-hold').addEventListener('click', () => {
+    S.hold = !S.hold; $('b-hold').textContent = 'HOLD: ' + (S.hold ? 'on' : 'off');
+    paint();
+    say(S.hold ? 'HOLD on — pin 2 high. Counting stopped.'
+               : 'HOLD off — counting again.',
+      S.hold ? 'Press COUNT as much as you like; the clock is being ignored.' : '');
+  });
+  $('b-blank').addEventListener('click', () => {
+    S.blank = !S.blank; $('b-blank').textContent = 'BLANK: ' + (S.blank ? 'on' : 'off');
+    paint(); report();
+  });
+  $('b-inv').addEventListener('click', () => {
+    S.inv = !S.inv;
+    $('b-inv').textContent = 'Inverters: ' + (S.inv ? 'fitted' : 'PULLED OUT');
+    paint(); report();
+  });
+  paint();
+  say('Showing 00. Press COUNT.',
+    'Nine presses to fill the units digit. The tenth moves the tens.');
+}
+initSim();
+</script>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the segment tables and the
+  display test. Pin numbers, the segment font and the carry-out polarity were read off the
+  Texas Instruments datasheets — CD4026B (SCHS031B) and CD4069UB (SCHS054E).</p>
+</div></footer>
