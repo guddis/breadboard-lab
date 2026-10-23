@@ -1,0 +1,987 @@
+<meta charset="utf-8">
+<title>Lucky Dice</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+tr.gold td{background:var(--copper-soft)}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+table.seq td{padding:.25rem .5rem;vertical-align:middle}
+table.seq svg{margin:0 auto}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+
+/* ---- chip grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simrow{display:flex;flex-wrap:wrap;gap:1.4rem;align-items:center}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+.simbar.tight{margin-top:.55rem;padding-top:0;border-top:none}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer;touch-action:manipulation;user-select:none}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+button.sel{border-color:var(--copper);color:var(--copper)}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.w.live{stroke:var(--teal);stroke-width:2.8}
+.mbox{fill:var(--surface-2);stroke:var(--line-2);stroke-width:1.6}
+.mbox.live{fill:var(--teal-soft);stroke:var(--teal);stroke-width:2.2}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.9;stroke-linejoin:round}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Shift registers &amp; pseudo-random numbers &middot; Project 09</p>
+  <h1>Lucky<br>Dice</h1>
+  <p class="lead">Hold a button and seven LEDs flicker through the faces of a die. Let go and
+  it stops on one. There is no processor and no random-number chip &mdash; three flip-flops
+  pass a bit along a row, and a single gate decides what the next bit is. The surprise is how
+  random something that simple can look.</p>
+  <div class="facts">
+    <span><b>Age</b> 11+, with an adult nearby for the first hour</span>
+    <span><b>Time</b> about 2 hours, in 4 stages</span>
+    <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+    <span><b>Chips</b> CD4093, CD4081, CD4013 &times; 2, CD4077, CD4071</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Roll it here first. Hold the button for as long as you like.</p>
+
+  <p>Hold <b>ROLL</b> and the die flickers. Let go and it stops. Do that thirty times and
+  look at the tally underneath: every face turns up about equally often, and so does the
+  seventh outcome &mdash; a dark die. Section 8 explains where that came from and why it is
+  not a bug.</p>
+
+  <div class="sim">
+    <div class="simrow">
+      <div id="sim-die"></div>
+      <div style="flex:1;min-width:18rem" id="sim-svg"></div>
+    </div>
+    <div class="simbar">
+      <button id="btn-roll" class="prim">Hold to ROLL</button>
+      <button id="btn-slow">Slow clock: off</button>
+      <button id="btn-reset">RESET</button>
+      <button id="btn-power">Power on</button>
+      <span class="msg" id="sim-msg"></span>
+    </div>
+    <div class="simbar tight">
+      <span class="msg" id="sim-tally" style="margin-left:0;text-align:left"></span>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">Turn <b>Slow clock</b> on and hold ROLL to watch
+  one bit move per second. <b>Power on</b> starts the chips in a random state, the way a
+  real board wakes up &mdash; one of the eight possibilities is a trap, and RESET is the way
+  out.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A row of three one-bit memories where
+  every tick each one copies its neighbour, and the newest bit is made by comparing the other
+  two. That is a <b>linear-feedback shift register</b>, and it is inside Wi-Fi, GPS and
+  most things that need a stream of bits that looks like noise.</div>
+</section>
+
+<section id="how">
+  <span class="snum">Section 2</span>
+  <h2>How three bits make seven steps</h2>
+  <p class="sub">A row of memories, and one gate that feeds the front of it.</p>
+
+  <h3>The shift register</h3>
+  <p>Each <b>D flip-flop</b> is the one-bit memory from <a href="../reaction-machine/guide.html">
+  Project 03</a>. Wire three in a row, give them all the same clock, and on every tick each
+  one copies the bit from the one before it. A bit placed at the front marches to the right
+  and drops off the end.</p>
+
+  <figure>
+    <div id="blk-svg"></div>
+    <figcaption>All three flip-flops share one clock, so they change together. The new bit at
+    the front is made by an XNOR gate looking at the last two.</figcaption>
+  </figure>
+
+  <h3>The feedback</h3>
+  <p>If the front just took whatever you gave it, the pattern would march out and leave
+  nothing behind. Instead the front takes <code>XNOR(Q2, Q3)</code>: 1 when the last two
+  bits are <em>the same</em>, 0 when they differ. The row now feeds itself.</p>
+
+  <p>Start with everything at 0 and tick. This table is not typed in &mdash; the page
+  computed it from the same functions the simulator uses:</p>
+
+  <div class="scroller"><table class="seq">
+    <thead><tr><th class="n">Tick</th><th class="n">Q1</th><th class="n">Q2</th><th class="n">Q3</th>
+      <th class="n">XNOR(Q2,Q3) = next Q1</th><th class="n">Die</th></tr></thead>
+    <tbody id="seq-body"></tbody>
+  </table></div>
+
+  <p>Seven different states, then back to the start. It visits all of them exactly once
+  &mdash; that is the longest cycle three bits can make with one tap pair (all eight states
+  minus one trap, which Section 3 is about). Notice what it does <em>not</em> do: it does
+  not count. The sequence 100, 110, 011, 101, 010, 001 jumps about, and that jumping is what
+  makes it look random.</p>
+
+  <div class="why"><b>What this is really for.</b> Wi-Fi scrambles every packet with a 7-bit
+  version of this circuit, so a long run of zeros in your data does not become a long silence
+  on the radio. Each GPS satellite has its own 10-bit register that repeats every 1&nbsp;023
+  steps &mdash; the receiver recognises the satellite by its pattern. Same parts, same idea,
+  a few more flip-flops.</div>
+</section>
+
+<section id="traps">
+  <span class="snum">Section 3</span>
+  <h2>XNOR, and the one state it can't leave</h2>
+  <p class="sub">Why this project uses XNOR and not the more famous XOR.</p>
+
+  <p>Three bits have eight states. The cycle above uses seven. The eighth is a trap &mdash; a
+  state that feeds itself and never leaves. Which state is the trap depends on which gate
+  you pick, and that matters because RESET puts the register at 000:</p>
+
+  <div class="scroller"><table class="seq" id="trap-table">
+    <thead><tr><th>Feedback gate</th><th class="n">Start</th><th class="n">After 1 tick</th>
+      <th class="n">After 20 ticks</th><th>What it means</th></tr></thead>
+    <tbody id="trap-body"></tbody>
+  </table></div>
+
+  <p>With <b>XOR</b>, 000 is the trap. RESET would put you straight into it, and the die
+  would sit dark for ever. With <b>XNOR</b>, the trap moves to 111 &mdash; and you cannot get
+  there from RESET. You can only start in it by switching on at an unlucky moment, because
+  a flip-flop wakes up holding whatever it likes.</p>
+
+  <div class="warn"><b>Press RESET after every power-up.</b> If all seven pips are lit and
+  ROLL does nothing, you powered on inside the trap. That is not a fault; it is this section,
+  happening to you. RESET fixes it.</div>
+
+  <p>In Stage 3 you will swap the XNOR chip for an XOR chip, in the same holes, and watch
+  RESET trap the die. It takes thirty seconds and nobody forgets it.</p>
+</section>
+
+<section id="decode">
+  <span class="snum">Section 4</span>
+  <h2>From three bits to seven lamps</h2>
+  <p class="sub">The die's faces are handed out so the decoder needs only two gates.</p>
+
+  <p>A die face is a pattern of up to seven pips. Wire each state to the lamps that make its
+  face and you get a decoder. The tidy trick: pips on a die come in opposite pairs, so seven
+  lamps need only <b>four signals</b>.</p>
+
+  <div class="scroller"><table class="seq">
+    <thead><tr><th class="n">State</th><th class="n">a</th><th class="n">b</th>
+      <th class="n">c</th><th class="n">C</th><th class="n">Face</th></tr></thead>
+    <tbody id="dec-body"></tbody>
+  </table></div>
+
+  <dl class="kv" style="margin:.4rem 0 1rem">
+    <dt>a</dt><dd>top-left and bottom-right &nbsp; = <code>Q2 OR Q3</code> &nbsp;&mdash; one OR gate</dd>
+    <dt>b</dt><dd>top-right and bottom-left &nbsp; = <code>Q3</code> &nbsp;&mdash; a wire</dd>
+    <dt>c</dt><dd>middle-left and middle-right = <code>Q2 AND Q3</code> &nbsp;&mdash; one AND gate</dd>
+    <dt>C</dt><dd>centre &nbsp; = <code>Q1</code> &nbsp;&mdash; a wire</dd>
+  </dl>
+
+  <p>The order of faces &mdash; 1, 3, 6, 5, 2, 4 &mdash; was not chosen by taste. There are 720
+  ways to hand six faces to six states. Checking all of them takes a computer less than a
+  second, and this one is the cheapest: two gates and two wires for the whole decoder.</p>
+
+  <div class="why"><b>Where you've seen this.</b> That search &mdash; try every assignment, keep
+  the one that needs the least hardware &mdash; is what chip designers call <em>state
+  assignment</em>, and design tools do it millions of times when they lay out a processor.
+  Project 07 did the same by hand for a seven-segment display.</div>
+</section>
+
+<section id="parts">
+  <span class="snum">Section 5</span>
+  <h2>What you need</h2>
+  <p class="sub">All from the kit. Full wire list in <a href="README.md">README.md</a>.</p>
+
+  <h3>Chips</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>Chip</th><th>What it holds</th><th>Job here</th></tr></thead>
+    <tbody>
+      <tr><td><code>CD4093</code></td><td>Four NAND gates with Schmitt inputs</td>
+        <td>The clock &mdash; one gate with its inputs tied is the oscillator from Project 03</td></tr>
+      <tr><td><code>CD4081</code></td><td>Four AND gates</td>
+        <td>Gate 1 stops the clock when you let go. Gate 2 makes pip signal <b>c</b></td></tr>
+      <tr><td><code>CD4013</code> &times; 2</td><td>Two D flip-flops each</td>
+        <td>Three of the four flip-flops are the register. The fourth sits idle</td></tr>
+      <tr><td><code>CD4077</code></td><td>Four XNOR gates</td><td>The feedback</td></tr>
+      <tr><td><code>CD4071</code></td><td>Four OR gates</td><td>Pip signal <b>a</b></td></tr>
+      <tr><td><code>CD4070</code></td><td>Four XOR gates</td>
+        <td>Stage 3 experiment only &mdash; swapped in for the CD4077 and back</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Everything else</h3>
+  <div class="scroller"><table>
+    <thead><tr><th class="n">Qty</th><th>Part</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td class="n">7</td><td>LED, all the same colour</td>
+        <td>The pips. White or yellow looks most like a die. Three double as test lamps in Stages 1&ndash;3</td></tr>
+      <tr><td class="n">4</td><td>PN2222 NPN transistor</td>
+        <td>One per pip signal. Flat side toward you, legs down: <b>E &ndash; B &ndash; C</b></td></tr>
+      <tr><td class="n">2</td><td>Push button (small)</td><td>ROLL and RESET</td></tr>
+      <tr><td class="n">7</td><td>330 &Omega; resistor</td><td>One per pip</td></tr>
+      <tr><td class="n">3</td><td>2 k&Omega; resistor</td><td>Test lamps in Stages 1&ndash;3, removed in Stage 4</td></tr>
+      <tr><td class="n">6</td><td>10 k&Omega; resistor</td><td>Two button pull-downs, four transistor bases</td></tr>
+      <tr><td class="n">1</td><td>100 k&Omega; resistor</td><td>Clock timing</td></tr>
+      <tr><td class="n">1</td><td>10 &micro;F electrolytic</td><td>Slow clock for building &mdash; <b>stripe to &minus;</b></td></tr>
+      <tr><td class="n">7</td><td>0.1 &micro;F ceramic ("104")</td><td>One across each chip's power pins, one for the clock</td></tr>
+      <tr><td class="n">1</td><td>100 &micro;F electrolytic</td><td>Across the rails &mdash; <b>stripe to &minus;</b></td></tr>
+      <tr><td class="n">1</td><td>Breadboard</td><td>Full size. Six chips and seven LEDs need the room</td></tr>
+      <tr><td class="n">~60</td><td>Jumper wires</td><td>Red for +, black for &minus;, colours for signals</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Power</h3>
+  <p><b>4.5 V to 5 V.</b> Three AA cells, or the MB102 module set to 5 V. Every chip here runs
+  from 3 V to 18 V. Nothing goes near mains electricity.</p>
+</section>
+
+<section id="rules">
+  <span class="snum">Section 6</span>
+  <h2>Rules for not breaking things</h2>
+  <p class="sub">The same as before, with a new one at number 4.</p>
+
+  <ol class="steps">
+    <li><b>Unplug the power before you rewire</b>
+      Every single time.</li>
+    <li><b>All six chips are 14-pin: + on pin 14, &minus; on pin 7</b>
+      Notch to the left, pin 1 bottom-left, numbers run anticlockwise. There is no 16-pin
+      chip in this project.</li>
+    <li><b>Never leave an input dangling</b>
+      That includes the SET and RESET pins you are not using, and every spare gate input.
+      Spare inputs go to &minus;.</li>
+    <li><b>Press RESET after every power-up</b>
+      Flip-flops wake up holding anything, and one of the eight possibilities is the trap
+      from Section 3.</li>
+    <li><b>Never wire an output straight to + or &minus;</b>
+      That is a short through the chip.</li>
+    <li><b>The electrolytic capacitors have a right way round</b>
+      The stripe marks the negative leg. Backwards, they can pop.</li>
+    <li><b>Touch something metal before handling chips</b>
+      Static kills CMOS.</li>
+    <li><b>Warm chip means stop</b>
+      Pull the power and re-check rule 2.</li>
+  </ol>
+</section>
+
+<section id="reading">
+  <span class="snum">Section 7</span>
+  <h2>The pinouts</h2>
+  <p class="sub">Pin numbering and breadboard rows are in
+  <a href="../gate-bench/guide.html">Project 01</a> if you need reminding.</p>
+
+  <div id="pinouts"></div>
+
+  <p>The CD4070 you swap in during Stage 3 has exactly the CD4077's pinout.</p>
+
+  <div class="warn"><b>A CD4013 flip-flop has two halves with different pin numbers.</b>
+  Half 1 uses pins 1&ndash;6; half 2 uses 8&ndash;13. You use half 1 of both chips and half 2
+  of the first. The second chip's half 2 is idle &mdash; tie its four inputs to &minus; rather
+  than leave them in the air.</div>
+</section>
+
+<section id="s1" class="stage">
+  <div class="tag"><span class="no">Stage 1</span><span>The clock</span><span>~20 min</span></div>
+  <h2>Make time pass</h2>
+  <p class="sub">The same trick as Project 03: an inverter fed from its own output.</p>
+
+  <p>Supply + to the top red rail, supply &minus; to the top blue rail, then jumper across to
+  the bottom rails. Put the 100 &micro;F across the rails, <b>stripe to &minus;</b>.</p>
+
+  <p>Place the <b>CD4093</b>, notch left. Use gate 1; tie its two inputs together so it
+  works as a NOT:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>pin 7</b></td><td>&minus; rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 &micro;F</td><td>pin 14 &rarr; pin 7</td><td>Steadies the supply</td></tr>
+      <tr><td><b>pin 1</b></td><td><b>pin 2</b></td><td>Both inputs together: a NOT gate</td></tr>
+      <tr><td>100 k&Omega;</td><td>pin 3 &rarr; pin 1</td><td>Output feeds back to input</td></tr>
+      <tr><td>10 &micro;F</td><td>pin 1 &rarr; &minus; rail (stripe to &minus;)</td><td>Slow clock for building</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td><td>Three unused gates</td></tr>
+      <tr><td>pin 3</td><td>2 k&Omega; &rarr; LED long leg; short leg &rarr; &minus;</td><td>Clock lamp</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power on.</p>
+
+  <ul class="tick">
+    <li>The lamp blinks about <b>once a second</b>: on, off, on, off.</li>
+    <li>f &asymp; 1.23 &divide; (R &times; C) = 1.23 &divide; (100&nbsp;000 &times; 0.000&nbsp;010) &asymp; 1.2 blinks per second.
+      Yours may be half as fast or half as quick again &mdash; electrolytic capacitors are loose
+      by 20&nbsp;% or more, and the switching point of each chip differs. Nothing is wrong.</li>
+  </ul>
+
+  <div class="note"><b>The lamp is dim on purpose.</b> A CD4000 output only gives a milliamp or
+  two. The 2 k&Omega; keeps the output above 4 V so the clock stays a clean 0 or 1 &mdash; a
+  brighter lamp would pull it down to a vague voltage and spoil the timing.</div>
+
+  <div class="why"><b>What this is really for.</b> Every digital machine has a clock, and the
+  clock is the only reason anything happens. Yours is an inverter that keeps disagreeing with
+  itself, slowed down by a resistor filling a capacitor.</div>
+</section>
+
+<section id="s2" class="stage">
+  <div class="tag"><span class="no">Stage 2</span><span>The register</span><span>~35 min</span></div>
+  <h2>Three bits that march</h2>
+  <p class="sub">No feedback yet &mdash; a light that walks along a row.</p>
+
+  <p>Remove the clock lamp and its 2 k&Omega;. Place the <b>CD4081</b>. Gate 1 is the clock
+  switch: it passes the clock through only while ROLL is held.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Power</td></tr>
+      <tr><td><b>pin 7</b></td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>0.1 &micro;F</td><td>pin 14 &rarr; pin 7</td><td></td></tr>
+      <tr><td>CD4093 <b>pin 3</b></td><td>CD4081 <b>pin 1</b></td><td>The raw clock</td></tr>
+      <tr><td>ROLL leg</td><td>+ rail</td><td></td></tr>
+      <tr><td>ROLL diagonal leg</td><td>ROLL node</td><td></td></tr>
+      <tr><td>ROLL node</td><td>10 k&Omega; &rarr; &minus; rail</td><td>Holds it at 0 when not pressed</td></tr>
+      <tr><td>ROLL node</td><td>CD4081 <b>pin 2</b></td><td>Permission to run</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td><td>Spare for now &mdash; pins 5, 6 move in Stage 4</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Output: <b>CD4081 pin 3 = CLK</b>. Use <b>diagonally opposite</b> legs on every button;
+  a four-leg button has its legs joined in hidden pairs, and diagonal is always right.</p>
+
+  <p>Now the two <b>CD4013</b> chips. Call them <b>A</b> and <b>B</b>.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A and B, <b>pin 14</b></td><td>+ rail</td><td>Power</td></tr>
+      <tr><td>A and B, <b>pin 7</b></td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>0.1 &micro;F on each</td><td>pin 14 &rarr; pin 7</td><td></td></tr>
+      <tr><td>A <b>pin 3</b>, A <b>pin 11</b>, B <b>pin 3</b></td><td>CLK (CD4081 pin 3)</td><td>All three share one clock</td></tr>
+      <tr><td>A <b>pin 1</b> (Q1)</td><td>A <b>pin 9</b> (D2)</td><td>Q1 passes to Q2</td></tr>
+      <tr><td>A <b>pin 13</b> (Q2)</td><td>B <b>pin 5</b> (D)</td><td>Q2 passes to Q3</td></tr>
+      <tr><td>A <b>pin 5</b> (D1)</td><td>+ rail</td><td><em>Temporary.</em> Becomes the feedback in Stage 3</td></tr>
+      <tr><td>A pins <b>6, 8</b>; B <b>pin 6</b></td><td>&minus; rail</td><td>SET unused</td></tr>
+      <tr><td>B pins <b>8, 9, 10, 11</b></td><td>&minus; rail</td><td>The idle half</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>And RESET &mdash; a button that clears all three bits at once:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>RESET leg</td><td>+ rail</td><td></td></tr>
+      <tr><td>RESET diagonal leg</td><td>RESET node</td><td></td></tr>
+      <tr><td>RESET node</td><td>10 k&Omega; &rarr; &minus; rail</td><td>Pull-down</td></tr>
+      <tr><td>RESET node</td><td>A <b>pin 4</b>, A <b>pin 10</b>, B <b>pin 4</b></td><td>Reset of Q1, Q2, Q3</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Three test lamps, each <b>2 k&Omega; &rarr; LED &rarr; &minus;</b>, on A pin 1 (Q1),
+  A pin 13 (Q2) and B pin 1 (Q3).</p>
+
+  <p>Power on, press RESET, then hold ROLL.</p>
+
+  <ul class="tick">
+    <li>One lamp after another comes on, left to right, one per blink. After three blinks
+      all three are lit and stay lit.</li>
+    <li>Let go of ROLL mid-march: it freezes. Hold again and it carries on.</li>
+    <li>RESET puts them all out.</li>
+  </ul>
+
+  <div class="warn"><b>The lamps are dim, and that is the 2 k&Omega;.</b> Each Q also feeds the
+  next flip-flop, which needs a clean 1. Wiring a bright lamp straight on would drag the
+  output to a vague 2.5 V that the next chip may not read as 1. Project 03 found this out
+  the hard way.</div>
+
+  <div class="why"><b>What this is really for.</b> A shift register turns a stream of bits
+  arriving one at a time into a row of bits available all at once. Keyboards, memory chips and
+  the serial port on every computer use one to do exactly that.</div>
+</section>
+
+<section id="s3" class="stage">
+  <div class="tag"><span class="no">Stage 3</span><span>The feedback</span><span>~25 min</span></div>
+  <h2>Close the loop</h2>
+  <p class="sub">One gate turns a conveyor belt into a sequence.</p>
+
+  <p>Remove the wire from A pin 5 to +. Place the <b>CD4077</b>:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Power</td></tr>
+      <tr><td><b>pin 7</b></td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>0.1 &micro;F</td><td>pin 14 &rarr; pin 7</td><td></td></tr>
+      <tr><td>A <b>pin 13</b> (Q2)</td><td>CD4077 <b>pin 1</b></td><td>First tap</td></tr>
+      <tr><td>B <b>pin 1</b> (Q3)</td><td>CD4077 <b>pin 2</b></td><td>Second tap</td></tr>
+      <tr><td>CD4077 <b>pin 3</b></td><td>A <b>pin 5</b> (D1)</td><td>The new bit enters the front</td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td><td>Unused gates</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Power on, press RESET, hold ROLL, and watch the three lamps. Compare against the table
+  in Section 2.</p>
+
+  <ul class="tick">
+    <li>From all dark: <b>100, 110, 011, 101, 010, 001</b>, then dark again. Seven steps.</li>
+    <li>It repeats for as long as you hold.</li>
+    <li>Let go anywhere; hold again and it picks up from there.</li>
+  </ul>
+
+  <h3>The experiment worth doing</h3>
+  <ol class="steps">
+    <li><b>Power off. Pull the CD4077 and put a CD4070 in the same holes</b>
+      Same pinout, notch the same way round. It is an XOR instead of an XNOR.</li>
+    <li><b>Power on, RESET, hold ROLL</b>
+      Nothing happens. All three lamps stay dark for as long as you like.</li>
+    <li><b>Work out why</b>
+      XOR(0,0) = 0, so a 0 goes into the front of a row of zeros. Section 3 had this table.</li>
+    <li><b>Power off, put the CD4077 back</b></li>
+  </ol>
+
+  <div class="why"><b>What this is really for.</b> Real designs have to check their
+  trap states on purpose. A processor that can wake up in a state it cannot leave is a
+  processor that needs a reset line, and every chip has one for exactly this reason.</div>
+</section>
+
+<section id="s4" class="stage">
+  <div class="tag"><span class="no">Stage 4</span><span>The die</span><span>~45 min</span></div>
+  <h2>Seven lamps, four signals</h2>
+  <p class="sub">The decoder from Section 4, and then you roll it.</p>
+
+  <p>Remove the three test lamps and their 2 k&Omega; resistors; the LEDs become pips. Place
+  the <b>CD4071</b>:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>pin 14</b></td><td>+ rail</td><td>Power</td></tr>
+      <tr><td><b>pin 7</b></td><td>&minus; rail</td><td>Ground</td></tr>
+      <tr><td>0.1 &micro;F</td><td>pin 14 &rarr; pin 7</td><td></td></tr>
+      <tr><td>A <b>pin 13</b> (Q2)</td><td>CD4071 <b>pin 1</b></td><td></td></tr>
+      <tr><td>B <b>pin 1</b> (Q3)</td><td>CD4071 <b>pin 2</b></td><td></td></tr>
+      <tr><td>pins 5, 6, 8, 9, 12, 13</td><td>&minus; rail</td><td>Unused gates</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Output: <b>CD4071 pin 3 = signal a</b>. Now gate 2 of the <b>CD4081</b>. Move its pins 5
+  and 6 off &minus;:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>A <b>pin 13</b> (Q2)</td><td>CD4081 <b>pin 5</b></td><td></td></tr>
+      <tr><td>B <b>pin 1</b> (Q3)</td><td>CD4081 <b>pin 6</b></td><td></td></tr>
+    </tbody>
+  </table></div>
+
+  <p>Output: <b>CD4081 pin 4 = signal c</b>. Signals <b>b</b> and <b>C</b> are plain wires: b
+  is B pin 1 and C is A pin 1. Each of the four signals drives a transistor, and each
+  transistor drives its lamps:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>Signal</th><th>Comes from</th><th>Lights these pips</th></tr></thead>
+    <tbody>
+      <tr><td><b>a</b></td><td>CD4071 pin 3</td><td>top-left, bottom-right</td></tr>
+      <tr><td><b>b</b></td><td>B pin 1</td><td>top-right, bottom-left</td></tr>
+      <tr><td><b>c</b></td><td>CD4081 pin 4</td><td>middle-left, middle-right</td></tr>
+      <tr><td><b>C</b></td><td>A pin 1</td><td>centre</td></tr>
+    </tbody>
+  </table></div>
+
+  <p>For <b>each</b> of the four, build the same driver:</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th></tr></thead>
+    <tbody>
+      <tr><td>The signal</td><td>10 k&Omega; &rarr; transistor base (middle leg)</td></tr>
+      <tr><td>Transistor emitter (left leg)</td><td>&minus; rail</td></tr>
+      <tr><td>+ rail</td><td>330 &Omega; &rarr; LED long leg &mdash; <b>one 330 &Omega; per LED</b></td></tr>
+      <tr><td>LED short leg(s)</td><td>transistor collector (right leg)</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="note"><b>Why a transistor, when the test lamps managed without.</b> Each lamp
+  now draws about 8 mA and two share a driver. A CD4000 output can give a milliamp or so, and
+  Q1, Q2 and Q3 also have to feed the logic. The 10 k&Omega; into the base asks the output
+  for 0.4 mA &mdash; so light for the pips, a clean 1 for the logic.</div>
+
+  <p>Power on, press RESET, <b>hold ROLL</b>.</p>
+
+  <ul class="tick">
+    <li>The pips flicker through the faces. At this speed &mdash; one step a second &mdash; you can read each.</li>
+    <li>Let go: a face stays. About one time in seven the die is dark &mdash; that is the
+      seventh state, not a fault.</li>
+    <li>RESET gives a dark die; the first six ticks after it are 1, 3, 6, 5, 2, 4.</li>
+  </ul>
+
+  <h3>Now make it fast</h3>
+  <p>Power off. Swap the 10 &micro;F for a <b>0.1 &micro;F</b> in the same two holes. The
+  clock is now f &asymp; 1.23 &divide; (100&nbsp;000 &times; 0.000&nbsp;000&nbsp;1) &asymp; <b>120
+  ticks a second</b>, which is 17 full trips round the seven states every second. Hold ROLL
+  and the die becomes a blur; let go and you cannot have aimed.</p>
+
+  <div class="why"><b>What this is really for.</b> You just did what a game console does when
+  it needs a random number and has no random-number hardware: run a small register fast, and
+  read it when something unpredictable &mdash; here, your thumb &mdash; says stop.</div>
+</section>
+
+<section id="bonus" class="stage">
+  <div class="tag"><span class="no">Bonus</span><span>If you want more</span><span>any order</span></div>
+  <h2>A "roll again" lamp, and a longer register</h2>
+
+  <h3>The roll-again lamp</h3>
+  <p>The dark die is the only state where Q1, Q2 and Q3 are all 0. That is <code>NOT(Q1 OR
+  Q2 OR Q3)</code>. The CD4071 already has <code>a = Q2 OR Q3</code>, so one more OR gate
+  finishes it: move CD4071 pins 5 and 6 off &minus; and put <b>Q1</b> (A pin 1) on pin 5 and
+  <b>a</b> (CD4071 pin 3) on pin 6. Pin 4 is now 1 for every state except dark. Drive a fifth
+  transistor from it the same way as the others, with a green LED: lit means "valid roll".</p>
+
+  <h3>Four bits instead of three</h3>
+  <p>The idle half of chip B is the fourth flip-flop: B pin 9 (D2) to B pin 1 (Q3) instead of
+  &minus;, B pin 11 to CLK, B pin 10 to the RESET node; its output is <b>B pin 13</b>. Move
+  the XNOR inputs to Q3 and Q4 (B pin 1 and B pin 13). The cycle is now <b>15 states</b>
+  instead of 7. The die decoder no longer means anything &mdash; put test lamps on all four
+  and count.</p>
+</section>
+
+<section id="fair">
+  <span class="snum">Section 8</span>
+  <h2>Is it fair?</h2>
+  <p class="sub">Seven equally likely outcomes, and a die with six faces.</p>
+
+  <p>Seven states are visited in turn, and nothing makes one more likely than another. What
+  matters is <em>when you let go</em>. A single trip round the cycle lasts 1&nbsp;&divide;&nbsp;17
+  of a second, about 57 ms. Your thumb does not release the button to within 57 ms of a plan;
+  it wanders by hundreds. So every state is equally likely, and the dark one turns up one roll
+  in seven.</p>
+
+  <p>You cannot get six equally likely outcomes out of seven by any trick &mdash; seven does not
+  divide into six. What you can do is <b>throw one away and roll again</b>, which is what the
+  dark die is. Statisticians call it <em>rejection sampling</em> and it is how fair random
+  numbers are made from unfair or awkward sources everywhere.</p>
+
+  <div class="warn"><b>It is pseudo-random, and honest about it.</b> From RESET the register
+  always goes 1, 3, 6, 5, 2, 4. If you could count 3 ticks at the slow clock you could roll a
+  six every time &mdash; the worksheet has you do it. At 120 ticks a second, nobody can.
+  "Random" in electronics nearly always means "too fast for the person using it to steer".</div>
+
+  <p>The worksheet has a 60-roll tally table to test it on your own board.</p>
+</section>
+
+<section id="fix">
+  <span class="snum">Section 9</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Full table in <a href="README.md">README.md</a>.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing lights at all</td><td>Power missing from a chip. All six want + on 14 and &minus; on 7.</td></tr>
+      <tr><td>Clock lamp stays on or off</td><td>The 100 k&Omega; must go from pin 3 <b>back to pin 1</b>, and pins 1 and 2 must be tied.</td></tr>
+      <tr><td>Clock never starts the register</td><td>CD4081 pin 2 isn't reaching the ROLL node, or pin 3 isn't reaching all three clock pins.</td></tr>
+      <tr><td>Register runs when you are not holding ROLL</td><td>The ROLL node's 10 k&Omega; pull-down is missing.</td></tr>
+      <tr><td>All lamps lit and ROLL does nothing</td><td>Powered on inside the 111 trap. Press RESET.</td></tr>
+      <tr><td>All dark and ROLL does nothing</td><td>A CD4070 (XOR) is fitted instead of the CD4077, or the feedback wire to A pin 5 is missing.</td></tr>
+      <tr><td>RESET does nothing to one bit</td><td>Its reset pin: A pins 4 and 10, B pin 4.</td></tr>
+      <tr><td>Pattern is wrong but repeats</td><td>Q2 and Q3 swapped on the XNOR, or a Q wired to the wrong D.</td></tr>
+      <tr><td>One pair of pips never lights</td><td>That transistor is in backwards. Flat side toward you: E &ndash; B &ndash; C.</td></tr>
+      <tr><td>Faces look wrong: pairs on the wrong sides</td><td>Pips swapped between two groups. Check the table in Stage 4.</td></tr>
+      <tr><td>A chip gets warm</td><td>Power in backwards. Unplug now.</td></tr>
+      <tr><td>Everything is wrong at once</td><td>Unplug, walk away for five minutes, come back and re-read one table. This is what real engineers do.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for the full wire list and
+  troubleshooting, <a href="worksheet.md">worksheet.md</a> for the tables, the six-every-time
+  trick and the 60-roll tally. Pin numbers read off the Texas Instruments datasheets:
+  CD4013B, CD4077B/CD4070B, CD4081B, CD4071B, CD4093B.</p>
+</div></footer>
+
+<script>
+"use strict";
+/* ============ the model: pure functions, no DOM — the page and the simulator share it ============ */
+const XNOR = (a, b) => a === b ? 1 : 0;
+const XOR  = (a, b) => a !== b ? 1 : 0;
+const step = (q, gate) => [(gate || XNOR)(q[1], q[2]), q[0], q[1]];          /* q = [Q1,Q2,Q3] */
+const signals = q => ({a: q[1] | q[2], b: q[2], c: q[1] & q[2], C: q[0]});   /* OR, wire, AND, wire */
+const GROUPS = {a:['TL','BR'], b:['TR','BL'], c:['ML','MR'], C:['C']};
+const FACES = {
+  1:['C'], 2:['TL','BR'], 3:['TL','C','BR'], 4:['TL','TR','BL','BR'],
+  5:['TL','TR','C','BL','BR'], 6:['TL','TR','ML','MR','BL','BR']};
+const litPips = q => { const s = signals(q);
+  return Object.keys(GROUPS).filter(g => s[g]).flatMap(g => GROUPS[g]); };
+function faceOf(q){                      /* 0 = dark, 1..6 = a face, -1 = all seven lit */
+  const l = litPips(q).slice().sort().join();
+  if (!l) return 0;
+  for (const f in FACES) if (FACES[f].slice().sort().join() === l) return +f;
+  return -1;
+}
+const key = q => q.join('');
+const CYCLE = (() => { const out = []; let q = [0,0,0];
+  for (let i = 0; i < 8; i++){ out.push(q); q = step(q); } return out; })();   /* 8th = back to start */
+</script>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ die drawing ============ */
+const PIPXY = {TL:[16,16], TR:[44,16], ML:[16,30], MR:[44,30], C:[30,30], BL:[16,44], BR:[44,44]};
+function dieSVG(lit, size, label){
+  let s = `<svg viewBox="0 0 60 60" width="${size}" height="${size}" role="img"
+    aria-label="${label || 'die'}"><rect x="2" y="2" width="56" height="56" rx="10"
+    style="fill:var(--surface);stroke:var(--ink)" stroke-width="2.4"/>`;
+  for (const p in PIPXY){
+    const on = lit.indexOf(p) >= 0, [x, y] = PIPXY[p];
+    s += `<circle cx="${x}" cy="${y}" r="${on ? 5 : 4}"
+      style="fill:${on ? 'var(--w-yellow)' : 'var(--surface-2)'};stroke:${on ? 'var(--copper)' : 'var(--line-2)'}"
+      stroke-width="1.3"/>`;
+  }
+  return s + '</svg>';
+}
+const faceText = f => f > 0 ? 'face ' + f : f === 0 ? 'dark' : 'all lit';
+
+/* ============ generated tables ============ */
+function drawTables(){
+  const bit = v => `<td class="n ${v ? 'on' : 'off'}">${v}</td>`;
+  const sb = $('seq-body');
+  if (sb) sb.innerHTML = CYCLE.map((q, i) => {
+    const d = XNOR(q[1], q[2]), f = faceOf(q);
+    return `<tr${i === 7 ? ' class="gold"' : ''}><td class="n">${i}${i === 7 ? ' = start' : ''}</td>
+      ${bit(q[0])}${bit(q[1])}${bit(q[2])}${bit(d)}
+      <td class="n">${dieSVG(litPips(q), 30, faceText(f))}</td></tr>`;
+  }).join('');
+
+  const tb = $('trap-body');
+  if (tb){
+    const run = (q, g, n) => { for (let i = 0; i < n; i++) q = step(q, g); return q; };
+    const rows = [['XNOR', XNOR, [0,0,0]], ['XNOR', XNOR, [1,1,1]],
+                  ['XOR',  XOR,  [0,0,0]], ['XOR',  XOR,  [1,1,1]]];
+    tb.innerHTML = rows.map(([n, g, q]) => {
+      const q1 = step(q, g), q20 = run(q, g, 20), stuck = key(q1) === key(q);
+      return `<tr${stuck ? ' class="gold"' : ''}><td>${n}</td><td class="n">${key(q)}</td>
+        <td class="n">${key(q1)}</td><td class="n">${key(q20)}</td>
+        <td>${stuck ? '<b>trap</b> — it feeds itself' : 'escapes into the cycle'}</td></tr>`;
+    }).join('');
+  }
+
+  const db = $('dec-body');
+  if (db) db.innerHTML = CYCLE.slice(0, 7).map(q => {
+    const s = signals(q), f = faceOf(q);
+    return `<tr><td class="n">${key(q)}</td>${bit(s.a)}${bit(s.b)}${bit(s.c)}${bit(s.C)}
+      <td class="n">${dieSVG(litPips(q), 30, faceText(f))}</td></tr>`;
+  }).join('');
+}
+
+/* ============ chip pinouts ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd';
+const QUAD = (n, sub) => ({name:n, sub, pins:14, p:{
+  1:['in 1a',IN], 2:['in 1b',IN], 3:['OUT 1',OUT], 4:['OUT 2',OUT],
+  5:['in 2a',IN], 6:['in 2b',IN], 7:['− GND',GND], 8:['in 3a',IN],
+  9:['in 3b',IN], 10:['OUT 3',OUT], 11:['OUT 4',OUT], 12:['in 4a',IN],
+  13:['in 4b',IN], 14:['+ 5 V',PWR]}});
+const CHIPS = [
+  {name:'CD4013', sub:'Dual D flip-flop — the register', pins:14, p:{
+    1:['Q1',OUT], 2:['Q1 bar',OUT], 3:['CLOCK 1',IN], 4:['RESET 1',IN],
+    5:['D1',IN], 6:['SET 1',IN], 7:['− GND',GND], 8:['SET 2',IN],
+    9:['D2',IN], 10:['RESET 2',IN], 11:['CLOCK 2',IN], 12:['Q2 bar',OUT],
+    13:['Q2',OUT], 14:['+ 5 V',PWR]}},
+  QUAD('CD4093', 'Quad NAND, Schmitt — the clock'),
+  QUAD('CD4081', 'Quad AND — clock switch, signal c'),
+  QUAD('CD4077', 'Quad XNOR — the feedback'),
+  QUAD('CD4071', 'Quad OR — signal a')
+];
+const ROLECOL = {in:'var(--ink-2)', out:'var(--teal)', pwr:'var(--w-red)', gnd:'var(--w-blue)'};
+function dipSVG(c){
+  const half = c.pins/2, pitch = 26, bw = 74, top = 22;
+  const bh = half*pitch, W = 340, H = bh + top + 26, bx = (W-bw)/2;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${c.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${bh}" rx="5" fill="var(--surface-2)"
+    stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${W/2-9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)" stroke="var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= c.pins; i++){
+    const left = i <= half, idx = left ? i-1 : c.pins - i;
+    const y = top + idx*pitch + pitch/2, [lbl, role] = c.p[i], col = ROLECOL[role];
+    const x1 = left ? bx : bx + bw, x2 = left ? bx - 20 : bx + bw + 20;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+7 : bx+bw-7}" y="${y+3.4}" text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-5 : x2+5}" y="${y+3.6}" text-anchor="${left ? 'end' : 'start'}"
+      fill="${col}" ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  return s + `<text class="sv-cap" x="${W/2}" y="${H-6}" text-anchor="middle">${c.name}</text></svg>`;
+}
+function drawPinouts(){
+  const h = $('pinouts'); if (!h) return;
+  h.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4><span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>'
+    + `<dl class="kv" style="margin-top:1rem">
+       <dt style="color:var(--w-red)">Red</dt><dd>Power. All six chips: + on 14, − on 7.</dd>
+       <dt style="color:var(--teal)">Teal</dt><dd>Outputs. Never wire one to a rail.</dd></dl>`;
+}
+
+/* ============ block diagram, used by section 2 and the simulator ============ */
+function blkSVG(live){
+  const id = n => live ? ` id="${n}"` : '';
+  const mk = live ? 'ahL' : 'ahS', FX = [110, 290, 470];
+  let s = `<svg viewBox="0 0 640 224" role="img" aria-label="Three flip-flops in a row sharing a clock, with an XNOR of the last two feeding the first">
+    <defs><marker id="${mk}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5"
+    orient="auto-start-reverse"><path d="M0,1 L9,5 L0,9 z" fill="var(--line-2)"/></marker></defs>`;
+  for (let i = 0; i < 3; i++){
+    s += `<rect class="mbox"${id('ff'+i)} x="${FX[i]}" y="90" width="110" height="46" rx="7"/>
+      <text class="sv-lbl" x="${FX[i]+55}" y="108" text-anchor="middle">flip-flop ${i+1}</text>
+      <text class="sv-bit"${id('bt'+i)} x="${FX[i]+55}" y="126" text-anchor="middle"
+        style="fill:var(--ink-3)">${live ? 'Q'+(i+1)+' = 0' : 'Q'+(i+1)}</text>`;
+  }
+  s += `<path class="w"${id('w01')} d="M220,113 H290" marker-end="url(#${mk})"/>
+        <path class="w"${id('w12')} d="M400,113 H470" marker-end="url(#${mk})"/>
+        <path class="w" d="M580,113 H610"/>
+        <path class="w"${id('wt2')} d="M435,113 V50 H402" marker-end="url(#${mk})"/>
+        <path class="w"${id('wt3')} d="M610,113 V30 H402" marker-end="url(#${mk})"/>
+        <circle cx="435" cy="113" r="3.2" fill="var(--ink-3)"/><circle cx="610" cy="113" r="3.2" fill="var(--ink-3)"/>
+        <rect class="mbox" x="290" y="18" width="110" height="46" rx="7"/>
+        <text class="sv-cap" x="345" y="38" text-anchor="middle">XNOR</text>
+        <text class="sv-lbl" x="345" y="53" text-anchor="middle">CD4077</text>
+        <path class="w"${id('wfb')} d="M290,41 H60 V113 H108" marker-end="url(#${mk})"/>
+        <text class="sv-lbl" x="70" y="34">new bit goes in here</text>
+        <text class="sv-lbl" x="448" y="46">Q2</text><text class="sv-lbl" x="560" y="26">Q3</text>
+        <path class="w"${id('wclk')} d="M20,186 H525"/>`;
+  for (const x of [165, 345, 525])
+    s += `<path class="w"${id('wc'+x)} d="M${x},186 V138" marker-end="url(#${mk})"/>
+          <circle cx="${x}" cy="186" r="3.2" fill="var(--ink-3)"/>`;
+  s += `<text class="sv-lbl" x="20" y="208">CLOCK — all three change together, and only while ROLL is held</text></svg>`;
+  return s;
+}
+
+/* ============ the simulator ============ */
+const SIM = {q:[0,0,0], held:false, last:0, acc:0, slow:false, tally:[0,0,0,0,0,0,0], n:0};
+const rate = () => SIM.slow ? 1.23 : 123;               /* ticks per second */
+const say = m => { const e = $('sim-msg'); if (e) e.textContent = m; };
+
+function paint(){
+  const q = SIM.q, d = XNOR(q[1], q[2]);
+  const die = $('sim-die');
+  if (die) die.innerHTML = dieSVG(litPips(q), 132, faceText(faceOf(q)));
+  const live = (n, v) => { const e = $(n); if (e) e.classList.toggle('live', !!v); };
+  for (let i = 0; i < 3; i++){
+    live('ff'+i, q[i]);
+    const t = $('bt'+i);
+    if (t){ t.textContent = 'Q'+(i+1)+' = '+q[i]; t.style.fill = q[i] ? 'var(--teal)' : 'var(--ink-3)'; }
+  }
+  live('w01', q[0]); live('w12', q[1]); live('wt2', q[1]); live('wt3', q[2]); live('wfb', d);
+  const run = SIM.held;
+  ['wclk','wc165','wc345','wc525'].forEach(n => live(n, run));
+}
+function paintTally(){
+  const e = $('sim-tally'); if (!e) return;
+  e.textContent = SIM.n
+    ? `${SIM.n} roll${SIM.n === 1 ? '' : 's'}:  dark ×${SIM.tally[0]}  ·  ` +
+      [1,2,3,4,5,6].map(f => `${f} ×${SIM.tally[f]}`).join('  ·  ')
+    : 'Tally of your rolls appears here.';
+}
+function frame(now){
+  if (!SIM.held) return;
+  SIM.acc += (now - SIM.last) / 1000 * rate();
+  SIM.last = now;
+  const n = Math.floor(SIM.acc); SIM.acc -= n;
+  for (let i = 0; i < n; i++) SIM.q = step(SIM.q);
+  paint();
+  requestAnimationFrame(frame);
+}
+function hold(on){
+  if (on === SIM.held) return;
+  SIM.held = on;
+  if (on){
+    SIM.last = performance.now(); SIM.acc = Math.random();   /* a release lands anywhere in a tick */
+    say('Rolling…'); requestAnimationFrame(frame);
+    return;
+  }
+  paint();
+  const f = faceOf(SIM.q);
+  if (f > 0){ SIM.tally[f]++; SIM.n++; say('You rolled a ' + f + '.'); }
+  else if (f === 0){ SIM.tally[0]++; SIM.n++; say('Dark — the seventh state. Roll again.'); }
+  else say('Every pip lit and stuck: the 111 trap. Press RESET.');
+  paintTally();
+}
+function initSim(){
+  const host = $('sim-svg'); if (!host) return;
+  host.innerHTML = '<div class="scroller">' + blkSVG(true) + '</div>';
+  const rb = $('btn-roll');
+  rb.addEventListener('pointerdown', e => { e.preventDefault(); rb.setPointerCapture(e.pointerId); hold(true); });
+  rb.addEventListener('pointerup', () => hold(false));
+  rb.addEventListener('pointercancel', () => hold(false));
+  rb.addEventListener('keydown', e => { if ((e.key === ' ' || e.key === 'Enter') && !e.repeat){ e.preventDefault(); hold(true); } });
+  rb.addEventListener('keyup', e => { if (e.key === ' ' || e.key === 'Enter') hold(false); });
+  $('btn-slow').addEventListener('click', e => {
+    SIM.slow = !SIM.slow;
+    e.target.textContent = 'Slow clock: ' + (SIM.slow ? 'on' : 'off');
+    e.target.classList.toggle('sel', SIM.slow);
+    say(SIM.slow ? 'About one tick a second. Hold ROLL and watch the bits move.' : '123 ticks a second.');
+  });
+  $('btn-reset').addEventListener('click', () => { SIM.q = [0,0,0]; paint(); say('RESET: all three bits cleared.'); });
+  $('btn-power').addEventListener('click', () => {
+    const r = Math.floor(Math.random() * 8);
+    SIM.q = [r >> 2 & 1, r >> 1 & 1, r & 1]; paint();
+    say(key(SIM.q) === '111' ? 'Powered on inside the trap. Hold ROLL — nothing moves. Press RESET.'
+                             : 'Powered on in state ' + key(SIM.q) + '. Press RESET to be sure.');
+  });
+  paint(); paintTally(); say('Hold ROLL.');
+}
+
+drawTables(); drawPinouts(); initSim();
+const bs = $('blk-svg'); if (bs) bs.innerHTML = '<div class="scroller">' + blkSVG(false) + '</div>';
+</script>

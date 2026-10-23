@@ -19,6 +19,7 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 | [Score Tower](projects/score-tower/) | Decoding, seven-segment displays, carry | 10–12 | 2½ h | CD4026 × 2, CD4069 × 3 |
 | [Digit Factory](projects/digit-factory/) | Truth tables, minimising, active-low logic | 12+ | 2½ h | CD4081 × 2, CD4071 × 2, CD4070, CD4069 |
 | [Dusk Switch](projects/dusk-switch/) | Sensors, thresholds, hysteresis | 11+ | 2 h | CD4011, CD4093 |
+| [Lucky Dice](projects/lucky-dice/) | Shift registers, feedback, pseudo-random numbers | 11+ | 2 h | CD4093, CD4081, CD4013 × 2, CD4077, CD4071 |
 
 The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
 time, and the **Logic Vault** puts them to work. Both are combinational — they answer
@@ -35,6 +36,14 @@ The **Dusk Switch** is the first one with a sensor in it, and the first where th
 or a 0 at all — a photoresistor hands you 2.3 volts and leaves you to decide what that means. It
 is also the only project here that deliberately builds the circuit wrong first, because the
 flickering lamp is the lesson.
+
+The **Lucky Dice** goes back to the flip-flop from the Reaction Machine and puts three of them in a
+row. Each one copies its neighbour, and a single XNOR gate decides what the front one copies — and
+that is enough to make a sequence that looks random. It is also the project where a circuit gets
+stuck: one of the eight states feeds itself and never leaves, and choosing XNOR over XOR is what
+keeps RESET from walking straight into it. The die is honest about its limits: seven states cannot
+be shared among six faces, so one outcome is "dark, roll again", and from RESET the sequence is the
+same every time. It only looks random because your thumb is slower than the clock.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is
