@@ -5,6 +5,7 @@ docs/
 .claude/
 .vscode/
 .idea/
+settings.json
 
 # macOS / OneDrive cruft
 .DS_Store

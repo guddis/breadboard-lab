@@ -1,0 +1,2148 @@
+<meta charset="utf-8">
+<title>Project Template</title>
+<title>Pocket Adder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --ground: #EEF0EA;
+    --surface: #F8F9F5;
+    --surface-2: #E2E7DD;
+    --sunk: #DDE3D8;
+    --ink: #141C19;
+    --ink-2: #42504A;
+    --ink-3: #6D7B74;
+    --line: #C7CFC2;
+    --line-2: #AFBAA9;
+    --teal: #0E5B50;
+    --teal-2: #0A4038;
+    --teal-soft: #D6E6E1;
+    --copper: #A2551F;
+    --copper-soft: #F2E2D5;
+    --red: #B93A2B;
+    --green: #2C7F3C;
+    --amber: #B98A0E;
+    --violet: #6A4B9E;
+    --w-red: #C93B33;
+    --w-black: #2E2E2E;
+    --w-yellow: #C99A16;
+    --w-blue: #2A6BB8;
+    --w-green: #2C8552;
+    --w-violet: #7A4FB6;
+    --w-orange: #CE7526;
+    --w-white: #8C9490;
+    --shadow: 0 1px 2px rgba(20, 28, 25, .06), 0 6px 18px -8px rgba(20, 28, 25, .14);
+    --fd: "Futura", "Futura PT", "Avenir Next", "Century Gothic", "URW Gothic", system-ui, sans-serif;
+    --fb: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+    --fm: Menlo, "SF Mono", Consolas, "DejaVu Sans Mono", monospace;
+  }
+
+  :root:not([data-theme=light]) {
+    @media (prefers-color-scheme:dark) {
+      --ground: #0D1311;
+      --surface: #141C19;
+      --surface-2: #1D2723;
+      --sunk: #101815;
+      --ink: #DEE5DF;
+      --ink-2: #A6B4AC;
+      --ink-3: #7B8983;
+      --line: #2A3833;
+      --line-2: #3A4A44;
+      --teal: #5BC0AB;
+      --teal-2: #8FD8C8;
+      --teal-soft: #15302B;
+      --copper: #DE9560;
+      --copper-soft: #2E2018;
+      --red: #EC6A5B;
+      --green: #5CC671;
+      --amber: #E0B33C;
+      --violet: #A98BE0;
+      --w-red: #E8635C;
+      --w-black: #9AA5A0;
+      --w-yellow: #E4BC48;
+      --w-blue: #5A9ADF;
+      --w-green: #54BF75;
+      --w-violet: #A487E0;
+      --w-orange: #E69A55;
+      --w-white: #C8D0CB;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -10px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme=dark] {
+    --ground: #0D1311;
+    --surface: #141C19;
+    --surface-2: #1D2723;
+    --sunk: #101815;
+    --ink: #DEE5DF;
+    --ink-2: #A6B4AC;
+    --ink-3: #7B8983;
+    --line: #2A3833;
+    --line-2: #3A4A44;
+    --teal: #5BC0AB;
+    --teal-2: #8FD8C8;
+    --teal-soft: #15302B;
+    --copper: #DE9560;
+    --copper-soft: #2E2018;
+    --red: #EC6A5B;
+    --green: #5CC671;
+    --amber: #E0B33C;
+    --violet: #A98BE0;
+    --w-red: #E8635C;
+    --w-black: #9AA5A0;
+    --w-yellow: #E4BC48;
+    --w-blue: #5A9ADF;
+    --w-green: #54BF75;
+    --w-violet: #A487E0;
+    --w-orange: #E69A55;
+    --w-white: #C8D0CB;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -10px rgba(0, 0, 0, .6);
+  }
+
+  * {
+    box-sizing: border-box
+  }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font: 400 17px/1.62 var(--fb);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden
+  }
+
+  .wrap {
+    max-width: 52rem;
+    margin: 0 auto;
+    padding: 0 1.5rem
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  .fd {
+    font-family: var(--fd);
+    font-weight: 600;
+    letter-spacing: -.01em
+  }
+
+  h2 {
+    font-size: 1.85rem;
+    line-height: 1.15;
+    margin: 0 0 .2rem
+  }
+
+  h3 {
+    font-size: 1.18rem;
+    line-height: 1.25;
+    margin: 2.2rem 0 .5rem
+  }
+
+  h4 {
+    font-size: .98rem;
+    margin: 1.6rem 0 .4rem
+  }
+
+  p {
+    margin: 0 0 1rem
+  }
+
+  a {
+    color: var(--teal)
+  }
+
+  code,
+  kbd {
+    font: 500 .875em/1.4 var(--fm);
+    background: var(--surface-2);
+    padding: .12em .38em;
+    border-radius: 4px
+  }
+
+  kbd {
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 0 var(--line-2)
+  }
+
+  .lead {
+    font-size: 1.16rem;
+    color: var(--ink-2)
+  }
+
+  /* ---- header ---- */
+  header.top {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 3.4rem 0 2.6rem;
+    margin-bottom: 2.5rem
+  }
+
+  .eyebrow {
+    font: 600 .72rem/1 var(--fd);
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--copper);
+    margin: 0 0 1rem
+  }
+
+  header.top h1 {
+    font-size: clamp(2.5rem, 7vw, 3.9rem);
+    line-height: .96;
+    margin: 0 0 1rem
+  }
+
+  header.top .lead {
+    max-width: 34rem;
+    margin-bottom: 1.6rem
+  }
+
+  .facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1.6rem;
+    font: 500 .8rem/1.4 var(--fd);
+    color: var(--ink-3);
+    border-top: 1px solid var(--line);
+    padding-top: 1rem
+  }
+
+  .facts b {
+    color: var(--ink);
+    font-weight: 600
+  }
+
+  /* ---- sections ---- */
+  section {
+    margin: 0 0 3.4rem;
+    scroll-margin-top: 1rem
+  }
+
+  .snum {
+    font: 600 .72rem/1 var(--fd);
+    letter-spacing: .14em;
+    color: var(--copper);
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: .5rem
+  }
+
+  .sub {
+    color: var(--ink-3);
+    font-size: .95rem;
+    margin: .1rem 0 1.4rem
+  }
+
+  /* ---- blocks ---- */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1.25rem 1.35rem;
+    box-shadow: var(--shadow);
+    margin: 0 0 1.2rem
+  }
+
+  .note {
+    border-left: 3px solid var(--teal);
+    background: var(--teal-soft);
+    border-radius: 0 8px 8px 0;
+    padding: .9rem 1.1rem;
+    margin: 1.2rem 0;
+    font-size: .95rem
+  }
+
+  .note b {
+    font-family: var(--fd)
+  }
+
+  .warn {
+    border-left: 3px solid var(--copper);
+    background: var(--copper-soft);
+    border-radius: 0 8px 8px 0;
+    padding: .9rem 1.1rem;
+    margin: 1.2rem 0;
+    font-size: .95rem
+  }
+
+  .why {
+    font-size: .93rem;
+    color: var(--ink-2);
+    border-top: 1px dashed var(--line-2);
+    padding-top: .7rem;
+    margin-top: .9rem
+  }
+
+  .why b {
+    font-family: var(--fd);
+    color: var(--ink)
+  }
+
+  figure {
+    margin: 1.4rem 0
+  }
+
+  figcaption {
+    font: 400 .84rem/1.5 var(--fb);
+    color: var(--ink-3);
+    margin-top: .6rem;
+    padding-left: .1rem
+  }
+
+  svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    font-family: var(--fd)
+  }
+
+  .scroller {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch
+  }
+
+  /* ---- tables ---- */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .9rem;
+    margin: 1rem 0
+  }
+
+  th,
+  td {
+    text-align: left;
+    padding: .44rem .6rem;
+    border-bottom: 1px solid var(--line)
+  }
+
+  th {
+    font: 600 .74rem/1.3 var(--fd);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    border-bottom: 1px solid var(--line-2)
+  }
+
+  td.n,
+  th.n {
+    text-align: center;
+    font-family: var(--fm);
+    font-size: .86rem
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none
+  }
+
+  .tt {
+    max-width: 22rem
+  }
+
+  .tt {
+    max-width: 28rem
+  }
+
+  .tt td.n {
+    font-weight: 600
+  }
+
+  .on {
+    color: var(--teal);
+    font-weight: 700
+  }
+
+  .off {
+    color: var(--ink-3)
+  }
+
+  /* ---- steps ---- */
+  ol.steps {
+    list-style: none;
+    counter-reset: s;
+    padding: 0;
+    margin: 1.2rem 0
+  }
+
+  ol.steps>li {
+    counter-increment: s;
+    position: relative;
+    padding: 0 0 1.15rem 2.6rem;
+    margin: 0 0 .1rem;
+    border-left: 1px solid var(--line);
+    margin-left: .85rem
+  }
+
+  ol.steps>li:last-child {
+    border-left-color: transparent;
+    padding-bottom: 0
+  }
+
+  ol.steps>li::before {
+    content: counter(s);
+    position: absolute;
+    left: -.85rem;
+    top: -.1rem;
+    width: 1.7rem;
+    height: 1.7rem;
+    border-radius: 50%;
+    background: var(--surface);
+    border: 1px solid var(--line-2);
+    color: var(--ink-2);
+    font: 600 .8rem/1.62rem var(--fd);
+    text-align: center
+  }
+
+  ol.steps>li>b:first-child {
+    font-family: var(--fd);
+    display: block;
+    margin-bottom: .15rem
+  }
+
+  ul.tick {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0
+  }
+
+  ul.tick li {
+    padding-left: 1.5rem;
+    position: relative;
+    margin-bottom: .5rem;
+    font-size: .95rem
+  }
+
+  ul.tick li::before {
+    content: "";
+    position: absolute;
+    left: .1rem;
+    top: .55em;
+    width: .5rem;
+    height: .5rem;
+    border: 1.5px solid var(--line-2);
+    border-radius: 2px
+  }
+
+  /* ---- stage banner ---- */
+  .stage {
+    border-top: 2px solid var(--ink);
+    padding-top: 1.1rem;
+    margin-top: 3.6rem
+  }
+
+  .stage .tag {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem .9rem;
+    align-items: baseline;
+    font: 600 .74rem/1 var(--fd);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin-bottom: .7rem
+  }
+
+  .stage .tag .no {
+    color: var(--ink);
+    background: var(--surface-2);
+    border-radius: 3px;
+    padding: .28rem .5rem
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin: .2rem 0 0
+  }
+
+  .chips span {
+    font: 500 .72rem/1 var(--fm);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: .3rem .45rem;
+    color: var(--ink-2)
+  }
+
+  /* ---- gate grid ---- */
+  .gategrid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr))
+  }
+
+  .gate {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem;
+    box-shadow: var(--shadow)
+  }
+
+  .gate h4 {
+    margin: 0 0 .1rem;
+    font-size: 1.02rem
+  }
+
+  .gate .chip {
+    font: 500 .7rem/1 var(--fm);
+    color: var(--copper);
+    letter-spacing: .03em
+  }
+
+  .gate p {
+    font-size: .9rem;
+    margin: .55rem 0 .7rem;
+    color: var(--ink-2)
+  }
+
+  .gate table {
+    margin: .2rem 0 0;
+    font-size: .82rem
+  }
+
+  .gate th,
+  .gate td {
+    padding: .24rem .4rem
+  }
+
+  /* ---- simulator ---- */
+  .sim {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.1rem;
+    box-shadow: var(--shadow)
+  }
+
+  .simbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+    align-items: center;
+    margin-top: .9rem;
+    padding-top: .9rem;
+    border-top: 1px solid var(--line)
+  }
+
+  .simbar.tight {
+    margin-top: .55rem;
+    padding-top: 0;
+    border-top: none
+  }
+
+  button {
+    font: 600 .82rem/1 var(--fd);
+    letter-spacing: .02em;
+    color: var(--ink);
+    background: var(--surface-2);
+    border: 1px solid var(--line-2);
+    border-radius: 7px;
+    padding: .55rem .85rem;
+    cursor: pointer
+  }
+
+  padding:.55rem .85rem;
+  cursor:pointer;
+  touch-action:manipulation;
+  user-select:none
+  }
+
+  button:hover {
+    border-color: var(--ink-3)
+  }
+
+  button:active {
+    transform: translateY(1px)
+  }
+
+  button.prim {
+    background: var(--teal);
+    border-color: var(--teal);
+    color: var(--surface)
+  }
+
+  :root[data-theme=dark] button.prim,
+  :root:not([data-theme=light]) button.prim {
+    color: #08110F
+  }
+
+  button.sel {
+    border-color: var(--copper);
+    color: var(--copper)
+  }
+
+  .simbar .msg {
+    font: 500 .84rem/1.3 var(--fd);
+    color: var(--ink-2);
+    margin-left: auto;
+    text-align: right
+  }
+
+  [role=button] {
+    cursor: pointer
+  }
+
+  [role=button]:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px
+  }
+
+  button:focus-visible,
+  [role=button]:focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px
+  }
+
+  .sv-lbl {
+    font-size: 10.5px;
+    fill: var(--ink-3);
+    font-weight: 500
+  }
+
+  .sv-num {
+    font-size: 9.5px;
+    fill: var(--ink-3);
+    font-family: var(--fm)
+  }
+
+  .sv-cap {
+    font-size: 11.5px;
+    fill: var(--ink);
+    font-weight: 600
+  }
+
+  .sv-bit {
+    font-size: 13px;
+    font-family: var(--fm);
+    font-weight: 700
+  }
+
+  /* ---- misc ---- */
+  .two {
+    display: grid;
+    gap: 1.1rem;
+    grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr))
+  }
+
+  .kv {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .3rem 1rem;
+    font-size: .9rem
+  }
+
+  .kv dt {
+    font: 600 .74rem/1.5 var(--fd);
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--ink-3)
+  }
+
+  .kv dd {
+    margin: 0
+  }
+
+  footer {
+    border-top: 1px solid var(--line);
+    margin-top: 4rem;
+    padding: 2rem 0 3rem;
+    font-size: .88rem;
+    color: var(--ink-3)
+  }
+
+  @media print {
+    body {
+      background: #fff;
+      font-size: 11pt
+    }
+
+    header.top {
+      padding: 1rem 0
+    }
+
+    .sim,
+    .simbar {
+      display: none
+    }
+
+    section {
+      page-break-inside: avoid
+    }
+
+    .stage {
+      page-break-before: auto
+    }
+  }
+</style>
+<style>
+  .w {
+    fill: none;
+    stroke: var(--line-2);
+    stroke-width: 2;
+    stroke-linecap: round
+  }
+
+  .w.hi {
+    stroke: var(--teal);
+    stroke-width: 2.8
+  }
+
+  .tog rect {
+    fill: var(--surface-2);
+    stroke: var(--line-2);
+    stroke-width: 1.4
+  }
+
+  .w {
+    fill: none;
+    stroke: var(--line-2);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round
+  }
+
+  .w.live {
+    stroke: var(--teal);
+    stroke-width: 2.8
+  }
+
+  .w.ripple {
+    stroke: var(--copper);
+    stroke-width: 2.8;
+    stroke-dasharray: 4 3
+  }
+
+  .tog rect {
+    fill: var(--surface-2);
+    stroke: var(--line-2);
+    stroke-width: 1.4;
+    cursor: pointer
+  }
+
+  .tog.one rect {
+    fill: var(--teal-soft);
+    stroke: var(--teal)
+  }
+
+  .tog text {
+    fill: var(--ink-3)
+  }
+
+  .tog.one text {
+    fill: var(--teal)
+  }
+
+  .tog text {
+    fill: var(--ink-3);
+    pointer-events: none
+  }
+
+  .tog.one text {
+    fill: var(--teal);
+    font-weight: 700
+  }
+
+  .tog:hover rect {
+    stroke: var(--ink-3)
+  }
+
+  .lamp {
+    fill: var(--surface-2);
+    stroke: var(--line-2);
+    stroke-width: 1.6
+  }
+
+  .gsym {
+    fill: var(--surface-2);
+    stroke: var(--ink);
+    stroke-width: 1.9;
+    stroke-linejoin: round
+  }
+
+  .bub {
+    fill: var(--surface);
+    stroke: var(--ink);
+    stroke-width: 1.9
+  }
+
+  @keyframes ring {
+
+    0%,
+    100% {
+      opacity: 1
+    }
+
+    50% {
+      opacity: .25
+    }
+  }
+
+  .ringing {
+    animation: ring .28s infinite
+  }
+
+  .gsym {
+    fill: var(--surface-2);
+    stroke: var(--ink);
+    stroke-width: 1.8;
+    stroke-linejoin: round
+  }
+
+  .blockbox {
+    fill: none;
+    stroke: var(--line-2);
+    stroke-width: 1.2;
+    stroke-dasharray: 5 4
+  }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Topic &middot; Project NN</p>
+    <h1>Project<br>Title</h1>
+    <p class="lead">One or two sentences a 12-year-old would read and want to build. Say what
+      it does, not what it teaches &mdash; the teaching is the trick you pull off while they are
+      busy being interested.</p>
+    <p class="eyebrow">Binary arithmetic &amp; logic gates &middot; Project 10</p>
+    <h1>Pocket<br>Adder</h1>
+    <p class="lead">Four switches, three logic chips, and three lamps. Dial two numbers and the
+      gates calculate the sum in binary. There is no microcontroller and no calculator chip &mdash;
+      just nine logic gates doing arithmetic by hand, the way every computer has done it since 1937.</p>
+    <div class="facts">
+      <span><b>Age</b> 12+, with an adult nearby for the first hour</span>
+      <span><b>Time</b> N hours, in N stages</span>
+      <span><b>Voltage</b> 5 V &mdash; nothing dangerous</span>
+      <span><b>Chips</b> CD4077, CD4012</span>
+      <span><b>Age</b> 11+, with an adult nearby for the first hour</span>
+      <span><b>Time</b> about 2&ndash;2&frac12; hours, in 3 stages</span>
+      <span><b>Voltage</b> 5 V &mdash; safe on your fingers</span>
+      <span><b>Chips</b> CD4070, CD4081, CD4071</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <span class="snum">Template</span>
+    <h2>This page is the starting point, not the finished thing</h2>
+    <p class="sub">Everything below is a live demo of what you inherit. Delete it as you
+      replace it.</p>
+    <section id="idea">
+      <span class="snum">Section 1</span>
+      <h2>What you're building</h2>
+      <p class="sub">Click the switches to change the inputs. The gates do the math instantly.</p>
+
+      <p>The design system and the diagram library are already running on this page. Change
+        the <code>CHIPS</code> array in the script and the pinout drawings redraw themselves.
+        Read <a href="README.md">template/README.md</a> for the checklist before you start.</p>
+      <p>Two switches set number <b>A</b> (0 to 3), and two set number <b>B</b> (0 to 3).
+        Three lamps light up with the total, from 0 to 6. Watch the teal lines: current flows only
+        through the wires carrying a 1. When both inputs in a column are 1, notice the dashed line
+        carrying a <b>Carry</b> bit into the column on its left.</p>
+
+      <div class="note"><b>A note block.</b> Use these for the idea behind a step &mdash; the
+        insight, the real-world connection, the thing worth remembering after the build.</div>
+      <div class="sim">
+        <div id="sim-svg"></div>
+        <div class="simbar">
+          <button id="btn-a1">A₁ (2): 0</button>
+          <button id="btn-a0">A₀ (1): 0</button>
+          <span style="font-family:var(--fm);color:var(--ink-3);padding:0 .3rem">+</span>
+          <button id="btn-b1">B₁ (2): 0</button>
+          <button id="btn-b0">B₀ (1): 0</button>
+          <span class="msg" id="sim-math" style="font-weight:600;font-size:1.05rem"></span>
+        </div>
+        <div class="simbar tight">
+          <button id="btn-p1">Test: 1 + 1</button>
+          <button id="btn-p2">Test: 2 + 1</button>
+          <button id="btn-p3">Test: 2 + 3</button>
+          <button id="btn-p4">Test: 3 + 3</button>
+          <button id="btn-clr">Clear (0 + 0)</button>
+          <span class="msg" id="sim-bin" style="font-family:var(--fm)"></span>
+        </div>
+      </div>
+      <p class="sub" style="margin-top:.7rem">Click any switch box in the diagram or press the
+        buttons below it. <b>Bit 0</b> is a Half Adder; <b>Bit 1</b> is a Full Adder that accepts
+        the carry rippling across the boundary.</p>
+
+      <div class="warn"><b>A warning block.</b> Use these for the ways someone can destroy a
+        chip or waste an afternoon. Reversed power, floating inputs, shorted outputs.</div>
+      <div class="note"><b>The whole idea in one line.</b> A computer does not know what numbers
+        are. It knows only True and False &mdash; and by wiring an XOR gate for the sum and an AND
+        gate for the carry, Boolean logic becomes arithmetic.</div>
+    </section>
+
+    <div class="why"><b>A why block.</b> Ends a stage by saying what the idea is actually
+      used for. This is what turns a wiring exercise into an explanation.</div>
+    <section id="math">
+      <span class="snum">Section 2</span>
+      <h2>How 1s and 0s do arithmetic</h2>
+      <p class="sub">The 1937 breakthrough that turned algebra into calculators.</p>
+
+      <p>Think about how you learned addition in school. You write two numbers down, add the
+        right-hand column first, write down the unit, and carry the tens column over to the left.
+        Binary addition works exactly the same way &mdash; only simpler, because the digits never go
+        past 1:</p>
+
+      <div class="scroller">
+        <table class="tt" id="half-table">
+          <thead>
+            <tr>
+              <th class="n">A₀</th>
+              <th class="n">B₀</th>
+              <th class="n">Sum S₀</th>
+              <th class="n">Carry C₀</th>
+              <th class="n">Binary</th>
+              <th>What it means in decimal</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="n">0</td>
+              <td class="n">0</td>
+              <td class="n off">0</td>
+              <td class="n off">0</td>
+              <td class="n">00</td>
+              <td>0 + 0 = 0</td>
+            </tr>
+            <tr>
+              <td class="n">0</td>
+              <td class="n">1</td>
+              <td class="n on">1</td>
+              <td class="n off">0</td>
+              <td class="n">01</td>
+              <td>0 + 1 = 1</td>
+            </tr>
+            <tr>
+              <td class="n">1</td>
+              <td class="n">0</td>
+              <td class="n on">1</td>
+              <td class="n off">0</td>
+              <td class="n">01</td>
+              <td>1 + 0 = 1</td>
+            </tr>
+            <tr>
+              <td class="n">1</td>
+              <td class="n">1</td>
+              <td class="n off">0</td>
+              <td class="n on">1</td>
+              <td class="n">10</td>
+              <td>1 + 1 = 2 (in binary, "one-zero")</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>Look at the <b>Sum</b> column: it is 1 when the inputs are <em>different</em>, and 0 when
+        they are the same. That is the exact truth table of an <b>XOR gate</b> (CD4070).</p>
+
+      <p>Look at the <b>Carry</b> column: it is 1 only when <em>both</em> inputs are 1. That is the
+        exact truth table of an <b>AND gate</b> (CD4081).</p>
+
+      <p>Two gates. One answers the sum; one answers the carry. That little two-gate pair is called
+        a <b>Half Adder</b>.</p>
+
+      <div class="why"><b>Why it is called a "Half" Adder.</b> It can make a carry, but it has no
+        way to <em>accept</em> a carry from another column. It is fine for the rightmost column (Bit 0)
+        where nothing carries in, but useless for every column after that.</div>
+    </section>
+
+    <section>
+      <span class="snum">Library</span>
+      <h2>Gate symbols and truth tables</h2>
+      <p class="sub">Generated by <code>gateSym()</code> and <code>truthTable()</code>.</p>
+      <section id="full">
+        <span class="snum">Section 3</span>
+        <h2>The Full Adder &mdash; listening to your neighbour</h2>
+        <p class="sub">Adding three bits at once with two half adders and one OR gate.</p>
+
+        <p>The truth tables are computed from the same JavaScript functions a simulator would
+          use, so the table on the page cannot disagree with the circuit you describe. Edit the
+          <code>GATES</code> array to change what appears here.
+        </p>
+        <p>In the tens column of school math, you might have to add three digits: the top number, the
+          bottom number, and the carried digit from the units. In binary, column 1 must add three bits:
+          <b>A₁</b>, <b>B₁</b>, and the <b>Carry-In (C₀)</b> from column 0.
+        </p>
+
+        <div class="gategrid" id="gategrid"></div>
+        <p>To add three bits, you use two Half Adders in a row:</p>
+        <ol class="steps">
+          <li><b>First Half Adder:</b> Adds A₁ and B₁. Produces an <em>intermediate sum</em> and an
+            initial carry.</li>
+          <li><b>Second Half Adder:</b> Takes that intermediate sum and adds the incoming Carry (C₀).
+            The result is the final <b>Sum S₁</b> lamp!</li>
+          <li><b>Combine the carries:</b> If <em>either</em> the first half adder OR the second half
+            adder made a carry, a carry must travel to the next column (S₂). An <b>OR gate</b> (CD4071)
+            combines them.</li>
+        </ol>
+
+        <div class="scroller">
+          <table class="tt" id="full-table">
+            <thead>
+              <tr>
+                <th class="n">A₁</th>
+                <th class="n">B₁</th>
+                <th class="n">C₀ (in)</th>
+                <th class="n">Sum S₁</th>
+                <th class="n">Carry Out S₂</th>
+                <th>Total in decimal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="n">0</td>
+                <td class="n">0</td>
+                <td class="n">0</td>
+                <td class="n off">0</td>
+                <td class="n off">0</td>
+                <td>0</td>
+              </tr>
+              <tr>
+                <td class="n">0</td>
+                <td class="n">0</td>
+                <td class="n">1</td>
+                <td class="n on">1</td>
+                <td class="n off">0</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td class="n">0</td>
+                <td class="n">1</td>
+                <td class="n">0</td>
+                <td class="n on">1</td>
+                <td class="n off">0</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td class="n">0</td>
+                <td class="n">1</td>
+                <td class="n">1</td>
+                <td class="n off">0</td>
+                <td class="n on">1</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td class="n">1</td>
+                <td class="n">0</td>
+                <td class="n">0</td>
+                <td class="n on">1</td>
+                <td class="n off">0</td>
+                <td>1</td>
+              </tr>
+              <tr>
+                <td class="n">1</td>
+                <td class="n">0</td>
+                <td class="n">1</td>
+                <td class="n off">0</td>
+                <td class="n on">1</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td class="n">1</td>
+                <td class="n">1</td>
+                <td class="n">0</td>
+                <td class="n off">0</td>
+                <td class="n on">1</td>
+                <td>2</td>
+              </tr>
+              <tr>
+                <td class="n">1</td>
+                <td class="n">1</td>
+                <td class="n">1</td>
+                <td class="n on">1</td>
+                <td class="n on">1</td>
+                <td>3 (sum 1, carry 2)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="note"><b>The trick with the OR gate.</b> Beginners ask: why an OR gate instead
+          of another adder? Because the two carries can <em>never happen at the same time</em>. If A₁
+          and B₁ are both 1, the intermediate sum is 0 &mdash; so the second half adder cannot make a
+          carry. Because they are mutually exclusive, a cheap 2-input OR gate is completely safe.</div>
+      </section>
+
+      <section>
+        <section id="chips">
+          <span class="snum">Library</span>
+          <h2>Chip pinouts</h2>
+          <p class="sub">Generated by <code>dipSVG()</code> from a pin table.</p>
+          <h2>The three chips and their shared layout</h2>
+          <p class="sub">CD4070 (XOR), CD4081 (AND), and CD4071 (OR) share one identical 14-pin pinout.</p>
+
+          <p>Every pin gets a role &mdash; <code>IN</code>, <code>OUT</code>, <code>PWR</code>,
+            <code>GND</code> or <code>NC</code> &mdash; and the drawing colours itself accordingly.
+            Outputs come out teal and bold, because wiring an output to a rail is the mistake that
+            kills chips.
+          </p>
+          <p>Learn this pinout once and you know all three chips. Pin 14 is always +5 V; pin 7 is always
+            ground (&minus;). Each chip holds four separate 2-input gates:</p>
+
+          <figure>
+            <div id="dip-anatomy"></div>
+            <figcaption>Find the notch first, every time. Pin 1 sits to its lower left and the
+              numbers run <b>anticlockwise</b>.</figcaption>
+          </figure>
+          <div id="pinouts"></div>
+
+          <p>Four of the CD4000 quad-gate chips share one pin layout, so <code>QUAD('CD40xx')</code>
+            builds the whole pin table for you. Chips with their own arrangement get spelled out.</p>
+          <div id="pinouts"></div>
+          <div class="warn"><b>Watch out for gates 2 and 3.</b> On gates 1 and 4, the inputs sit
+            outside and the output is inside. On gates 2 and 3, it reverses: output pin 4 sits <em>above</em>
+            input pin 5, and output pin 10 sits <em>below</em> input pin 9. Double-check before pushing
+            wires into breadboard rows 4 and 10.</div>
+        </section>
+
+        <section>
+          <section id="breadboard">
+            <span class="snum">Library</span>
+            <h2>The breadboard diagram</h2>
+            <p class="sub">Generated by <code>bbSVG()</code>.</p>
+            <h2>How the breadboard holes are joined</h2>
+            <p class="sub">Keep this in mind while following the wire lists.</p>
+            <figure>
+              <div id="bb-anatomy"></div>
+              <figcaption>The hidden metal strips. Worth including in every project &mdash; it is the
+                single thing beginners most reliably get wrong.</figcaption>
+              <figcaption>The hidden metal clips inside the breadboard. Holes in a five-pin column are
+                joined together; holes across the center trough are not.</figcaption>
+            </figure>
+          </section>
+
+          <section class="stage">
+            <div class="tag"><span class="no">Stage 1</span><span>What this stage achieves</span>
+              <span>~25 min</span>
+            </div>
+            <h2>An example stage</h2>
+            <p class="sub">One idea. Ends with something that visibly works.</p>
+            <section class="stage" id="stage1">
+              <div class="tag"><span class="no">Stage 1</span><span>The Half Adder (Bit 0)</span>
+                <span>~35 min</span>
+              </div>
+              <h2>Start with the 1s column</h2>
+              <p class="sub">Two switches, two gates, and your first addition: 1 + 1 = 10₂.</p>
+
+              <p>Open with what they are about to do and why it matters. Then the wire list, as
+                <em>pin &rarr; pin</em> so it works wherever they physically place things.
+              </p>
+              <p>You will place two chips &mdash; the <b>CD4070 (XOR)</b> and the <b>CD4081 (AND)</b> &mdash;
+                and wire switches for inputs A₀ and B₀. By the end of this stage, you have a working 1-bit
+                calculator.</p>
+
+              <h3>Power and tie-downs</h3>
+              <div class="scroller">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Why</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Supply +</td>
+                      <td>Top red rail</td>
+                      <td>Power in</td>
+                    </tr>
+                    <tr>
+                      <td><b>pin 14</b></td>
+                      <td>+ rail</td>
+                      <td>Chip power</td>
+                    </tr>
+                    <tr>
+                      <td><b>pin 7</b></td>
+                      <td>&minus; rail</td>
+                      <td>Chip ground</td>
+                    </tr>
+                    <tr>
+                      <td>0.1 &micro;F ("104")</td>
+                      <td>pin 14 &rarr; pin 7</td>
+                      <td>Steadies the supply</td>
+                    </tr>
+                    <tr>
+                      <td>pins 5, 6, 8, 9, 12, 13</td>
+                      <td>&minus; rail</td>
+                      <td>Unused inputs</td>
+                    </tr>
+                    <tr>
+                      <td>Supply +</td>
+                      <td>Top red rail (+)</td>
+                      <td>Main 5 V power</td>
+                    </tr>
+                    <tr>
+                      <td>Supply &minus;</td>
+                      <td>Top blue rail (&minus;)</td>
+                      <td>Main ground</td>
+                    </tr>
+                    <tr>
+                      <td>Top red rail</td>
+                      <td>Bottom red rail</td>
+                      <td>Power to lower half</td>
+                    </tr>
+                    <tr>
+                      <td>Top blue rail</td>
+                      <td>Bottom blue rail</td>
+                      <td>Ground to lower half</td>
+                    </tr>
+                    <tr>
+                      <td>100 &micro;F capacitor</td>
+                      <td>Across + and &minus; rails</td>
+                      <td>Bulk smoothing (stripe to &minus;)</td>
+                    </tr>
+                    <tr>
+                      <td><b>CD4070 pin 14</b></td>
+                      <td>+ rail</td>
+                      <td>XOR power</td>
+                    </tr>
+                    <tr>
+                      <td><b>CD4070 pin 7</b></td>
+                      <td>&minus; rail</td>
+                      <td>XOR ground</td>
+                    </tr>
+                    <tr>
+                      <td>0.1 &micro;F ("104")</td>
+                      <td>CD4070 pin 14 to pin 7</td>
+                      <td>Local smoothing</td>
+                    </tr>
+                    <tr>
+                      <td>CD4070 pins 12, 13</td>
+                      <td>&minus; rail</td>
+                      <td>Tie unused Gate 4 inputs</td>
+                    </tr>
+                    <tr>
+                      <td><b>CD4081 pin 14</b></td>
+                      <td>+ rail</td>
+                      <td>AND power</td>
+                    </tr>
+                    <tr>
+                      <td><b>CD4081 pin 7</b></td>
+                      <td>&minus; rail</td>
+                      <td>AND ground</td>
+                    </tr>
+                    <tr>
+                      <td>0.1 &micro;F ("104")</td>
+                      <td>CD4081 pin 14 to pin 7</td>
+                      <td>Local smoothing</td>
+                    </tr>
+                    <tr>
+                      <td>CD4081 pins 12, 13</td>
+                      <td>&minus; rail</td>
+                      <td>Tie unused Gate 4 inputs</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>Then what to expect when power goes on, including anything disappointing:</p>
+              <h3>Input switches A₀ and B₀</h3>
+              <p>Push buttons or slide switches. Each switch connects its column to <b>+</b> when pressed.
+                A 100 k&Omega; resistor pulls the column down to <b>&minus;</b> when the switch is open,
+                stopping the chip input from floating:</p>
+
+              <div class="note"><b>Say the letdown out loud.</b> If the LED will be dim because a
+                CD4000 output only pushes about 3 mA, write that here. Naming it first turns "it's
+                broken" into "ah, that's normal".</div>
+              <div class="scroller">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Input</th>
+                      <th>Switch wiring</th>
+                      <th>Pull-down resistor</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><b>Line A₀</b></td>
+                      <td>Switch between + rail and line A₀</td>
+                      <td>100 k&Omega; from line A₀ to &minus; rail</td>
+                    </tr>
+                    <tr>
+                      <td><b>Line B₀</b></td>
+                      <td>Switch between + rail and line B₀</td>
+                      <td>100 k&Omega; from line B₀ to &minus; rail</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <h3>A sub-heading inside a stage</h3>
+              <p>Use <code>ol.steps</code> when the order genuinely matters:</p>
+              <ol class="steps">
+                <li><b>First thing</b> With a short explanation underneath.</li>
+                <li><b>Second thing</b> Each one leaves the circuit in a working state.</li>
+                <li><b>Third thing</b> And now it does something worth showing someone.</li>
+              </ol>
+              <h3>Bit 0 logic and lamps</h3>
+              <div class="scroller">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>From</th>
+                      <th>To</th>
+                      <th>Why</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Line A₀</td>
+                      <td>CD4070 pin 1</td>
+                      <td>Gate 1 input A (XOR)</td>
+                    </tr>
+                    <tr>
+                      <td>Line A₀</td>
+                      <td>CD4081 pin 1</td>
+                      <td>Gate 1 input A (AND)</td>
+                    </tr>
+                    <tr>
+                      <td>Line B₀</td>
+                      <td>CD4070 pin 2</td>
+                      <td>Gate 1 input B (XOR)</td>
+                    </tr>
+                    <tr>
+                      <td>Line B₀</td>
+                      <td>CD4081 pin 2</td>
+                      <td>Gate 1 input B (AND)</td>
+                    </tr>
+                    <tr>
+                      <td>CD4070 pin 3 (XOR 1 out)</td>
+                      <td>$S_0$ LED anode (long leg)</td>
+                      <td>Bit 0 Sum signal</td>
+                    </tr>
+                    <tr>
+                      <td>$S_0$ LED cathode</td>
+                      <td>220 &Omega; resistor to &minus; rail</td>
+                      <td>Limits LED current</td>
+                    </tr>
+                    <tr>
+                      <td>CD4081 pin 3 (AND 1 out)</td>
+                      <td>$C_0$ test LED anode</td>
+                      <td>Bit 0 Carry signal</td>
+                    </tr>
+                    <tr>
+                      <td>$C_0$ LED cathode</td>
+                      <td>220 &Omega; resistor to &minus; rail</td>
+                      <td>Limits LED current</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <p>And <code>ul.tick</code> for things to check off:</p>
+              <div class="note"><b>The LEDs are dim on purpose.</b> A CD4000-series chip output can only
+                push about 3 mA of current at 5 V. Modern indicator LEDs run on 15&ndash;20 mA. Your lamps
+                will glow gently, not brightly. This is not a mistake; it is 1970s CMOS silicon behaving
+                honestly.</div>
+
+              <h3>Test it now</h3>
+              <ul class="tick">
+                <li>Something to verify before moving on.</li>
+                <li>Something else.</li>
+                <li>Press nothing (0 + 0): both lamps dark.</li>
+                <li>Press A₀ alone (1 + 0): Sum lamp S₀ lights up. Total = 1.</li>
+                <li>Press B₀ alone (0 + 1): Sum lamp S₀ lights up. Total = 1.</li>
+                <li>Press both A₀ and B₀ (1 + 1): Sum lamp goes <em>dark</em>, and Carry lamp lights up!
+                  In binary, 1 + 1 = 10₂ (decimal 2).</li>
+              </ul>
+
+              <div class="why"><b>What this is really for.</b> Close the stage by connecting it to
+                something real &mdash; a part of a processor, a security property, a reason engineers
+                care. This is the part people remember.</div>
+              <div class="why"><b>What this is really for.</b> Modulo-2 addition is XOR. Every time you
+                download a file over the internet, a checksum uses this exact gate to verify that no bits
+                got scrambled. In RAID hard drives, your backup disk stores the XOR sum of the other disks;
+                if any disk dies, the missing data is restored using the same math.</div>
+            </section>
+
+            <section>
+              <span class="snum">Section N</span>
+              <section class="stage" id="stage2">
+                <div class="tag"><span class="no">Stage 2</span><span>The Full Adder &amp; Ripple Carry</span>
+                  <span>~45 min</span>
+                </div>
+                <h2>Build the 2-bit calculator</h2>
+                <p class="sub">Add the CD4071 (OR), wire the second column, and let the carry ripple across.</p>
+
+                <p>Remove the temporary carry LED from CD4081 pin 3. That carry signal will now travel across
+                  the board into the Bit 1 Full Adder, exactly like carrying a 1 on paper.</p>
+
+                <h3>Add CD4071 and wire inputs A₁ and B₁</h3>
+                <div class="scroller">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Why</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td><b>CD4071 pin 14</b></td>
+                        <td>+ rail</td>
+                        <td>OR power</td>
+                      </tr>
+                      <tr>
+                        <td><b>CD4071 pin 7</b></td>
+                        <td>&minus; rail</td>
+                        <td>OR ground</td>
+                      </tr>
+                      <tr>
+                        <td>0.1 &micro;F ("104")</td>
+                        <td>CD4071 pin 14 to pin 7</td>
+                        <td>Local smoothing</td>
+                      </tr>
+                      <tr>
+                        <td>CD4071 pins 5, 6, 8, 9, 12, 13</td>
+                        <td>&minus; rail</td>
+                        <td>Tie 6 unused OR inputs</td>
+                      </tr>
+                      <tr>
+                        <td><b>Line A₁</b></td>
+                        <td>Switch to +, 100 k&Omega; to &minus;</td>
+                        <td>Number A, Bit 1 (value 2)</td>
+                      </tr>
+                      <tr>
+                        <td><b>Line B₁</b></td>
+                        <td>Switch to +, 100 k&Omega; to &minus;</td>
+                        <td>Number B, Bit 1 (value 2)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3>Full Adder wiring (Bit 1)</h3>
+                <div class="scroller">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Why</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Line A₁</td>
+                        <td>CD4070 pin 5</td>
+                        <td>Gate 2 input A (XOR)</td>
+                      </tr>
+                      <tr>
+                        <td>Line A₁</td>
+                        <td>CD4081 pin 5</td>
+                        <td>Gate 2 input A (AND)</td>
+                      </tr>
+                      <tr>
+                        <td>Line B₁</td>
+                        <td>CD4070 pin 6</td>
+                        <td>Gate 2 input B (XOR)</td>
+                      </tr>
+                      <tr>
+                        <td>Line B₁</td>
+                        <td>CD4081 pin 6</td>
+                        <td>Gate 2 input B (AND)</td>
+                      </tr>
+                      <tr>
+                        <td>CD4070 pin 4 (XOR 2 out)</td>
+                        <td>CD4070 pin 8</td>
+                        <td>Intermediate sum &rarr; Gate 3 XOR input A</td>
+                      </tr>
+                      <tr>
+                        <td>CD4070 pin 4 (XOR 2 out)</td>
+                        <td>CD4081 pin 8</td>
+                        <td>Intermediate sum &rarr; Gate 3 AND input A</td>
+                      </tr>
+                      <tr>
+                        <td><b>CD4081 pin 3 (C₀ Carry)</b></td>
+                        <td>CD4070 pin 9</td>
+                        <td>Carry from Bit 0 &rarr; Gate 3 XOR input B</td>
+                      </tr>
+                      <tr>
+                        <td><b>CD4081 pin 3 (C₀ Carry)</b></td>
+                        <td>CD4081 pin 9</td>
+                        <td>Carry from Bit 0 &rarr; Gate 3 AND input B</td>
+                      </tr>
+                      <tr>
+                        <td>CD4070 pin 10 (XOR 3 out)</td>
+                        <td>$S_1$ LED anode</td>
+                        <td><b>Sum S₁ (2s place lamp)</b></td>
+                      </tr>
+                      <tr>
+                        <td>$S_1$ LED cathode</td>
+                        <td>220 &Omega; resistor to &minus;</td>
+                        <td>Sum 1 current limiter</td>
+                      </tr>
+                      <tr>
+                        <td>CD4081 pin 4 (AND 2 out)</td>
+                        <td>CD4071 pin 1</td>
+                        <td>First carry &rarr; OR gate 1 input A</td>
+                      </tr>
+                      <tr>
+                        <td>CD4081 pin 10 (AND 3 out)</td>
+                        <td>CD4071 pin 2</td>
+                        <td>Second carry &rarr; OR gate 1 input B</td>
+                      </tr>
+                      <tr>
+                        <td>CD4071 pin 3 (OR 1 out)</td>
+                        <td>$S_2$ LED anode</td>
+                        <td><b>Sum S₂ / Carry Out (4s place lamp)</b></td>
+                      </tr>
+                      <tr>
+                        <td>$S_2$ LED cathode</td>
+                        <td>220 &Omega; resistor to &minus;</td>
+                        <td>Sum 2 current limiter</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <h3>Test the complete calculator</h3>
+                <ul class="tick">
+                  <li><b>2 + 1 = 3:</b> Turn on A₁ (2) and B₀ (1). Lamps S₁ (2) and S₀ (1) light up: 011₂ = 3.</li>
+                  <li><b>2 + 2 = 4:</b> Turn on A₁ (2) and B₁ (2). Lamp S₂ (4) lights up: 100₂ = 4.</li>
+                  <li><b>2 + 3 = 5:</b> Turn on A₁ (2), B₁ (2), and B₀ (1). Lamps S₂ (4) and S₀ (1) light up: 101₂ = 5.
+                  </li>
+                  <li><b>3 + 3 = 6:</b> Turn on all four switches. Lamps S₂ (4) and S₁ (2) light up: 110₂ = 6!</li>
+                </ul>
+
+                <div class="why"><b>What this is really for.</b> Inside every computer processor is an
+                  <b>Arithmetic Logic Unit (ALU)</b>. The ALU has no CPU inside it; it is simply this exact
+                  circuit repeated 32 or 64 times across a silicon die. Every 3D video game frame, every video
+                  stream, and every physics calculation is built from this block.
+                </div>
+              </section>
+
+              <section class="stage" id="stage3">
+                <div class="tag"><span class="no">Stage 3</span><span>The Speed of Math</span>
+                  <span>~20 min</span>
+                </div>
+                <h2>Carry propagation delay</h2>
+                <p class="sub">Why 64-bit processors had to invent carry-lookahead.</p>
+
+                <p>In your circuit, when you turn on A₀ and B₀, the carry C₀ doesn't reach S₂ instantly.
+                  It takes time for the electrons to switch each gate. At 5 V, each CD4000 gate takes roughly
+                  <b>125 nanoseconds (ns)</b>.
+                </p>
+
+                <p>Trace the longest carry chain when $1 + 3$ is calculated:</p>
+                <ol class="steps">
+                  <li>CD4081 Gate 1 switches HIGH: <b>+125 ns</b></li>
+                  <li>That carry enters CD4081 Gate 3 and switches HIGH: <b>+125 ns</b></li>
+                  <li>That output enters CD4071 Gate 1 and switches S₂ HIGH: <b>+125 ns</b></li>
+                </ol>
+
+                <p>Total time for the answer to settle: <b>375 nanoseconds</b>. In a 2-bit adder that feels
+                  instant. But what if you wanted to add two 64-bit numbers with a ripple adder?</p>
+
+                <div class="scroller">
+                  <table class="tt">
+                    <thead>
+                      <tr>
+                        <th>Adder size</th>
+                        <th>Gates in longest carry chain</th>
+                        <th>Settling time at 125 ns/gate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>2-bit (yours)</td>
+                        <td>3 gates</td>
+                        <td>375 ns</td>
+                      </tr>
+                      <tr>
+                        <td>8-bit (1975 microcomputer)</td>
+                        <td>15 gates</td>
+                        <td>1,875 ns (1.8 &micro;s)</td>
+                      </tr>
+                      <tr>
+                        <td>32-bit (1990s PC)</td>
+                        <td>63 gates</td>
+                        <td>7,875 ns (7.9 &micro;s)</td>
+                      </tr>
+                      <tr>
+                        <td>64-bit (modern smartphone)</td>
+                        <td>127 gates</td>
+                        <td>15,875 ns (15.9 &micro;s)</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <p>At 15.9 microseconds per addition, a 64-bit computer could only do about 60,000 additions
+                  per second &mdash; nowhere near the billions of calculations per second a 3 GHz chip needs!</p>
+
+                <div class="why"><b>Carry-Lookahead Adders (CLA).</b> Because rippling through 64 gates is
+                  too slow, computer architects created the <em>Carry-Lookahead Adder</em>. Instead of waiting
+                  for the carry to trickle from bit to bit, extra logic looks at all 64 input bits simultaneously
+                  and predicts which columns will generate a carry before the sum even begins. It takes twice as
+                  many gates, but completes in just 4 gate delays.</div>
+              </section>
+
+              <section id="trouble">
+                <span class="snum">Section 4</span>
+                <h2>When it doesn't work</h2>
+                <p class="sub">Every project needs this table. It will get used.</p>
+                <p class="sub">Nine gates mean nine chances for a misplaced wire. Here is how to fix them.</p>
+
+                <div class="scroller">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>What you see</th>
+                        <th>Almost always</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Nothing lights at all</td>
+                        <td>Power isn't reaching pin 14 and pin 7.</td>
+                      </tr>
+                      <tr>
+                        <td>A chip gets warm</td>
+                        <td>Power in backwards. <b>Unplug now.</b></td>
+                      </tr>
+                      <tr>
+                        <td>Lights flicker on their own</td>
+                        <td>A floating input. Tie it to &minus;.</td>
+                      </tr>
+                      <tr>
+                        <td>An LED never lights</td>
+                        <td>Backwards. Long leg toward +.</td>
+                      </tr>
+                      <tr>
+                        <td>Everything is wrong at once</td>
+                        <td>Unplug, walk away five minutes, re-read
+                          one table. This is what real engineers do.</td>
+                      </tr>
+                      <tr>
+                        <td>Nothing lights on any switch setting</td>
+                        <td>Power isn't reaching pin 14 (+) and pin 7 (&minus;) on all three chips. Check both rails and
+                          all three red and blue jumpers.</td>
+                      </tr>
+                      <tr>
+                        <td>A chip gets warm to the touch</td>
+                        <td>Power is in backwards, or an output pin is wired straight to a rail. <b>Unplug
+                            immediately.</b></td>
+                      </tr>
+                      <tr>
+                        <td>Lamps flicker on their own</td>
+                        <td>A dangling input. Make sure all four 100 k&Omega; pull-down resistors are plugged into
+                          &minus;, and unused gate inputs are grounded.</td>
+                      </tr>
+                      <tr>
+                        <td>An LED never lights up</td>
+                        <td>The LED is backwards (long leg must go toward the gate output), or plugged into the wrong
+                          row.</td>
+                      </tr>
+                      <tr>
+                        <td>1 + 1 leaves S₀ ON instead of OFF</td>
+                        <td>You swapped the XOR and AND outputs, or wired S₀ to pin 4 instead of pin 3.</td>
+                      </tr>
+                      <tr>
+                        <td>Bit 1 works, but never carries into S₂</td>
+                        <td>Check the OR gate (CD4071) pins 1 and 2 &mdash; they must connect to CD4081 pins 4 and 10.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Everything is wrong at once</td>
+                        <td>Unplug power. Walk away for five minutes. Check the notch on every chip, and trace one wire
+                          at a time against the wire list.</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <div class="note"><b>The one technique worth teaching.</b> Don't stare at the whole
+                  board. Pick one signal and follow it. Halve the problem, then halve it again.</div>
+                <div class="note"><b>The debugging rule.</b> Don't test all 16 additions at once. Start with
+                  Stage 1: verify that 1 + 0 = 1 and 1 + 1 = 10₂. Once Bit 0 is rock solid, test Bit 1 with
+                  Bit 0 turned off (2 + 2 = 4). Isolate the problem to one column.</div>
+              </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>Bench sheets: <a href="README.md">README.md</a> for the wire list and troubleshooting,
+      <a href="worksheet.md">worksheet.md</a> for the tables to fill in.
+      Verify every pinout against the manufacturer's datasheet before you publish.
+    </p>
+    <p>Bench sheets: <a href="README.md">README.md</a> for parts, wire list, and pinouts;
+      <a href="worksheet.md">worksheet.md</a> for pencil exercises.
+      All pinouts verified against Texas Instruments datasheets.
+    </p>
+  </div>
+</footer>
+
+<script>
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+  /* ============ gate symbols ============ */
+  /* ============ gate symbols & library ============ */
+  const SHAPE = {
+    and: { d: 'M0,0 H22 A17,17 0 0 1 22,34 H0 Z', out: 39, lead: 0 },
+    or: { d: 'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out: 42, lead: 0 },
+    not: { d: 'M0,0 L30,17 L0,34 Z', out: 30, lead: 0, bub: 1 },
+    xor: { d: 'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out: 42, lead: -8, arc: 1 },
+    xnor: { d: 'M0,0 Q24,0 42,17 Q24,34 0,34 Q12,17 0,0 Z', out: 42, lead: -8, arc: 1, bub: 1 }
+  };
+  function gateSym(kind, ins, w, h) {
+    const s = SHAPE[kind], bx = s.out + 5, endX = s.bub ? bx + 5 : s.out;
+    let g = `<svg viewBox="-26 -8 ${104} 50" width="${w || 150}" height="${h || 62}"
+    role="img" aria-label="${kind} gate symbol">`;
+    const ys = ins === 1 ? [17] : [9, 25];
+    for (const y of ys)
+      g += `<line x1="-24" y1="${y}" x2="${s.lead}" y2="${y}" stroke="var(--ink-2)"
+      stroke-width="1.6" ${SH}/>`;
+    if (s.arc) g += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+    g += `<path d="${s.d}" style="fill:var(--surface-2);stroke:var(--ink)"
+    stroke-width="1.9" ${SH}/>`;
+    if (s.bub) g += `<circle cx="${bx}" cy="17" r="4.4" fill="var(--surface)"
+    stroke="var(--ink)" stroke-width="1.9"/>`;
+    g += `<line x1="${endX}" y1="17" x2="${endX + 24}" y2="17" stroke="var(--ink-2)"
+    stroke-width="1.6" ${SH}/>`;
+    return g + '</svg>';
+    function symAt(x, y, kind) {
+      const s = SHAPE[kind];
+      let h = `<g transform="translate(${x},${y})">`;
+      if (s.arc) h += `<path d="M-8,0 Q4,17 -8,34" fill="none" stroke="var(--ink)" stroke-width="1.8" ${SH}/>`;
+      h += `<path d="${s.d}" class="gsym"/>`;
+      h += `</g>`;
+      return h;
+    }
+
+    /* ============ gate cards ============ */
+    const GATES = [
+      {
+        n: 'NOT', chip: 'CD4069', k: 'not', ins: 1, f: a => a ? 0 : 1,
+        d: 'Flips whatever it gets. The only gate here with a single input — and the one you reach for constantly.'
+      },
+      {
+        n: 'AND', chip: 'CD4081', k: 'and', ins: 2, f: (a, b) => (a && b) ? 1 : 0,
+        d: 'Output is 1 only when <b>both</b> inputs are 1. Think of two switches in a row: the current needs to get past both.'
+      },
+      {
+        n: 'OR', chip: 'CD4071', k: 'or', ins: 2, f: (a, b) => (a || b) ? 1 : 0,
+        d: 'Output is 1 when <b>at least one</b> input is 1. Note that both being 1 still counts — this is not the "or" of everyday speech.'
+      },
+      {
+        n: 'XOR', chip: 'CD4070', k: 'xor', ins: 2, f: (a, b) => (a !== b) ? 1 : 0,
+        d: 'Output is 1 when the inputs are <b>different</b>. This is the everyday "or" — one or the other, but not both.'
+      },
+      {
+        n: 'XNOR', chip: 'CD4077', k: 'xnor', ins: 2, f: (a, b) => (a === b) ? 1 : 0,
+        d: 'Output is 1 when the inputs are <b>the same</b>. The whole vault hangs off this one.'
+      }
+    ];
+    function truthTable(g) {
+      const rows = g.ins === 1 ? [[0], [1]] : [[0, 0], [0, 1], [1, 0], [1, 1]];
+      let h = '<table><thead><tr>';
+      h += g.ins === 1 ? '<th class="n">In</th>' : '<th class="n">A</th><th class="n">B</th>';
+      h += '<th class="n">Out</th></tr></thead><tbody>';
+      for (const r of rows) {
+        const o = g.f.apply(null, r);
+        h += '<tr>' + r.map(v => `<td class="n">${v}</td>`).join('')
+          + `<td class="n ${o ? 'on' : 'off'}">${o}</td></tr>`;
+      }
+      return h + '</tbody></table>';
+    }
+    function drawGates() {
+      const host = $('gategrid'); if (!host) return;
+      host.innerHTML = GATES.map(g => `<div class="gate">
+      <h4>${g.n}</h4><span class="chip">${g.chip}</span>
+      ${gateSym(g.k, g.ins, 148, 60)}
+      <p>${g.d}</p>${truthTable(g)}</div>`).join('');
+    }
+
+    /* ============ DIP pinout ============ */
+    /* ============ DIP pinouts ============ */
+    const IN = 'in', OUT = 'out', PWR = 'pwr', GND = 'gnd', NC = 'nc';
+    const QUAD = n => ({
+      name: n, pins: 14, p: {
+        const QUAD = (n, sub) => ({
+          name: n, sub: sub, pins: 14, p: {
+            1: ['in 1a', IN], 2: ['in 1b', IN], 3: ['OUT 1', OUT], 4: ['OUT 2', OUT],
+            5: ['in 2a', IN], 6: ['in 2b', IN], 7: ['− GND', GND], 8: ['in 3a', IN],
+            9: ['in 3b', IN], 10: ['OUT 3', OUT], 11: ['OUT 4', OUT], 12: ['in 4a', IN],
+            13: ['in 4b', IN], 14: ['+ 5 V', PWR]
+          }
+        });
+        const CHIPS = [
+          Object.assign(QUAD('CD4077'), { sub: 'Quad 2-input XNOR — the comparators' }),
+          {
+            name: 'CD4012', sub: 'Dual 4-input NAND — the judge', pins: 14, p: {
+              1: ['OUT 1', OUT], 2: ['in 1a', IN], 3: ['in 1b', IN], 4: ['in 1c', IN],
+              5: ['in 1d', IN], 6: ['no connect', NC], 7: ['− GND', GND], 8: ['no connect', NC],
+              9: ['in 2a', IN], 10: ['in 2b', IN], 11: ['in 2c', IN], 12: ['in 2d', IN],
+              13: ['OUT 2', OUT], 14: ['+ 5 V', PWR]
+            }
+          },
+          Object.assign(QUAD('CD4081'), { sub: 'Quad 2-input AND — arms the alarm' }),
+          Object.assign(QUAD('CD4071'), { sub: 'Quad 2-input OR — Stage 2 only' }),
+          Object.assign(QUAD('CD4070'), { sub: 'Quad 2-input XOR — Stage 2 only' }),
+          {
+            name: 'CD4069', sub: 'Hex NOT — Stage 2 only', pins: 14, p: {
+              1: ['in 1', IN], 2: ['OUT 1', OUT], 3: ['in 2', IN], 4: ['OUT 2', OUT],
+              5: ['in 3', IN], 6: ['OUT 3', OUT], 7: ['− GND', GND], 8: ['OUT 4', OUT],
+              9: ['in 4', IN], 10: ['OUT 5', OUT], 11: ['in 5', IN], 12: ['OUT 6', OUT],
+              13: ['in 6', IN], 14: ['+ 5 V', PWR]
+            }
+          }
+  QUAD('CD4070', 'Quad 2-input XOR — Sum bits'),
+          QUAD('CD4081', 'Quad 2-input AND — Carry bits'),
+          QUAD('CD4071', 'Quad 2-input OR — Combines carries')
+        ];
+        const ROLECOL = {
+          in: 'var(--ink-2)', out: 'var(--teal)', pwr: 'var(--w-red)',
+          gnd: 'var(--w-blue)', nc: 'var(--ink-3)'
+        };
+        function dipSVG(c, scale){
+          const half = c.pins / 2, pitch = 30, bw = 74, top = 22;
+    const bh = half * pitch, W = 380, H = bh + top + 26, bx = (W - bw) / 2;
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W * (scale || 1)}"
+    role="img" aria-label="${c.name} pinout"><rect x="${bx}" y="${top}"
+    width="${bw}" height="${bh}" rx="5" fill="var(--surface-2)"
+    stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${W / 2 - 9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)"
+    stroke="var(--line-2)" stroke-width="1.4"/>`;
+    const half = c.pins / 2, pitch = 28, bw = 70, top = 20;
+    const bh = half * pitch, W = 360, H = bh + top + 24, bx = (W - bw) / 2;
+    let s = `<svg viewBox="0 0 ${W} ${H}" width="${W * (scale || 1)}" role="img" aria-label="${c.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${bh}" rx="5" fill="var(--surface-2)" stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${W / 2 - 9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)" stroke="var(--line-2)" stroke-width="1.4"/>`;
+    for (let i = 1; i <= c.pins; i++) {
+      const left = i <= half;
+      const idx = left ? i - 1 : c.pins - i;
+      const y = top + idx * pitch + pitch / 2;
+      const [lbl, role] = c.p[i];
+      const col = ROLECOL[role];
+      const x1 = left ? bx : bx + bw, x2 = left ? bx - 20 : bx + bw + 20;
+      s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}"
+      stroke-width="2" ${SH}/>`;
+      s += `<text class="sv-num" x="${left ? bx + 7 : bx + bw - 7}" y="${y + 3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+      s += `<text class="sv-lbl" x="${left ? x2 - 5 : x2 + 5}" y="${y + 3.6}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+      const x1 = left ? bx : bx + bw, x2 = left ? bx - 18 : bx + bw + 18;
+      s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="2" ${SH}/>`;
+      s += `<text class="sv-num" x="${left ? bx + 6 : bx + bw - 6}" y="${y + 3.4}" text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+      s += `<text class="sv-lbl" x="${left ? x2 - 5 : x2 + 5}" y="${y + 3.6}" text-anchor="${left ? 'end' : 'start'}" fill="${col}" ${role === OUT ? 'font-weight="700"' : ''}>${lbl}</text>`;
+    }
+    s += `<text class="sv-cap" x="${W / 2}" y="${H - 6}" text-anchor="middle">${c.name}</text>`;
+    s += `<text class="sv-cap" x="${W / 2}" y="${H - 5}" text-anchor="middle">${c.name}</text>`;
+    return s + '</svg>';
+  }
+  function drawPinouts() {
+    const host = $('pinouts'); if (!host) return;
+    host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+      `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>';
+    const an = $('dip-anatomy');
+    if (an) an.innerHTML = `<div class="card" style="display:flex;gap:1.4rem;
+    flex-wrap:wrap;align-items:center;justify-content:center">
+    <div class="scroller">${dipSVG(CHIPS[0], 0.92)}</div>
+    <dl class="kv" style="max-width:17rem">
+      <dt>Notch</dt><dd>The dent at the top. Your only orientation clue.</dd>
+      <dt>Pin 1</dt><dd>Immediately left of the notch, then count down.</dd>
+      <dt>Pin 7</dt><dd>Bottom left. Always − on these six chips.</dd>
+      <dt>Pin 14</dt><dd>Top right. Always +.</dd>
+      <dt class="on">Teal</dt><dd>Outputs. Never wire one to a rail.</dd>
+    </dl></div>`;
+    <div class="scroller">${dipSVG(c, 0.95)}</div></figure > `).join('') + '</div>';
+}
+
+/* ============ breadboard anatomy ============ */
+function bbSVG(){
+  const P = 19, C = 14, LM = 44, TM = 14;
+  const ROWS = {'+':0.5,'−':1.5,A:3.1,B:4.1,C:5.1,D:6.1,E:7.1,
+                F:8.8,G:9.8,H:10.8,I:11.8,J:12.8,'−2':14.4,'+2':15.4};
+  const hx = c => LM + (c-1)*P + P/2, hy = r => TM + ROWS[r]*P + P/2;
+  const W = LM + C*P + 128, H = hy('+2') + 26;
+  let s = `< svg viewBox = "0 0 ${W} ${H}" role = "img"
+    aria - label="How breadboard holes are connected" >
+    <rect x="${LM-13}" y="${TM}" width="${C*P+22}" height="${hy('+2')+11-TM}"
+      rx="6" style="fill:var(--surface);stroke:var(--line-2)" stroke-width="1.3"/>
+    <rect x="${LM-13}" y="${hy('E')+10}" width="${C*P+22}" height="${hy('F')-hy('E')-20}"
+      fill="var(--sunk)"/>`;
+  /* highlight groups */
+  const band = (c, r1, r2, col) => `< rect x = "${hx(c)-8.5}" y = "${hy(r1)-8.5}"
+    width = "17" height = "${hy(r2)-hy(r1)+17}" rx = "4" fill = "${col}" opacity = ".5" /> `;
+  let s = `< svg viewBox = "0 0 ${W} ${H}" role = "img" aria - label="How breadboard holes are connected" >
+    <rect x="${LM-13}" y="${TM}" width="${C*P+22}" height="${hy('+2')+11-TM}" rx="6" style="fill:var(--surface);stroke:var(--line-2)" stroke-width="1.3"/>
+    <rect x="${LM-13}" y="${hy('E')+10}" width="${C*P+22}" height="${hy('F')-hy('E')-20}" fill="var(--sunk)"/>`;
+  const band = (c, r1, r2, col) => `< rect x = "${hx(c)-8.5}" y = "${hy(r1)-8.5}" width = "17" height = "${hy(r2)-hy(r1)+17}" rx = "4" fill = "${col}" opacity = ".5" /> `;
+  s += band(4,'A','E','var(--teal-soft)') + band(4,'F','J','var(--copper-soft)');
+  s += `< rect x = "${LM-9}" y = "${hy('+')-8.5}" width = "${C*P+14}" height = "17" rx = "4"
+    fill = "var(--w-red)" opacity = ".16" /> `;
+  /* rail stripes */
+  s += `< rect x = "${LM-9}" y = "${hy('+')-8.5}" width = "${C*P+14}" height = "17" rx = "4" fill = "var(--w-red)" opacity = ".16" /> `;
+  for (const [r,col,dy] of [['+','var(--w-red)',-11],['−','var(--w-blue)',11],
+                            ['−2','var(--w-blue)',-11],['+2','var(--w-red)',11]])
+    s += `< line x1 = "${LM-7}" y1 = "${hy(r)+dy}" x2 = "${LM+C*P-5}" y2 = "${hy(r)+dy}"
+    stroke = "${col}" stroke - width="1.5" opacity = ".8" /> `;
+  /* holes + labels */
+    s += `< line x1 = "${LM-7}" y1 = "${hy(r)+dy}" x2 = "${LM+C*P-5}" y2 = "${hy(r)+dy}" stroke = "${col}" stroke - width="1.5" opacity = ".8" /> `;
+  for (const r of Object.keys(ROWS)){
+    for (let c = 1; c <= C; c++)
+      s += `< rect x = "${hx(c)-3.6}" y = "${hy(r)-3.6}" width = "7.2" height = "7.2" rx = "1.6"
+    style = "fill:var(--sunk);stroke:var(--line)" stroke - width=".8" /> `;
+    s += `< text class="sv-num" x = "${LM-19}" y = "${hy(r)+3.3}" text - anchor="middle"
+      > ${ r.replace('2', '') }</text > `;
+      s += `< rect x = "${hx(c)-3.6}" y = "${hy(r)-3.6}" width = "7.2" height = "7.2" rx = "1.6" style = "fill:var(--sunk);stroke:var(--line)" stroke - width=".8" /> `;
+    s += `< text class="sv-num" x = "${LM-19}" y = "${hy(r)+3.3}" text - anchor="middle" > ${ r.replace('2', '') }</text > `;
+  }
+  /* callouts */
+  const call = (x, y, t, anchor) => `< text class="sv-lbl" x = "${x}" y = "${y}"
+    text - anchor="${anchor||'start'}" > ${ t }</text > `;
+  const RX = LM + C*P + 12;
+  s += `< line x1 = "${hx(4)+10}" y1 = "${hy('C')}" x2 = "${RX-6}" y2 = "${hy('B')}"
+    stroke = "var(--teal)" stroke - width="1.2" stroke - dasharray="3 3" /> `
+    + call(RX, hy('B')-4, 'these five holes')
+    + call(RX, hy('B')+9, 'are one wire');
+  s += `< line x1 = "${hx(4)+10}" y1 = "${hy('H')}" x2 = "${RX-6}" y2 = "${hy('I')}"
+    stroke = "var(--copper)" stroke - width="1.2" stroke - dasharray="3 3" /> `
+    + call(RX, hy('I')-4, 'so are these —')
+    + call(RX, hy('I')+9, 'but NOT joined')
+    + call(RX, hy('I')+22, 'to the five above');
+  s += call(RX, hy('+')+3, '+ rail, full length')
+    + call(RX, hy('−')+3, '− rail, full length')
+    + call(hx(1)-4, hy('E')+ (hy('F')-hy('E'))/2 + 3.5,
+        'the channel — chips straddle this', 'start');
+  const call = (x, y, t) => `< text class="sv-lbl" x = "${x}" y = "${y}" > ${ t }</text > `;
+  s += `< line x1 = "${hx(4)+10}" y1 = "${hy('C')}" x2 = "${RX-6}" y2 = "${hy('B')}" stroke = "var(--teal)" stroke - width="1.2" stroke - dasharray="3 3" /> `
+    + call(RX, hy('B')-4, 'these five holes') + call(RX, hy('B')+9, 'are one wire');
+  s += `< line x1 = "${hx(4)+10}" y1 = "${hy('H')}" x2 = "${RX-6}" y2 = "${hy('I')}" stroke = "var(--copper)" stroke - width="1.2" stroke - dasharray="3 3" /> `
+    + call(RX, hy('I')-4, 'so are these —') + call(RX, hy('I')+9, 'not joined across channel');
+  s += call(RX, hy('+')+3, '+ rail, full length') + call(RX, hy('−')+3, '− rail, full length');
+  return s + '</svg>';
+}
+function drawBB(){
+  const h = $('bb-anatomy');
+  if (h) h.innerHTML = '<div class="scroller">' + bbSVG() + '</div>';
+}
+drawGates(); drawPinouts(); drawBB();
+
+/* ============ SIMULATOR STATE & LOGIC ============ */
+const SIM = {
+  a1: 0, a0: 0,
+  b1: 0, b0: 0
+};
+
+function calcAdder(){
+  const a0 = SIM.a0, b0 = SIM.b0;
+  const a1 = SIM.a1, b1 = SIM.b1;
+
+  // Bit 0: Half Adder
+  const s0 = a0 ^ b0;
+  const c0 = a0 & b0;
+
+  // Bit 1: Full Adder
+  const int_sum = a1 ^ b1;
+  const c1a = a1 & b1;
+  const s1 = int_sum ^ c0;
+  const c1b = int_sum & c0;
+  const s2 = c1a | c1b;
+
+  const aVal = (a1 << 1) | a0;
+  const bVal = (b1 << 1) | b0;
+  const sumVal = (s2 << 2) | (s1 << 1) | s0;
+
+  return { a0, b0, a1, b1, s0, c0, int_sum, c1a, c1b, s1, s2, aVal, bVal, sumVal };
+}
+
+function simSVG(){
+  const d = calcAdder();
+  const hi = v => v ? ' live' : '';
+  const rip = v => v ? ' ripple' : '';
+
+  let s = `< svg viewBox = "0 0 680 340" role = "img" aria - label="Interactive 2-Bit Ripple Adder Diagram" > `;
+
+  // Background column groupings
+  s += `< rect class="blockbox" x = "140" y = "32" width = "280" height = "280" rx = "8" /> `;
+  s += `< text class="sv-cap" x = "280" y = "24" text - anchor="middle" fill = "var(--copper)" > BIT 1 & middot; FULL ADDER(2s)</text > `;
+
+  s += `< rect class="blockbox" x = "435" y = "32" width = "135" height = "280" rx = "8" /> `;
+  s += `< text class="sv-cap" x = "502" y = "24" text - anchor="middle" fill = "var(--teal)" > BIT 0 & middot; HALF ADDER(1s)</text > `;
+
+  // Input switches (left)
+  function drawTog(x, y, v, id, lbl, sub){
+    return `< g class="tog ${v ? 'one' : ''}" id = "${id}" role = "button" tabindex = "0" aria - label="${lbl}, value ${v}" >
+      <rect x="${x}" y="${y-14}" width="48" height="28" rx="6"/>
+      <text class="sv-bit" x="${x+24}" y="${y+5}" text-anchor="middle">${v}</text>
+      <text class="sv-cap" x="${x-8}" y="${y+4}" text-anchor="end">${lbl}</text>
+      <text class="sv-num" x="${x+24}" y="${y-18}" text-anchor="middle">${sub}</text>
+    </g > `;
+  }
+
+  s += drawTog(44, 75,  d.a1, 'tog-a1', 'A₁', '2s');
+  s += drawTog(44, 125, d.b1, 'tog-b1', 'B₁', '2s');
+  s += drawTog(44, 215, d.a0, 'tog-a0', 'A₀', '1s');
+  s += drawTog(44, 265, d.b0, 'tog-b0', 'B₀', '1s');
+
+  /* ============ BIT 0 WIRING & GATES ============ */
+  // Gate 1 XOR (CD4070) at (465, 195)
+  // Gate 1 AND (CD4081) at (465, 255)
+  const gx0_xor = 465, gy0_xor = 195;
+  const gx0_and = 465, gy0_and = 255;
+
+  // A0 bus wire: from (92, 215) -> splits to XOR input (pin 1) and AND input (pin 1)
+  s += `< path class="w${hi(d.a0)}" d = "M92,215 H440 V${gy0_xor+9} H${gx0_xor}" /> `;
+  s += `< path class="w${hi(d.a0)}" d = "M440,215 V${gy0_and+9} H${gx0_and}" /> `;
+
+  // B0 bus wire: from (92, 265) -> splits to XOR input (pin 2) and AND input (pin 2)
+  s += `< path class="w${hi(d.b0)}" d = "M92,265 H450 V${gy0_xor+25} H${gx0_xor}" /> `;
+  s += `< path class="w${hi(d.b0)}" d = "M450,265 V${gy0_and+25} H${gx0_and}" /> `;
+
+  s += symAt(gx0_xor, gy0_xor, 'xor');
+  s += `< text class="sv-num" x = "${gx0_xor+20}" y = "${gy0_xor+42}" text - anchor="middle" > CD4070(G1)</text > `;
+
+  s += symAt(gx0_and, gy0_and, 'and');
+  s += `< text class="sv-num" x = "${gx0_and+20}" y = "${gy0_and+42}" text - anchor="middle" > CD4081(G1)</text > `;
+
+  // S0 output wire from XOR (gx0_xor+42, gy0_xor+17) -> lamp S0 at (610, 212)
+  s += `< path class="w${hi(d.s0)}" d = "M${gx0_xor+42},${gy0_xor+17} H595" /> `;
+
+  // C0 carry out from AND (gx0_and+39, gy0_and+17) -> ripples over to Bit 1!
+  // It ripples back left into Bit 1 Full Adder!
+  s += `< path class="w${rip(d.c0)}" d = "M${gx0_and+39},${gy0_and+17} H520 V165 H245" /> `;
+  s += `< text class="sv-lbl" x = "385" y = "158" text - anchor="middle" fill = "${d.c0 ? 'var(--copper)' : 'var(--ink-3)'}" > Carry C₀ ripple & larr;</text > `;
+
+  /* ============ BIT 1 WIRING & GATES ============ */
+  // Half Adder 1a: XOR 2 at (175, 65), AND 2 at (175, 125)
+  const gx1_xor1 = 175, gy1_xor1 = 65;
+  const gx1_and1 = 175, gy1_and1 = 125;
+
+  s += `< path class="w${hi(d.a1)}" d = "M92,75 H155 V${gy1_xor1+9} H${gx1_xor1}" /> `;
+  s += `< path class="w${hi(d.a1)}" d = "M155,75 V${gy1_and1+9} H${gx1_and1}" /> `;
+
+  s += `< path class="w${hi(d.b1)}" d = "M92,125 H165 V${gy1_xor1+25} H${gx1_xor1}" /> `;
+  s += `< path class="w${hi(d.b1)}" d = "M165,125 V${gy1_and1+25} H${gx1_and1}" /> `;
+
+  s += symAt(gx1_xor1, gy1_xor1, 'xor');
+  s += `< text class="sv-num" x = "${gx1_xor1+20}" y = "${gy1_xor1+42}" text - anchor="middle" > CD4070(G2)</text > `;
+
+  s += symAt(gx1_and1, gy1_and1, 'and');
+  s += `< text class="sv-num" x = "${gx1_and1+20}" y = "${gy1_and1+42}" text - anchor="middle" > CD4081(G2)</text > `;
+
+  // Intermediate sum wire (from XOR 2 out to XOR 3 and AND 3)
+  const gx1_xor2 = 270, gy1_xor2 = 85;
+  const gx1_and2 = 270, gy1_and2 = 185;
+
+  s += `< path class="w${hi(d.int_sum)}" d = "M${gx1_xor1+42},${gy1_xor1+17} H235 V${gy1_xor2+9} H${gx1_xor2}" /> `;
+  s += `< path class="w${hi(d.int_sum)}" d = "M235,${gy1_xor1+17} V${gy1_and2+9} H${gx1_and2}" /> `;
+
+  // C0 carry enters XOR 3 (pin 9) and AND 3 (pin 9)
+  s += `< path class="w${rip(d.c0)}" d = "M245,165 V${gy1_xor2+25} H${gx1_xor2}" /> `;
+  s += `< path class="w${rip(d.c0)}" d = "M245,165 V${gy1_and2+25} H${gx1_and2}" /> `;
+
+  s += symAt(gx1_xor2, gy1_xor2, 'xor');
+  s += `< text class="sv-num" x = "${gx1_xor2+20}" y = "${gy1_xor2+42}" text - anchor="middle" > CD4070(G3)</text > `;
+
+  s += symAt(gx1_and2, gy1_and2, 'and');
+  s += `< text class="sv-num" x = "${gx1_and2+20}" y = "${gy1_and2+42}" text - anchor="middle" > CD4081(G3)</text > `;
+
+  // Final S1 sum output from XOR 3 -> lamp S1 at (610, 102)
+  s += `< path class="w${hi(d.s1)}" d = "M${gx1_xor2+42},${gy1_xor2+17} H595" /> `;
+
+  // Carry combination: OR gate 1 at (355, 140)
+  const gx_or = 355, gy_or = 140;
+  // c1a from AND 2 (gx1_and1+39, gy1_and1+17) -> OR pin 1
+  s += `< path class="w${hi(d.c1a)}" d = "M${gx1_and1+39},${gy1_and1+17} H340 V${gy_or+9} H${gx_or}" /> `;
+  // c1b from AND 3 (gx1_and2+39, gy1_and2+17) -> OR pin 2
+  s += `< path class="w${hi(d.c1b)}" d = "M${gx1_and2+39},${gy1_and2+17} H340 V${gy_or+25} H${gx_or}" /> `;
+
+  s += symAt(gx_or, gy_or, 'or');
+  s += `< text class="sv-num" x = "${gx_or+20}" y = "${gy_or+42}" text - anchor="middle" > CD4071(G1)</text > `;
+
+  // Final S2 / Carry Out from OR -> lamp S2 at (610, 50)
+  s += `< path class="w${hi(d.s2)}" d = "M${gx_or+42},${gy_or+17} H580 V50 H595" /> `;
+
+  /* ============ OUTPUT LAMPS (right) ============ */
+  function drawLamp(cx, cy, v, lbl, weight){
+    const col = v ? 'var(--teal)' : 'var(--surface-2)';
+    const sCol = v ? 'var(--teal)' : 'var(--line-2)';
+    return `< g transform = "translate(${cx},${cy})" >
+      <circle class="lamp" cx="0" cy="0" r="14" style="fill:${col};stroke:${sCol}"/>
+      <text class="sv-bit" x="0" y="5" text-anchor="middle" fill="${v ? '#fff' : 'var(--ink-3)'}">${v}</text>
+      <text class="sv-cap" x="24" y="-2" text-anchor="start">${lbl}</text>
+      <text class="sv-num" x="24" y="13" text-anchor="start">value ${weight}</text>
+    </g > `;
+  }
+
+  s += drawLamp(610, 50,  d.s2, 'S₂ (Carry Out)', '4');
+  s += drawLamp(610, 102, d.s1, 'Sum S₁', '2');
+  s += drawLamp(610, 212, d.s0, 'Sum S₀', '1');
+
+  s += `</svg > `;
+  return s;
+}
+
+function updateSim(){
+  const h = $('sim-svg');
+  if (h) h.innerHTML = simSVG();
+
+  const d = calcAdder();
+
+  // Button labels
+  $('btn-a1').textContent = `A₁ (2): ${ d.a1 } `;
+  $('btn-a0').textContent = `A₀ (1): ${ d.a0 } `;
+  $('btn-b1').textContent = `B₁ (2): ${ d.b1 } `;
+  $('btn-b0').textContent = `B₀ (1): ${ d.b0 } `;
+
+  $('btn-a1').className = d.a1 ? 'prim' : '';
+  $('btn-a0').className = d.a0 ? 'prim' : '';
+  $('btn-b1').className = d.b1 ? 'prim' : '';
+  $('btn-b0').className = d.b0 ? 'prim' : '';
+
+  // Math display
+  $('sim-math').innerHTML = `${ d.aVal } + ${ d.bVal } = <span style="color:var(--teal)">${d.sumVal}</span>`;
+
+  // Binary strings
+  const aBin = `${ d.a1 }${ d.a0 } `;
+  const bBin = `${ d.b1 }${ d.b0 } `;
+  const sumBin = `${ d.s2 }${ d.s1 }${ d.s0 } `;
+  $('sim-bin').innerHTML = `${ aBin }& #x2082; + ${ bBin }& #x2082; = <b>${sumBin}&#x2082;</b>`;
+
+  // Wire interactive clicks to diagram toggles
+  ['tog-a1','tog-a0','tog-b1','tog-b0'].forEach(id => {
+    const el = $(id);
+    if (el) el.onclick = () => {
+      const k = id.replace('tog-','');
+      SIM[k] = SIM[k] ? 0 : 1;
+      updateSim();
+    };
+  });
+}
+
+function initSim(){
+  $('btn-a1').onclick = () => { SIM.a1 = SIM.a1 ? 0 : 1; updateSim(); };
+  $('btn-a0').onclick = () => { SIM.a0 = SIM.a0 ? 0 : 1; updateSim(); };
+  $('btn-b1').onclick = () => { SIM.b1 = SIM.b1 ? 0 : 1; updateSim(); };
+  $('btn-b0').onclick = () => { SIM.b0 = SIM.b0 ? 0 : 1; updateSim(); };
+
+  $('btn-p1').onclick = () => { SIM.a1=0; SIM.a0=1; SIM.b1=0; SIM.b0=1; updateSim(); }; // 1 + 1
+  $('btn-p2').onclick = () => { SIM.a1=1; SIM.a0=0; SIM.b1=0; SIM.b0=1; updateSim(); }; // 2 + 1
+  $('btn-p3').onclick = () => { SIM.a1=1; SIM.a0=0; SIM.b1=1; SIM.b0=1; updateSim(); }; // 2 + 3
+  $('btn-p4').onclick = () => { SIM.a1=1; SIM.a0=1; SIM.b1=1; SIM.b0=1; updateSim(); }; // 3 + 3
+  $('btn-clr').onclick = () => { SIM.a1=0; SIM.a0=0; SIM.b1=0; SIM.b0=0; updateSim(); };
+
+  drawPinouts();
+  drawBB();
+  updateSim();
+}
+
+window.addEventListener('DOMContentLoaded', initSim);
+</script>

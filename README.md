@@ -20,6 +20,7 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 | [Digit Factory](projects/digit-factory/) | Truth tables, minimising, active-low logic | 12+ | 2½ h | CD4081 × 2, CD4071 × 2, CD4070, CD4069 |
 | [Dusk Switch](projects/dusk-switch/) | Sensors, thresholds, hysteresis | 11+ | 2 h | CD4011, CD4093 |
 | [Lucky Dice](projects/lucky-dice/) | Shift registers, feedback, pseudo-random numbers | 11+ | 2 h | CD4093, CD4081, CD4013 × 2, CD4077, CD4071 |
+| [Pocket Adder](projects/pocket-adder/) | Binary arithmetic, half adders, full adders, ripple carry | 11+ | 2–2½ h | CD4070, CD4081, CD4071 |
 
 The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
 time, and the **Logic Vault** puts them to work. Both are combinational — they answer
@@ -44,6 +45,13 @@ stuck: one of the eight states feeds itself and never leaves, and choosing XNOR 
 keeps RESET from walking straight into it. The die is honest about its limits: seven states cannot
 be shared among six faces, so one outcome is "dark, roll again", and from RESET the sequence is the
 same every time. It only looks random because your thumb is slower than the clock.
+
+The **Pocket Adder** answers the question every beginner asks after meeting logic gates: *how do
+1s and 0s actually do math?* It takes two numbers on four switches and adds them using nine discrete
+gates — an XOR for the sum and an AND for the carry in the first column, and a full two-stage adder
+in the second column that accepts the carry rippling across. You watch Shannon's 1937 algebra turn
+into numbers you can add up, and see firsthand why addition takes time in silicon before the answer
+can settle.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is
