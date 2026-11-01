@@ -1,0 +1,960 @@
+<meta charset="utf-8">
+<title>Step Sequencer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --ground:#EEF0EA; --surface:#F8F9F5; --surface-2:#E2E7DD; --sunk:#DDE3D8;
+  --ink:#141C19; --ink-2:#42504A; --ink-3:#6D7B74;
+  --line:#C7CFC2; --line-2:#AFBAA9;
+  --teal:#0E5B50; --teal-2:#0A4038; --teal-soft:#D6E6E1;
+  --copper:#A2551F; --copper-soft:#F2E2D5;
+  --red:#B93A2B; --green:#2C7F3C; --amber:#B98A0E; --violet:#6A4B9E;
+  --w-red:#C93B33; --w-black:#2E2E2E; --w-yellow:#C99A16; --w-blue:#2A6BB8;
+  --w-green:#2C8552; --w-violet:#7A4FB6; --w-orange:#CE7526; --w-white:#8C9490;
+  --shadow:0 1px 2px rgba(20,28,25,.06), 0 6px 18px -8px rgba(20,28,25,.14);
+  --fd:"Futura","Futura PT","Avenir Next","Century Gothic","URW Gothic",system-ui,sans-serif;
+  --fb:Charter,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --fm:Menlo,"SF Mono",Consolas,"DejaVu Sans Mono",monospace;
+}
+:root:not([data-theme=light]){@media (prefers-color-scheme:dark){
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}}
+:root[data-theme=dark]{
+  --ground:#0D1311; --surface:#141C19; --surface-2:#1D2723; --sunk:#101815;
+  --ink:#DEE5DF; --ink-2:#A6B4AC; --ink-3:#7B8983;
+  --line:#2A3833; --line-2:#3A4A44;
+  --teal:#5BC0AB; --teal-2:#8FD8C8; --teal-soft:#15302B;
+  --copper:#DE9560; --copper-soft:#2E2018;
+  --red:#EC6A5B; --green:#5CC671; --amber:#E0B33C; --violet:#A98BE0;
+  --w-red:#E8635C; --w-black:#9AA5A0; --w-yellow:#E4BC48; --w-blue:#5A9ADF;
+  --w-green:#54BF75; --w-violet:#A487E0; --w-orange:#E69A55; --w-white:#C8D0CB;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -10px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 17px/1.62 var(--fb);
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:52rem;margin:0 auto;padding:0 1.5rem}
+h1,h2,h3,h4,.fd{font-family:var(--fd);font-weight:600;letter-spacing:-.01em}
+h2{font-size:1.85rem;line-height:1.15;margin:0 0 .2rem}
+h3{font-size:1.18rem;line-height:1.25;margin:2.2rem 0 .5rem}
+h4{font-size:.98rem;margin:1.6rem 0 .4rem}
+p{margin:0 0 1rem} a{color:var(--teal)}
+code,kbd{font:500 .875em/1.4 var(--fm);background:var(--surface-2);
+  padding:.12em .38em;border-radius:4px}
+kbd{border:1px solid var(--line);box-shadow:0 1px 0 var(--line-2)}
+.lead{font-size:1.16rem;color:var(--ink-2)}
+
+/* ---- header ---- */
+header.top{background:var(--surface);border-bottom:1px solid var(--line);
+  padding:3.4rem 0 2.6rem;margin-bottom:2.5rem}
+.eyebrow{font:600 .72rem/1 var(--fd);letter-spacing:.14em;text-transform:uppercase;
+  color:var(--copper);margin:0 0 1rem}
+header.top h1{font-size:clamp(2.5rem,7vw,3.9rem);line-height:.96;margin:0 0 1rem}
+header.top .lead{max-width:34rem;margin-bottom:1.6rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem 1.6rem;font:500 .8rem/1.4 var(--fd);
+  color:var(--ink-3);border-top:1px solid var(--line);padding-top:1rem}
+.facts b{color:var(--ink);font-weight:600}
+
+/* ---- sections ---- */
+section{margin:0 0 3.4rem;scroll-margin-top:1rem}
+.snum{font:600 .72rem/1 var(--fd);letter-spacing:.14em;color:var(--copper);
+  text-transform:uppercase;display:block;margin-bottom:.5rem}
+.sub{color:var(--ink-3);font-size:.95rem;margin:.1rem 0 1.4rem}
+
+/* ---- blocks ---- */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1.25rem 1.35rem;box-shadow:var(--shadow);margin:0 0 1.2rem}
+.note{border-left:3px solid var(--teal);background:var(--teal-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.note b{font-family:var(--fd)}
+.warn{border-left:3px solid var(--copper);background:var(--copper-soft);
+  border-radius:0 8px 8px 0;padding:.9rem 1.1rem;margin:1.2rem 0;font-size:.95rem}
+.why{font-size:.93rem;color:var(--ink-2);border-top:1px dashed var(--line-2);
+  padding-top:.7rem;margin-top:.9rem}
+.why b{font-family:var(--fd);color:var(--ink)}
+figure{margin:1.4rem 0}
+figcaption{font:400 .84rem/1.5 var(--fb);color:var(--ink-3);margin-top:.6rem;
+  padding-left:.1rem}
+svg{display:block;max-width:100%;height:auto;font-family:var(--fd)}
+.scroller{overflow-x:auto;-webkit-overflow-scrolling:touch}
+
+/* ---- tables ---- */
+table{width:100%;border-collapse:collapse;font-size:.9rem;margin:1rem 0}
+th,td{text-align:left;padding:.44rem .6rem;border-bottom:1px solid var(--line)}
+th{font:600 .74rem/1.3 var(--fd);letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border-bottom:1px solid var(--line-2)}
+td.n,th.n{text-align:center;font-family:var(--fm);font-size:.86rem}
+tbody tr:last-child td{border-bottom:none}
+.tt{max-width:32rem}
+.tt td.n{font-weight:600}
+.on{color:var(--teal);font-weight:700}
+.off{color:var(--ink-3)}
+
+/* ---- steps ---- */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:1.2rem 0}
+ol.steps>li{counter-increment:s;position:relative;padding:0 0 1.15rem 2.6rem;
+  margin:0 0 .1rem;border-left:1px solid var(--line);margin-left:.85rem}
+ol.steps>li:last-child{border-left-color:transparent;padding-bottom:0}
+ol.steps>li::before{content:counter(s);position:absolute;left:-.85rem;top:-.1rem;
+  width:1.7rem;height:1.7rem;border-radius:50%;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);
+  font:600 .8rem/1.62rem var(--fd);text-align:center}
+ol.steps>li>b:first-child{font-family:var(--fd);display:block;margin-bottom:.15rem}
+ul.tick{list-style:none;padding:0;margin:1rem 0}
+ul.tick li{padding-left:1.5rem;position:relative;margin-bottom:.5rem;font-size:.95rem}
+ul.tick li::before{content:"";position:absolute;left:.1rem;top:.55em;width:.5rem;
+  height:.5rem;border:1.5px solid var(--line-2);border-radius:2px}
+
+/* ---- stage banner ---- */
+.stage{border-top:2px solid var(--ink);padding-top:1.1rem;margin-top:3.6rem}
+.stage .tag{display:flex;flex-wrap:wrap;gap:.4rem .9rem;align-items:baseline;
+  font:600 .74rem/1 var(--fd);letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin-bottom:.7rem}
+.stage .tag .no{color:var(--ink);background:var(--surface-2);border-radius:3px;
+  padding:.28rem .5rem}
+
+/* ---- gate grid ---- */
+.gategrid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.gate{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+  padding:1rem;box-shadow:var(--shadow)}
+.gate h4{margin:0 0 .1rem;font-size:1.02rem}
+.gate .chip{font:500 .7rem/1 var(--fm);color:var(--copper);letter-spacing:.03em}
+
+/* ---- simulator ---- */
+.sim{background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:1.1rem;box-shadow:var(--shadow)}
+.simbar{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;margin-top:.9rem;
+  padding-top:.9rem;border-top:1px solid var(--line)}
+.simbar.tight{margin-top:.55rem;padding-top:0;border-top:none}
+button{font:600 .82rem/1 var(--fd);letter-spacing:.02em;color:var(--ink);
+  background:var(--surface-2);border:1px solid var(--line-2);border-radius:7px;
+  padding:.55rem .85rem;cursor:pointer;touch-action:manipulation;user-select:none}
+button:hover{border-color:var(--ink-3)}
+button:active{transform:translateY(1px)}
+button.prim{background:var(--teal);border-color:var(--teal);color:var(--surface)}
+:root[data-theme=dark] button.prim,
+:root:not([data-theme=light]) button.prim{color:#08110F}
+button.sel{border-color:var(--copper);color:var(--copper)}
+.simbar .msg{font:500 .84rem/1.3 var(--fd);color:var(--ink-2);margin-left:auto;
+  text-align:right}
+button:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+.sv-lbl{font-size:10.5px;fill:var(--ink-3);font-weight:500}
+.sv-num{font-size:9.5px;fill:var(--ink-3);font-family:var(--fm)}
+.sv-cap{font-size:11.5px;fill:var(--ink);font-weight:600}
+.sv-bit{font-size:13px;font-family:var(--fm);font-weight:700}
+
+/* step sequencer controls */
+.seq-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:.4rem;margin:1rem 0}
+.step-col{display:flex;flex-direction:column;align-items:center;gap:.35rem;background:var(--surface-2);
+  padding:.6rem .3rem;border-radius:8px;border:1px solid var(--line);transition:border-color .15s}
+.step-col.active{border-color:var(--teal);background:var(--teal-soft)}
+.step-led{width:14px;height:14px;border-radius:50%;background:var(--sunk);
+  border:1.5px solid var(--line-2);transition:all .1s}
+.step-col.active .step-led{background:var(--teal);border-color:var(--teal);
+  box-shadow:0 0 8px var(--teal)}
+.step-pot{writing-mode:bt-lr;-webkit-appearance:slider-vertical;width:18px;height:75px;cursor:pointer}
+.step-note{font:600 .74rem/1 var(--fm);color:var(--ink-2);text-align:center}
+.step-col.active .step-note{color:var(--teal);font-weight:700}
+
+/* ---- misc ---- */
+.two{display:grid;gap:1.1rem;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr))}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.3rem 1rem;font-size:.9rem}
+.kv dt{font:600 .74rem/1.5 var(--fd);letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-3)}
+.kv dd{margin:0}
+footer{border-top:1px solid var(--line);margin-top:4rem;padding:2rem 0 3rem;
+  font-size:.88rem;color:var(--ink-3)}
+@media print{
+  body{background:#fff;font-size:11pt}
+  header.top{padding:1rem 0}
+  .sim,.simbar,.seq-grid{display:none}
+  section{page-break-inside:avoid}
+  .stage{page-break-before:auto}
+}
+</style>
+<style>
+.w{fill:none;stroke:var(--line-2);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.w.live{stroke:var(--teal);stroke-width:2.8}
+.w.clock{stroke:var(--copper);stroke-width:2.6}
+.gsym{fill:var(--surface-2);stroke:var(--ink);stroke-width:1.8;stroke-linejoin:round}
+.blockbox{fill:none;stroke:var(--line-2);stroke-width:1.2;stroke-dasharray:5 4}
+</style>
+
+<header class="top"><div class="wrap">
+  <p class="eyebrow">Analog-digital hybrid synthesis &middot; Project 11</p>
+  <h1>Step<br>Sequencer</h1>
+  <p class="lead">Eight steps, three chips, and an analog synthesizer playing a looping bassline
+  on your bench. A master clock ticks, a decade counter steps through eight trim pots, and a
+  bilateral switch gates the audio into punchy musical notes. No processor, no MIDI, no code &mdash;
+  the circuit is the instrument.</p>
+  <div class="facts">
+    <span><b>Age</b> 11+, with an adult nearby for the first hour</span>
+    <span><b>Time</b> about 2&frac12;&ndash;3 hours, in 5 stages</span>
+    <span><b>Voltage</b> 5 V &mdash; safe on your fingers</span>
+    <span><b>Chips</b> CD40106, CD4017, CD4066</span>
+  </div>
+</div></header>
+
+<main class="wrap">
+
+<section id="idea">
+  <span class="snum">Section 1</span>
+  <h2>What you're building</h2>
+  <p class="sub">Press PLAY to start the synthesizer. Move the sliders to tune the melody.</p>
+
+  <p>The eight sliders below represent the eight trim pots you will plug into the breadboard.
+  A walking playhead triggers each note in turn. Turn on <b>Gate</b> to hear the bilateral switch
+  create crisp, staccato gaps between notes; turn on <b>Slide</b> to hear the pitch glide smoothly
+  between steps like a Roland TB-303.</p>
+
+  <div class="sim">
+    <div class="seq-grid" id="seq-controls"></div>
+    <div id="sim-svg"></div>
+    <div class="simbar">
+      <button id="btn-play" class="prim">▶ Play Audio</button>
+      <button id="btn-step">Step +1</button>
+      <button id="btn-loop">Loop: 8 Steps</button>
+      <button id="btn-gate" class="sel">Gate: ON</button>
+      <button id="btn-slide">Slide: OFF</button>
+      <span class="msg" id="sim-tempo-txt">Tempo: 130 BPM</span>
+    </div>
+    <div class="simbar tight">
+      <span style="font-family:var(--fd);font-size:.82rem;font-weight:600;color:var(--ink-3)">Tempo:</span>
+      <input type="range" id="rng-tempo" min="60" max="300" value="130" style="width:130px;cursor:pointer">
+      <button id="btn-p-acid">Preset: Acid Bass</button>
+      <button id="btn-p-arp">Preset: Arpeggio</button>
+      <button id="btn-p-game">Preset: 8-Bit Hero</button>
+      <span class="msg" id="sim-status" style="font-family:var(--fm)">Playing: Step 1</span>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.7rem">In the browser, this uses the Web Audio API to model
+  the Schmitt-trigger square wave oscillator you are about to build. On your breadboard, the sound
+  comes out of an actual speaker driven by a PN2222 transistor.</p>
+
+  <div class="note"><b>The whole idea in one line.</b> A digital counter walks a high voltage
+  across eight positions one at a time. Each position picks a different resistance, and that
+  resistance dictates the vibration speed of an audio oscillator. Logic handles the rhythm;
+  analog physics handles the pitch.</div>
+</section>
+
+<section id="how">
+  <span class="snum">Section 2</span>
+  <h2>How chips make music</h2>
+  <p class="sub">The three blocks inside every analog sequencer.</p>
+
+  <p>Before microprocessors existed, electronic musicians made songs with <b>analog sequencers</b>.
+  Famous instruments like the Roland TB-303 (the sound of acid house) and the Moog modular
+  sequencer relied on three simple functional blocks:</p>
+
+  <ol class="steps">
+    <li><b>The Clock (Tempo):</b> A slow oscillator (1 to 10 Hz) ticking steadily like a metronome.
+    In our circuit, one inverter of the <b>CD40106</b> generates this heartbeat.</li>
+    <li><b>The Distributor (Step Counter):</b> A <b>CD4017 decade counter</b> that receives each
+    clock pulse and advances a single HIGH output along eight pins in order (0 &rarr; 7).</li>
+    <li><b>The Voice (Pitch &amp; Gating):</b> A fast oscillator (100 to 1,000 Hz) whose frequency
+    depends on a timing resistor. The active step feeds current through its trim pot, commanding
+    the oscillator to sing that note. A <b>CD4066 bilateral switch</b> acts as an electronic gate,
+    opening only during the beat so each note hits cleanly.</li>
+  </ol>
+
+  <div class="why"><b>Why this is called an "analog-digital hybrid".</b> The clock and counter
+  are strictly digital &mdash; 1s and 0s counting in binary sequence. But the pitch network is
+  purely analog: a continuous range of resistance steering continuous voltage. Combining digital
+  timing with analog tone is the foundation of electronic music.</div>
+</section>
+
+<section id="counter">
+  <span class="snum">Section 3</span>
+  <h2>The 16-pin trap &amp; modulo-8 reset</h2>
+  <p class="sub">Why the CD4017 is different from every other chip in this lab.</p>
+
+  <p>The <b>CD4017</b> is the only chip here with <b>16 pins</b>. Almost every logic chip puts
+  power on pin 14 and ground on pin 7. The CD4017 puts <b>+ on pin 16</b> and <b>&minus; on pin 8</b>.
+  If you treat it like a 14-pin chip, pin 14 gets +5 V &mdash; which connects supply power straight
+  into the clock input, freezing the counter dead.</p>
+
+  <h3>Making an 8-step loop</h3>
+  <p>The CD4017 is designed to count to ten (Q0 through Q9). We want an 8-step musical loop
+  (steps 0 to 7). How do we make a 10-step counter stop at 8? We connect <b>output Q8 (pin 9)</b>
+  straight to <b>RESET (pin 15)</b>!</p>
+
+  <p>When the 8th beat ends, the chip switches to count 8 for roughly 100 nanoseconds &mdash; just
+  long enough for pin 9 to pull pin 15 HIGH, instantaneously snapping the counter back to count 0.
+  To human ears, the reset is completely invisible: you hear a seamless, looping 8-step melody.</p>
+
+  <div class="note"><b>The 4-step variation.</b> Want a short 4-step techno loop? Disconnect pin 15
+  from pin 9 and connect it to <b>pin 10 (Q4)</b> instead. Now the counter resets on step 4,
+  looping steps 0, 1, 2, 3 endlessly.</div>
+</section>
+
+<section id="chips">
+  <span class="snum">Library</span>
+  <h2>The three chips and their pinouts</h2>
+  <p class="sub">Verified against Texas Instruments datasheets.</p>
+
+  <div id="pinouts"></div>
+
+  <div class="warn"><b>The CD4017 pin scramble.</b> Notice that the CD4017 outputs are not
+  in numerical order along the legs of the chip: step 0 is pin 3, step 1 is pin 2, step 2 is pin 4,
+  and step 5 is all the way over on pin 1! Do not guess where an output sits; use the pin table in Stage 2.</div>
+</section>
+
+<section id="breadboard">
+  <span class="snum">Library</span>
+  <h2>The breadboard diagram</h2>
+  <p class="sub">How the internal clips join your parts.</p>
+  <figure>
+    <div id="bb-anatomy"></div>
+    <figcaption>Five holes in a column are electrically connected. Holes across the center channel
+    are separated.</figcaption>
+  </figure>
+</section>
+
+<section class="stage" id="stage1">
+  <div class="tag"><span class="no">Stage 1</span><span>The Heartbeat (Tempo Clock)</span>
+    <span>~30 min</span></div>
+  <h2>Start with the master clock</h2>
+  <p class="sub">One Schmitt inverter, a 1 µF capacitor, and a tempo knob that sets the beat.</p>
+
+  <p>Place the <b>CD40106</b> on the left of your board. We wire Inverter 1 (pins 1 and 2) with
+  a timing capacitor and potentiometer. When power goes on, a blue or teal LED will blink steadily.</p>
+
+  <h3>Power rails and CD40106</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Supply +</td><td>Top red rail (+)</td><td>Main 5 V power</td></tr>
+      <tr><td>Supply &minus;</td><td>Top blue rail (&minus;)</td><td>Main ground</td></tr>
+      <tr><td>Top red rail</td><td>Bottom red rail</td><td>Link rails</td></tr>
+      <tr><td>Top blue rail</td><td>Bottom blue rail</td><td>Link rails</td></tr>
+      <tr><td>100 &micro;F capacitor</td><td>Across + and &minus; rails</td><td>Bulk smoothing (stripe to &minus;)</td></tr>
+      <tr><td><b>CD40106 pin 14</b></td><td>+ rail</td><td>Chip power</td></tr>
+      <tr><td><b>CD40106 pin 7</b></td><td>&minus; rail</td><td>Chip ground</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>CD40106 pin 14 to pin 7</td><td>Local decoupling</td></tr>
+      <tr><td>CD40106 pins 11, 13</td><td>&minus; rail</td><td>Tie unused inputs</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Tempo oscillator and beat indicator</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD40106 pin 1</td><td>1 &micro;F capacitor positive leg</td><td>Timing node</td></tr>
+      <tr><td>1 &micro;F negative leg</td><td>&minus; rail</td><td>Timing capacitor (stripe to &minus;)</td></tr>
+      <tr><td>CD40106 pin 2 (OUT 1)</td><td>100 k&Omega; pot (outer leg)</td><td>Feedback path</td></tr>
+      <tr><td>100 k&Omega; pot (middle wiper)</td><td>CD40106 pin 1</td><td>Variable tempo resistance</td></tr>
+      <tr><td>CD40106 pin 2</td><td>Tempo LED anode (long leg)</td><td>Beat lamp</td></tr>
+      <tr><td>Tempo LED cathode</td><td>220 &Omega; resistor to &minus; rail</td><td>Limits LED current</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Test Stage 1</h3>
+  <p>Power on. The tempo LED should blink regularly. Turn the potentiometer knob: turned one way,
+  the LED flashes slowly like a resting heartbeat (~60 BPM); turned the other way, it flashes
+  rapidly (~250 BPM).</p>
+
+  <div class="why"><b>What this is really for.</b> Every sequencer, drum machine, and DAW needs
+  a clock generator. In modern studios, MIDI clock pulses send 24 ticks per quarter note so all
+  your synthesizers play in tight synchronization. Here, CD40106 pin 2 is your master clock wire.</div>
+</section>
+
+<section class="stage" id="stage2">
+  <div class="tag"><span class="no">Stage 2</span><span>The 8-Step Walk (CD4017)</span>
+    <span>~40 min</span></div>
+  <h2>Watch the playhead chase across eight lamps</h2>
+  <p class="sub">Add the 16-pin counter, loop step 8 to reset, and see the sequence march in line.</p>
+
+  <p>Place the <b>CD4017</b> beside the CD40106. Wire power to <b>pin 16</b> and ground to <b>pin 8</b>.
+  Connect the tempo clock to pin 14, and wire eight LEDs in a neat row.</p>
+
+  <h3>CD4017 setup</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>CD4017 pin 16</b></td><td>+ rail</td><td><b>Power — not pin 14!</b></td></tr>
+      <tr><td><b>CD4017 pin 8</b></td><td>&minus; rail</td><td><b>Ground — not pin 7!</b></td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>CD4017 pin 16 to pin 8</td><td>Local decoupling</td></tr>
+      <tr><td>CD40106 pin 2 (Clock)</td><td>CD4017 pin 14 (CLOCK)</td><td>Tempo advances the counter</td></tr>
+      <tr><td>CD4017 pin 13</td><td>&minus; rail</td><td>Clock inhibit off (allow count)</td></tr>
+      <tr><td><b>CD4017 pin 9 (Q8)</b></td><td><b>CD4017 pin 15 (RESET)</b></td><td><b>Reset on step 8 &rarr; 8-step loop</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Wire the 8 step LEDs</h3>
+  <p>The outputs are scrambled physically, so wire them by <b>count order</b>:</p>
+  <div class="scroller"><table>
+    <thead><tr><th>Step</th><th>Output</th><th>Pin</th><th>LED wiring</th></tr></thead>
+    <tbody>
+      <tr><td>Step 1</td><td>Q0</td><td><b>Pin 3</b></td><td>Pin 3 &rarr; LED 1 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 2</td><td>Q1</td><td><b>Pin 2</b></td><td>Pin 2 &rarr; LED 2 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 3</td><td>Q2</td><td><b>Pin 4</b></td><td>Pin 4 &rarr; LED 3 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 4</td><td>Q3</td><td><b>Pin 7</b></td><td>Pin 7 &rarr; LED 4 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 5</td><td>Q4</td><td><b>Pin 10</b></td><td>Pin 10 &rarr; LED 5 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 6</td><td>Q5</td><td><b>Pin 1</b></td><td>Pin 1 &rarr; LED 6 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 7</td><td>Q6</td><td><b>Pin 5</b></td><td>Pin 5 &rarr; LED 7 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+      <tr><td>Step 8</td><td>Q7</td><td><b>Pin 6</b></td><td>Pin 6 &rarr; LED 8 anode &rarr; 220 &Omega; &rarr; &minus;</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Test Stage 2</h3>
+  <p>Power on. The eight LEDs should chase from 1 to 8 in a smooth, continuous loop.
+  Adjust the tempo pot to see the playhead speed up or slow down. If the lights skip or jump,
+  re-check the pin table above.</p>
+
+  <div class="why"><b>What this is really for.</b> This is the visual display of the Roland TR-808
+  drum machine. In 1980, the 808 let musicians program beats by tapping buttons along a 16-step
+  chasing LED line just like this. Every hip-hop and electronic track since has used that visual workflow.</div>
+</section>
+
+<section class="stage" id="stage3">
+  <div class="tag"><span class="no">Stage 3</span><span>Making Sound (The Audio Voice)</span>
+    <span>~30 min</span></div>
+  <h2>Build the pitch oscillator and speaker driver</h2>
+  <p class="sub">A fast Schmitt inverter and an NPN transistor that vibrates an 8 Ω speaker.</p>
+
+  <p>Now we turn electricity into sound. Inverter 2 on the CD40106 (pins 3 and 4) will oscillate
+  at hundreds of cycles per second &mdash; audible audio frequency. A <b>PN2222 transistor</b>
+  amplifies the weak CMOS output to drive your passive speaker.</p>
+
+  <h3>Audio oscillator and speaker wiring</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>CD40106 pin 3</td><td>0.1 &micro;F ceramic ("104")</td><td>Audio timing node</td></tr>
+      <tr><td>0.1 &micro;F other leg</td><td>&minus; rail</td><td>Audio timing capacitor</td></tr>
+      <tr><td>CD40106 pin 3</td><td>1 M&Omega; resistor to CD40106 pin 4</td><td>Keeps input from floating</td></tr>
+      <tr><td>CD40106 pin 3</td><td>47 k&Omega; resistor to CD40106 pin 4</td><td>Temporary pitch resistor for testing</td></tr>
+      <tr><td>CD40106 pin 4 (OUT 2)</td><td>10 k&Omega; resistor</td><td>Protects transistor base</td></tr>
+      <tr><td>10 k&Omega; other leg</td><td>PN2222 Base (middle leg)</td><td>Transistor audio input</td></tr>
+      <tr><td>PN2222 Emitter (left leg)</td><td>&minus; rail</td><td>Ground reference</td></tr>
+      <tr><td>PN2222 Collector (right leg)</td><td>Speaker negative wire</td><td>Transistor switches speaker current</td></tr>
+      <tr><td>Speaker positive wire</td><td><b>100 &Omega; resistor</b> to + rail</td><td><b>Mandatory current limit &mdash; protects transistor</b></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="warn"><b>Do not omit the 100 Ω resistor.</b> Without it, the speaker coil draws
+  over 300 mA, which will scorch your transistor and drop the battery voltage so low that the logic
+  chips reset. The 100 &Omega; keeps the volume pleasant and the transistor cool.</div>
+
+  <h3>Test Stage 3</h3>
+  <p>Power on. You should hear a steady buzzing tone through the speaker. Touch a 10 k&Omega; resistor
+  in parallel across the 47 k&Omega; &mdash; the pitch jumps higher! Remove the temporary 47 k&Omega;
+  resistor when verified.</p>
+
+  <div class="why"><b>Why a square wave sounds buzzy.</b> A pure musical flute note is a smooth
+  sine wave. A logic inverter output can only be full ON or full OFF, creating a sharp square wave.
+  Square waves contain strong odd harmonics &mdash; the same rich, buzzy tone heard in 8-bit Nintendo
+  game soundtracks and distorted synthesizer leads.</div>
+</section>
+
+<section class="stage" id="stage4">
+  <div class="tag"><span class="no">Stage 4</span><span>Tuning the Melody (The 8 Pots)</span>
+    <span>~45 min</span></div>
+  <h2>Eight trim pots meet on a common pitch bus</h2>
+  <p class="sub">How digital step outputs steer analog resistance without colliding.</p>
+
+  <p>We want each step to set its own pitch. But if all eight outputs were wired together, they
+  would short-circuit each other! To solve this, each step's trim pot wiper passes through an
+  <b>isolation diode (1N4148)</b> before joining the common <b>Pitch Bus</b>.</p>
+
+  <p>Only the currently active step is at 5 V; the other seven are at 0 V. The diodes allow current
+  to flow *only* from the active step into the pitch bus, while blocking current from leaking backwards
+  into the seven inactive steps!</p>
+
+  <h3>Wiring the 8 pitch pots</h3>
+  <p>For each step 1 through 8:</p>
+  <ol class="steps">
+    <li>Connect the pot's left leg to the CD4017 step output pin.</li>
+    <li>Connect the pot's middle wiper to the anode of a 1N4148 diode.</li>
+    <li>Connect the diode's cathode (marked with a <b>black stripe</b>) to a common breadboard row:
+    the <b>Pitch Bus</b>.</li>
+    <li>Connect the Pitch Bus directly to <b>CD40106 pin 3</b> (the audio timing node).</li>
+  </ol>
+
+  <h3>Test Stage 4</h3>
+  <p>Power on! As the LEDs chase 1 through 8, the speaker plays an 8-note sequence. Take a small
+  screwdriver or use your fingers to turn the trim pots: you can tune each note individually to
+  compose your own musical melody!</p>
+
+  <div class="why"><b>Control Voltage (CV).</b> In 1964, Bob Moog revolutionized music by using
+  variable voltages to control audio pitch. Before digital protocols like MIDI existed, synthesizers
+  were connected using "CV and Gate" patch cables &mdash; the exact principle you just built with
+  potentiometers and diodes.</div>
+</section>
+
+<section class="stage" id="stage5">
+  <div class="tag"><span class="no">Stage 5</span><span>Analog Gating &amp; Slide (CD4066)</span>
+    <span>~35 min</span></div>
+  <h2>The quad bilateral switch adds rhythm and glide</h2>
+  <p class="sub">Turn continuous drone into punchy staccato bass and classic acid slides.</p>
+
+  <p>Right now, your sequencer sounds like a siren &mdash; the pitch slides continuously from note
+  to note without stopping. Real music has <b>rhythm</b>: space between the notes. We will use the
+  <b>CD4066 bilateral switch</b> to gate the audio on and off with the clock, and add an analog
+  portamento slide.</p>
+
+  <h3>CD4066 setup and gating</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td><b>CD4066 pin 14</b></td><td>+ rail</td><td>Switch power</td></tr>
+      <tr><td><b>CD4066 pin 7</b></td><td>&minus; rail</td><td>Switch ground</td></tr>
+      <tr><td>0.1 &micro;F ("104")</td><td>CD4066 pin 14 to pin 7</td><td>Local decoupling</td></tr>
+      <tr><td>CD4066 pin 12</td><td>&minus; rail</td><td>Tie unused Switch D control</td></tr>
+      <tr><td>CD40106 pin 4 (Audio Out)</td><td>CD4066 pin 1 (Switch A)</td><td>Audio enters bilateral switch</td></tr>
+      <tr><td>CD4066 pin 2 (Switch A)</td><td>10 k&Omega; resistor to PN2222 base</td><td>Switched audio feeds speaker</td></tr>
+      <tr><td>CD40106 pin 2 (Clock)</td><td>CD4066 pin 13 (Control A)</td><td><b>Clock pulses open the audio gate</b></td></tr>
+      <tr><td>CD4066 pin 13</td><td>10 k&Omega; resistor to &minus; rail</td><td>Pull-down keeps gate closed when clock is low</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>The analog slide switch (Switch C)</h3>
+  <div class="scroller"><table>
+    <thead><tr><th>From</th><th>To</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Pitch Bus</td><td>CD4066 pin 8 (Switch C)</td><td>Switch connects to pitch node</td></tr>
+      <tr><td>CD4066 pin 9 (Switch C)</td><td>1 &micro;F capacitor (positive leg)</td><td>Slide capacitor</td></tr>
+      <tr><td>1 &micro;F negative leg</td><td>&minus; rail</td><td>Capacitor ground (stripe to &minus;)</td></tr>
+      <tr><td>CD4066 pin 6 (Control C)</td><td>Slide jumper (to + or &minus;)</td><td>HIGH = Slide ON, LOW = Slide OFF</td></tr>
+    </tbody>
+  </table></div>
+
+  <h3>Test Stage 5</h3>
+  <ul class="tick">
+    <li><b>With Gate active:</b> The notes no longer slur together. Each step punches with a crisp,
+    rhythmic attack, followed by silence before the next note.</li>
+    <li><b>Engage Slide (pin 6 to +):</b> The capacitor slows down how fast the voltage changes
+    between steps. Notes glide smoothly into each other like a trombone or an acid bass synth!</li>
+  </ul>
+
+  <div class="why"><b>The Roland TB-303 and acid house.</b> In 1982, Roland released the TB-303
+  Bass Line. It was a commercial flop until Chicago musicians in the late 1980s discovered that
+  cranking the tempo and switching between staccato gates and analog slides produced a wild,
+  squelchy groove. That single combination of a step counter, bilateral gate, and slide capacitor
+  birthed acid house music.</div>
+</section>
+
+<section id="trouble">
+  <span class="snum">Section 4</span>
+  <h2>When it doesn't work</h2>
+  <p class="sub">Three chips and eight potentiometers give plenty of places for loose wires.</p>
+
+  <div class="scroller"><table>
+    <thead><tr><th>What you hear or see</th><th>Almost always</th></tr></thead>
+    <tbody>
+      <tr><td>Nothing lights and no sound</td><td>Power not reaching the chips. Remember the CD4017 wants <b>+ on pin 16</b> and <b>&minus; on pin 8</b>.</td></tr>
+      <tr><td>Steady high-pitched squeal that never steps</td><td>Tempo clock is not oscillating. Check the 1 &micro;F capacitor and 100 k&Omega; pot on CD40106 pins 1 and 2.</td></tr>
+      <tr><td>LEDs chase, but pitch never changes</td><td>Diodes are in backwards or missing. The black stripe must face the common Pitch Bus.</td></tr>
+      <tr><td>Counter stops on step 8 and freezes</td><td>Pin 9 (Q8) is not reaching pin 15 (RESET), or pin 13 (CLOCK INHIBIT) is floating instead of grounded.</td></tr>
+      <tr><td>Notes drone continuously without rhythmic gaps</td><td>CD4066 pin 13 is stuck HIGH. Connect pin 13 to clock pin 2 through the 10 k&Omega; pull-down.</td></tr>
+      <tr><td>Buzzer is silent, but LEDs sequence normally</td><td>Active buzzer used instead of passive (test across 5 V battery), or PN2222 transistor is backwards (flat side faces you: E-B-C).</td></tr>
+      <tr><td>Transistor or chips feel warm</td><td>The mandatory 100 &Omega; speaker resistor was omitted. <b>Unplug immediately and insert the 100 &Omega;.</b></td></tr>
+      <tr><td>Melody steps in a confusing, jumbled order</td><td>The CD4017 outputs are scrambled on the physical package. Follow the pin order table: 3, 2, 4, 7, 10, 1, 5, 6.</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+</main>
+
+<footer><div class="wrap">
+  <p>Bench sheets: <a href="README.md">README.md</a> for wire lists and pinouts;
+  <a href="worksheet.md">worksheet.md</a> for tempo and pitch exercises.
+  All pinouts verified against Texas Instruments datasheets.</p>
+</div></footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const SH = 'stroke-linecap="round" stroke-linejoin="round"';
+
+/* ============ DIP pinouts ============ */
+const IN='in', OUT='out', PWR='pwr', GND='gnd', SIG='sig';
+const CHIPS = [
+  {name:'CD40106', sub:'Hex Schmitt NOT — clocks & oscillators', pins:14, p:{
+    1:['in 1',IN], 14:['+  VDD',PWR],
+    2:['out 1',OUT], 13:['in 6',IN],
+    3:['in 2',IN], 12:['out 6',OUT],
+    4:['out 2',OUT], 11:['in 5',IN],
+    5:['in 3',IN], 10:['out 5',OUT],
+    6:['out 3',OUT], 9:['in 4',IN],
+    7:['−  VSS',GND], 8:['out 4',OUT]}},
+  {name:'CD4017', sub:'Decade counter · 16 PINS (+ on 16, − on 8)', pins:16, p:{
+    1:['count 5',OUT], 16:['+  VDD (pin 16)',PWR],
+    2:['count 1',OUT], 15:['RESET (pin 15)',IN],
+    3:['count 0',OUT], 14:['CLOCK IN',IN],
+    4:['count 2',OUT], 13:['INHIBIT',IN],
+    5:['count 6',OUT], 12:['carry out',OUT],
+    6:['count 7',OUT], 11:['count 9',OUT],
+    7:['count 3',OUT], 10:['count 4',OUT],
+    8:['−  VSS (pin 8)',GND], 9:['count 8 &rarr; reset',OUT]}},
+  {name:'CD4066', sub:'Quad bilateral switch — note gate & slide', pins:14, p:{
+    1:['switch A',SIG], 14:['+  VDD',PWR],
+    2:['switch A',SIG], 13:['control A (Gate)',IN],
+    3:['switch B',SIG], 12:['control D',IN],
+    4:['switch B',SIG], 11:['switch D',SIG],
+    5:['control B',IN], 10:['switch D',SIG],
+    6:['control C (Slide)',IN], 9:['switch C',SIG],
+    7:['−  VSS',GND], 8:['switch C',SIG]}}
+];
+const ROLECOL = {in:'var(--ink-2)', out:'var(--teal)', pwr:'var(--w-red)',
+  gnd:'var(--w-blue)', sig:'var(--copper)'};
+
+function dipSVG(chip){
+  const n = chip.pins, half = n/2, pitch = 23, bw = 105, bx = 95, top = 22;
+  const H = top + half*pitch + 24, W = 320;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${chip.name} pinout">
+    <rect x="${bx}" y="${top}" width="${bw}" height="${half*pitch}" rx="4"
+      fill="var(--surface-2)" stroke="var(--line-2)" stroke-width="1.4"/>
+    <path d="M${bx+bw/2-9},${top} a9,9 0 0 0 18,0" fill="var(--sunk)"
+      stroke="var(--line-2)" stroke-width="1.4"/>`;
+  for (let i = 1; i <= n; i++){
+    const left = i <= half;
+    const idx  = left ? i-1 : n-i;
+    const y    = top + idx*pitch + pitch/2;
+    const [lbl, role] = chip.p[i];
+    const col  = ROLECOL[role] || 'var(--ink-2)';
+    const x1 = left ? bx : bx + bw, x2 = left ? bx - 18 : bx + bw + 18;
+    s += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="${col}" stroke-width="2" ${SH}/>`;
+    s += `<text class="sv-num" x="${left ? bx+6 : bx+bw-6}" y="${y+3.4}"
+      text-anchor="${left ? 'start' : 'end'}">${i}</text>`;
+    s += `<text class="sv-lbl" x="${left ? x2-5 : x2+5}" y="${y+3.5}"
+      text-anchor="${left ? 'end' : 'start'}" fill="${col}"
+      ${role===OUT||role===PWR ? 'font-weight="700"' : ''}>${lbl}</text>`;
+  }
+  s += `<text class="sv-cap" x="${W/2}" y="${H-5}" text-anchor="middle">${chip.name}</text>`;
+  return s + '</svg>';
+}
+
+function drawPinouts(){
+  const host = $('pinouts'); if (!host) return;
+  host.innerHTML = '<div class="gategrid">' + CHIPS.map(c =>
+    `<figure class="gate" style="margin:0"><h4>${c.name}</h4>
+     <span class="chip">${c.sub}</span>
+     <div class="scroller">${dipSVG(c)}</div></figure>`).join('') + '</div>';
+}
+
+/* ============ breadboard anatomy ============ */
+function bbSVG(){
+  const P = 19, C = 14, LM = 44, TM = 14;
+  const ROWS = {'+':0.5,'−':1.5,A:3.1,B:4.1,C:5.1,D:6.1,E:7.1,
+                F:8.8,G:9.8,H:10.8,I:11.8,J:12.8,'−2':14.4,'+2':15.4};
+  const hx = c => LM + (c-1)*P + P/2, hy = r => TM + ROWS[r]*P + P/2;
+  const W = LM + C*P + 128, H = hy('+2') + 26;
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="How breadboard holes are connected">
+    <rect x="${LM-13}" y="${TM}" width="${C*P+22}" height="${hy('+2')+11-TM}" rx="6" style="fill:var(--surface);stroke:var(--line-2)" stroke-width="1.3"/>
+    <rect x="${LM-13}" y="${hy('E')+10}" width="${C*P+22}" height="${hy('F')-hy('E')-20}" fill="var(--sunk)"/>`;
+  const band = (c, r1, r2, col) => `<rect x="${hx(c)-8.5}" y="${hy(r1)-8.5}" width="17" height="${hy(r2)-hy(r1)+17}" rx="4" fill="${col}" opacity=".5"/>`;
+  s += band(4,'A','E','var(--teal-soft)') + band(4,'F','J','var(--copper-soft)');
+  s += `<rect x="${LM-9}" y="${hy('+')-8.5}" width="${C*P+14}" height="17" rx="4" fill="var(--w-red)" opacity=".16"/>`;
+  for (const [r,col,dy] of [['+','var(--w-red)',-11],['−','var(--w-blue)',11],
+                            ['−2','var(--w-blue)',-11],['+2','var(--w-red)',11]])
+    s += `<line x1="${LM-7}" y1="${hy(r)+dy}" x2="${LM+C*P-5}" y2="${hy(r)+dy}" stroke="${col}" stroke-width="1.5" opacity=".8"/>`;
+  for (const r of Object.keys(ROWS)){
+    for (let c = 1; c <= C; c++)
+      s += `<rect x="${hx(c)-3.6}" y="${hy(r)-3.6}" width="7.2" height="7.2" rx="1.6" style="fill:var(--sunk);stroke:var(--line)" stroke-width=".8"/>`;
+    s += `<text class="sv-num" x="${LM-19}" y="${hy(r)+3.3}" text-anchor="middle">${r.replace('2','')}</text>`;
+  }
+  const RX = LM + C*P + 12;
+  const call = (x, y, t) => `<text class="sv-lbl" x="${x}" y="${y}">${t}</text>`;
+  s += `<line x1="${hx(4)+10}" y1="${hy('C')}" x2="${RX-6}" y2="${hy('B')}" stroke="var(--teal)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('B')-4, 'these five holes') + call(RX, hy('B')+9, 'are one wire');
+  s += `<line x1="${hx(4)+10}" y1="${hy('H')}" x2="${RX-6}" y2="${hy('I')}" stroke="var(--copper)" stroke-width="1.2" stroke-dasharray="3 3"/>`
+    + call(RX, hy('I')-4, 'so are these —') + call(RX, hy('I')+9, 'not joined across channel');
+  s += call(RX, hy('+')+3, '+ rail, full length') + call(RX, hy('−')+3, '− rail, full length');
+  return s + '</svg>';
+}
+function drawBB(){
+  const h = $('bb-anatomy');
+  if (h) h.innerHTML = '<div class="scroller">' + bbSVG() + '</div>';
+}
+
+/* ============ STEP SEQUENCER & WEB AUDIO SYNTH ============ */
+const NOTES = [
+  {n:'C3', f:130.81}, {n:'D3', f:146.83}, {n:'E3', f:164.81}, {n:'F3', f:174.61},
+  {n:'G3', f:196.00}, {n:'A3', f:220.00}, {n:'B3', f:246.94}, {n:'C4', f:261.63},
+  {n:'D4', f:293.66}, {n:'E4', f:329.63}, {n:'G4', f:392.00}, {n:'A4', f:440.00}
+];
+
+const SEQ = {
+  playing: false,
+  step: 0,
+  maxSteps: 8,
+  tempo: 130, // BPM
+  gateOn: true,
+  slideOn: false,
+  pitches: [0, 4, 7, 9, 7, 4, 2, 0] // indices into NOTES
+};
+
+let audioCtx = null, osc = null, gainNode = null, timerId = null;
+
+function initAudio(){
+  if (audioCtx) return;
+  const AudioContext = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContext) return;
+  audioCtx = new AudioContext();
+
+  osc = audioCtx.createOscillator();
+  osc.type = 'square'; // Schmitt trigger inverter is a square wave
+
+  gainNode = audioCtx.createGain();
+  gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+
+  osc.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+  osc.start();
+}
+
+function playNote(freq){
+  if (!audioCtx) return;
+  const now = audioCtx.currentTime;
+  const stepDuration = 60 / SEQ.tempo;
+
+  if (SEQ.slideOn){
+    osc.frequency.setTargetAtTime(freq, now, 0.04);
+  } else {
+    osc.frequency.setValueAtTime(freq, now);
+  }
+
+  if (SEQ.gateOn){
+    // Staccato note gate: quick attack, holds for 60% of step, then silences
+    const gateLen = stepDuration * 0.65;
+    gainNode.gain.cancelScheduledValues(now);
+    gainNode.gain.setValueAtTime(0.18, now);
+    gainNode.gain.setValueAtTime(0.18, now + gateLen);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + gateLen + 0.03);
+  } else {
+    // Continuous drone: always un-muted
+    gainNode.gain.cancelScheduledValues(now);
+    gainNode.gain.setValueAtTime(0.16, now);
+  }
+}
+
+function stopAudio(){
+  if (gainNode && audioCtx){
+    gainNode.gain.cancelScheduledValues(audioCtx.currentTime);
+    gainNode.gain.setValueAtTime(0, audioCtx.currentTime);
+  }
+}
+
+function advanceStep(){
+  SEQ.step = (SEQ.step + 1) % SEQ.maxSteps;
+  const noteIdx = SEQ.pitches[SEQ.step];
+  const targetNote = NOTES[noteIdx];
+
+  if (SEQ.playing){
+    playNote(targetNote.f);
+  }
+  updateUI();
+}
+
+function startSequencer(){
+  initAudio();
+  if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+
+  SEQ.playing = true;
+  $('btn-play').textContent = '⏹ Stop Audio';
+  $('btn-play').classList.add('sel');
+
+  const stepDurationMs = (60 / SEQ.tempo) * 1000;
+  if (timerId) clearInterval(timerId);
+  timerId = setInterval(advanceStep, stepDurationMs);
+
+  const noteIdx = SEQ.pitches[SEQ.step];
+  playNote(NOTES[noteIdx].f);
+  updateUI();
+}
+
+function stopSequencer(){
+  SEQ.playing = false;
+  $('btn-play').textContent = '▶ Play Audio';
+  $('btn-play').classList.remove('sel');
+  if (timerId) { clearInterval(timerId); timerId = null; }
+  stopAudio();
+  updateUI();
+}
+
+function renderControls(){
+  const host = $('seq-controls');
+  if (!host) return;
+  host.innerHTML = '';
+  for (let i = 0; i < 8; i++){
+    const col = document.createElement('div');
+    col.className = 'step-col' + (SEQ.step === i ? ' active' : '');
+    col.id = 'scol-' + i;
+
+    const led = document.createElement('div');
+    led.className = 'step-led';
+
+    const lbl = document.createElement('span');
+    lbl.className = 'step-note';
+    lbl.textContent = `S${i+1}`;
+
+    const pot = document.createElement('input');
+    pot.type = 'range';
+    pot.className = 'step-pot';
+    pot.min = 0;
+    pot.max = NOTES.length - 1;
+    pot.value = SEQ.pitches[i];
+    pot.oninput = e => {
+      SEQ.pitches[i] = parseInt(e.target.value, 10);
+      updateUI();
+      if (SEQ.step === i && SEQ.playing){
+        playNote(NOTES[SEQ.pitches[i]].f);
+      }
+    };
+
+    const ntxt = document.createElement('span');
+    ntxt.className = 'step-note';
+    ntxt.id = 'snote-' + i;
+    ntxt.textContent = NOTES[SEQ.pitches[i]].n;
+
+    col.appendChild(led);
+    col.appendChild(lbl);
+    col.appendChild(pot);
+    col.appendChild(ntxt);
+    host.appendChild(col);
+  }
+}
+
+function updateUI(){
+  for (let i = 0; i < 8; i++){
+    const col = $('scol-' + i);
+    const ntxt = $('snote-' + i);
+    if (col){
+      col.className = 'step-col' + (SEQ.step === i ? ' active' : '');
+      if (col.style) col.style.opacity = (i >= SEQ.maxSteps) ? '0.35' : '1';
+    }
+    if (ntxt) ntxt.textContent = NOTES[SEQ.pitches[i]].n;
+  }
+
+  const curNote = NOTES[SEQ.pitches[SEQ.step]];
+  $('sim-status').innerHTML = `Step <b>${SEQ.step + 1}</b>: <b>${curNote.n}</b> (${Math.round(curNote.f)} Hz)`;
+  drawSimDiagram();
+}
+
+function drawSimDiagram(){
+  const host = $('sim-svg');
+  if (!host) return;
+
+  const curStep = SEQ.step;
+  const isPlaying = SEQ.playing;
+  const curFreq = Math.round(NOTES[SEQ.pitches[curStep]].f);
+
+  let s = `<svg viewBox="0 0 680 160" role="img" aria-label="Step Sequencer Signal Flow Diagram">`;
+
+  // Blocks
+  s += `<rect class="blockbox" x="20" y="24" width="130" height="112" rx="8"/>`;
+  s += `<text class="sv-cap" x="85" y="44" text-anchor="middle" fill="var(--copper)">CD40106</text>`;
+  s += `<text class="sv-lbl" x="85" y="62" text-anchor="middle">Tempo Clock</text>`;
+  s += `<circle cx="85" cy="95" r="11" fill="${isPlaying ? 'var(--teal)' : 'var(--surface-2)'}" stroke="var(--teal)"/>`;
+  s += `<text class="sv-bit" x="85" y="100" text-anchor="middle" fill="${isPlaying ? '#fff' : 'var(--ink-3)'}">${isPlaying ? 'CLK' : 'OFF'}</text>`;
+
+  s += `<path class="w ${isPlaying ? 'clock' : ''}" d="M150,95 H200"/>`;
+
+  s += `<rect class="blockbox" x="200" y="24" width="150" height="112" rx="8"/>`;
+  s += `<text class="sv-cap" x="275" y="44" text-anchor="middle" fill="var(--teal)">CD4017</text>`;
+  s += `<text class="sv-lbl" x="275" y="62" text-anchor="middle">8-Step Counter</text>`;
+  s += `<text class="sv-bit" x="275" y="98" text-anchor="middle" fill="var(--teal)" style="font-size:18px">Step ${curStep+1}</text>`;
+
+  s += `<path class="w live" d="M350,95 H400"/>`;
+
+  s += `<rect class="blockbox" x="400" y="24" width="130" height="112" rx="8"/>`;
+  s += `<text class="sv-cap" x="465" y="44" text-anchor="middle" fill="var(--copper)">PITCH BUS</text>`;
+  s += `<text class="sv-lbl" x="465" y="62" text-anchor="middle">8 Trim Pots</text>`;
+  s += `<text class="sv-num" x="465" y="98" text-anchor="middle" fill="var(--ink)">${curFreq} Hz</text>`;
+
+  s += `<path class="w live" d="M530,95 H570"/>`;
+
+  s += `<rect class="blockbox" x="570" y="24" width="95" height="112" rx="8"/>`;
+  s += `<text class="sv-cap" x="617" y="44" text-anchor="middle" fill="var(--teal)">CD4066</text>`;
+  s += `<text class="sv-lbl" x="617" y="62" text-anchor="middle">Gate &rarr; Spkr</text>`;
+  s += `<text class="sv-num" x="617" y="98" text-anchor="middle" fill="${SEQ.gateOn ? 'var(--teal)' : 'var(--ink-3)'}">${SEQ.gateOn ? 'GATE ON' : 'DRONE'}</text>`;
+
+  s += `</svg>`;
+  host.innerHTML = s;
+}
+
+function initSequencer(){
+  $('btn-play').onclick = () => {
+    if (SEQ.playing) stopSequencer();
+    else startSequencer();
+  };
+
+  $('btn-step').onclick = () => {
+    initAudio();
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    advanceStep();
+  };
+
+  $('btn-loop').onclick = () => {
+    SEQ.maxSteps = SEQ.maxSteps === 8 ? 4 : 8;
+    $('btn-loop').textContent = `Loop: ${SEQ.maxSteps} Steps`;
+    $('btn-loop').className = SEQ.maxSteps === 4 ? 'sel' : '';
+    if (SEQ.step >= SEQ.maxSteps) SEQ.step = 0;
+    updateUI();
+  };
+
+  $('btn-gate').onclick = () => {
+    SEQ.gateOn = !SEQ.gateOn;
+    $('btn-gate').textContent = `Gate: ${SEQ.gateOn ? 'ON' : 'OFF'}`;
+    $('btn-gate').className = SEQ.gateOn ? 'sel' : '';
+    updateUI();
+  };
+
+  $('btn-slide').onclick = () => {
+    SEQ.slideOn = !SEQ.slideOn;
+    $('btn-slide').textContent = `Slide: ${SEQ.slideOn ? 'ON' : 'OFF'}`;
+    $('btn-slide').className = SEQ.slideOn ? 'sel' : '';
+    updateUI();
+  };
+
+  $('rng-tempo').oninput = e => {
+    SEQ.tempo = parseInt(e.target.value, 10);
+    $('sim-tempo-txt').textContent = `Tempo: ${SEQ.tempo} BPM`;
+    if (SEQ.playing){
+      clearInterval(timerId);
+      const stepDurationMs = (60 / SEQ.tempo) * 1000;
+      timerId = setInterval(advanceStep, stepDurationMs);
+    }
+  };
+
+  $('btn-p-acid').onclick = () => {
+    SEQ.pitches = [0, 0, 7, 0, 10, 0, 7, 2];
+    SEQ.gateOn = true; SEQ.slideOn = true; SEQ.tempo = 140;
+    $('rng-tempo').value = 140; $('sim-tempo-txt').textContent = 'Tempo: 140 BPM';
+    $('btn-slide').className = 'sel'; $('btn-slide').textContent = 'Slide: ON';
+    renderControls(); updateUI();
+  };
+
+  $('btn-p-arp').onclick = () => {
+    SEQ.pitches = [0, 4, 7, 11, 7, 4, 2, 0];
+    SEQ.gateOn = true; SEQ.slideOn = false; SEQ.tempo = 125;
+    $('rng-tempo').value = 125; $('sim-tempo-txt').textContent = 'Tempo: 125 BPM';
+    $('btn-slide').className = ''; $('btn-slide').textContent = 'Slide: OFF';
+    renderControls(); updateUI();
+  };
+
+  $('btn-p-game').onclick = () => {
+    SEQ.pitches = [7, 7, 0, 7, 9, 7, 4, 2];
+    SEQ.gateOn = true; SEQ.slideOn = false; SEQ.tempo = 180;
+    $('rng-tempo').value = 180; $('sim-tempo-txt').textContent = 'Tempo: 180 BPM';
+    $('btn-slide').className = ''; $('btn-slide').textContent = 'Slide: OFF';
+    renderControls(); updateUI();
+  };
+
+  drawPinouts();
+  drawBB();
+  renderControls();
+  updateUI();
+}
+
+window.addEventListener('DOMContentLoaded', initSequencer);
+</script>

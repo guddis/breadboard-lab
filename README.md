@@ -21,6 +21,7 @@ by hand. No microcontroller, no code, no app. The circuit *is* the explanation.
 | [Dusk Switch](projects/dusk-switch/) | Sensors, thresholds, hysteresis | 11+ | 2 h | CD4011, CD4093 |
 | [Lucky Dice](projects/lucky-dice/) | Shift registers, feedback, pseudo-random numbers | 11+ | 2 h | CD4093, CD4081, CD4013 × 2, CD4077, CD4071 |
 | [Pocket Adder](projects/pocket-adder/) | Binary arithmetic, half adders, full adders, ripple carry | 11+ | 2–2½ h | CD4070, CD4081, CD4071 |
+| [Step Sequencer](projects/step-sequencer/) | Analog-digital hybrid synthesis, clock division, musical pitch | 11+ | 2½–3 h | CD40106, CD4017, CD4066 |
 
 The projects are in order. The **Gate Bench** introduces the six logic gates one chip at a
 time, and the **Logic Vault** puts them to work. Both are combinational — they answer
@@ -52,6 +53,12 @@ gates — an XOR for the sum and an AND for the carry in the first column, and a
 in the second column that accepts the carry rippling across. You watch Shannon's 1937 algebra turn
 into numbers you can add up, and see firsthand why addition takes time in silicon before the answer
 can settle.
+
+The **Step Sequencer** combines digital state with analog control to build a musical instrument from
+scratch. A Schmitt-trigger clock sets the tempo, a decade counter advances an eight-step loop, and
+eight trim pots dial in eight separate pitches through isolation diodes onto a shared pitch bus.
+Finally, a bilateral switch gates the audio to create the staccato groove and analog portamento
+slide behind the legendary Roland TB-303 and early modular synthesizers.
 
 Open a project's `guide.html` in any browser — that's the real guide, with diagrams and a
 working simulator you can play with before touching a wire. The `README.md` beside it is
